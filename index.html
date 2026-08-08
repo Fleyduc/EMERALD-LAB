@@ -2455,6 +2455,71 @@ pen — ruchka 🖊"
             </div>
           </div>
 
+          <!-- IELTS O'QUVCHILAR UCHUN WRITING TASK 2 QOLLANMASI -->
+          <div id="ielts-book-section" class="card hidden">
+            <div class="card-title">
+              <span>📖</span>
+              <span>Rasmiy Qo'llanma: EMERALD LAB - IELTS WRITING TASK 2</span>
+            </div>
+
+            <div class="book-container">
+              <!-- Interactive 3D Book Cover -->
+              <a
+                href="Emerald_Lab_-_IELTS_Writing_Task_2_Complete_Guide.pdf"
+                target="_blank"
+              >
+                <div
+                  class="book-cover-3d"
+                  title="Kitobni to'liq PDF formatda ochish uchun ustiga bosing"
+                >
+                  <div class="book-badge-top">BAND 7-9 STUDY EDITION</div>
+                  <div class="book-icon-center">✍️</div>
+                  <div class="book-title-main">
+                    EMERALD LAB<br /><span
+                      style="font-size: 1.3rem; color: #fff"
+                      >IELTS WRITING TASK 2</span
+                    >
+                  </div>
+                  <div class="book-footer-sub">
+                    COMPLETE GUIDE<br /><small>5 Essay Turi + 10 Namuna Insho</small>
+                  </div>
+                </div>
+              </a>
+
+              <p
+                style="
+                  margin-top: 1.2rem;
+                  color: var(--text-muted);
+                  font-size: 0.95rem;
+                  max-width: 600px;
+                  text-align: center;
+                "
+              >
+                Ushbu qo'llanma Opinion, Discussion, Problem-Solution,
+                Advantages/Disadvantages va Two-Part Question insho turlari
+                bo'yicha to'liq tuzilma, band-9 lug'at va namuna
+                insholardan iborat. O'qish uchun rasm yoki tugmani bosing!
+              </p>
+
+              <a
+  href="Emerald_Lab_-_IELTS_Writing_Task_2_Complete_Guide.pdf"
+  target="_blank"
+  class="btn-primary"
+  style="
+    display: inline-block;
+    width: auto;
+    padding: 12px 30px;
+    margin-top: 1rem;
+    text-decoration: none;
+    font-size: 1rem;
+    background: linear-gradient(135deg, #10b981, #059669);
+  "
+>
+                📖 PDF holatda o'qish
+              </a>
+            </div>
+          </div>
+
           <!-- PROGRESS -->
           <div class="card">
             <div class="card-title">📊 Sizning O'zlashtirish Darajangiz</div>
@@ -3717,6 +3782,13 @@ pen — ruchka 🖊"
             bookSec.classList.remove("hidden");
           } else {
             bookSec.classList.add("hidden");
+          }
+
+          const ieltsBookSec = document.getElementById("ielts-book-section");
+          if (user.level === "ielts") {
+            ieltsBookSec.classList.remove("hidden");
+          } else {
+            ieltsBookSec.classList.add("hidden");
           }
 
           renderStudentLessons();
