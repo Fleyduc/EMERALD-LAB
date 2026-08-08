@@ -861,6 +861,299 @@
         background: rgba(16, 185, 129, 0.1);
       }
 
+      /* Lug'at O'yini - qayta ishlangan variant kartalari */
+      @keyframes vqPopIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @keyframes vqCardIn {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes vqRingGrow {
+        from {
+          --pct: 0;
+        }
+      }
+
+      @keyframes vqPulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 0 var(--emerald-glow);
+        }
+        50% {
+          box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+        }
+      }
+
+      #vocab-quiz-modal .modal-card {
+        animation: vqCardIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+        border: 1px solid var(--card-border);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45), 0 0 40px rgba(16, 185, 129, 0.08);
+      }
+
+      .vocab-quiz-word-box {
+        position: relative;
+        background: linear-gradient(
+          160deg,
+          rgba(16, 185, 129, 0.16),
+          rgba(16, 185, 129, 0.02)
+        );
+        border: 1px solid var(--card-border);
+        border-radius: 20px;
+        padding: 26px 18px 20px;
+        margin-bottom: 22px;
+        overflow: hidden;
+      }
+
+      .vocab-quiz-word-box::before {
+        content: "";
+        position: absolute;
+        top: -40%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 220px;
+        height: 220px;
+        background: radial-gradient(
+          circle,
+          var(--emerald-glow) 0%,
+          rgba(0, 0, 0, 0) 70%
+        );
+        pointer-events: none;
+      }
+
+      .vocab-quiz-word-row {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+      }
+
+      .vocab-quiz-audio-btn-lg {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: rgba(16, 185, 129, 0.15);
+        border: 1px solid var(--card-border-hover);
+        cursor: pointer;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+        animation: vqPulse 2.4s ease-in-out infinite;
+      }
+
+      .vocab-quiz-audio-btn-lg:hover {
+        background: var(--emerald-primary);
+        transform: scale(1.08);
+      }
+
+      .vocab-quiz-option {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        background: rgba(2, 20, 15, 0.55);
+        border-radius: 14px;
+        cursor: pointer;
+        border: 1.5px solid var(--card-border);
+        transition: all 0.2s ease;
+        text-align: left;
+        animation: vqPopIn 0.3s ease both;
+      }
+
+      .vocab-quiz-option:hover {
+        border-color: var(--emerald-light);
+        background: rgba(16, 185, 129, 0.12);
+        transform: translateX(3px);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+      }
+
+      .vocab-quiz-option-letter {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--emerald-light);
+        font-weight: 800;
+        font-size: 0.85rem;
+        border: 1px solid var(--card-border);
+        transition: all 0.2s ease;
+      }
+
+      .vocab-quiz-option-text {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text-main);
+        flex: 1;
+      }
+
+      .vocab-quiz-option-icon {
+        font-size: 1rem;
+        flex-shrink: 0;
+        opacity: 0;
+        transform: scale(0.5);
+        transition: all 0.25s ease;
+      }
+
+      .vocab-quiz-option.correct .vocab-quiz-option-icon,
+      .vocab-quiz-option.wrong .vocab-quiz-option-icon {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      .vocab-quiz-option.correct {
+        background: rgba(16, 185, 129, 0.3);
+        border-color: var(--emerald-primary);
+        box-shadow: 0 0 14px var(--emerald-glow);
+      }
+      .vocab-quiz-option.correct .vocab-quiz-option-letter {
+        background: var(--emerald-primary);
+        color: #022c22;
+      }
+
+      .vocab-quiz-option.wrong {
+        background: rgba(239, 68, 68, 0.25);
+        border-color: var(--danger);
+        box-shadow: 0 0 14px var(--danger-glow);
+      }
+      .vocab-quiz-option.wrong .vocab-quiz-option-letter {
+        background: var(--danger);
+        color: white;
+      }
+
+      .vocab-quiz-dots {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+      }
+
+      .vocab-quiz-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.15);
+        transition: all 0.25s ease;
+      }
+
+      .vocab-quiz-dot.done {
+        background: var(--emerald-primary);
+      }
+      .vocab-quiz-dot.active {
+        background: var(--emerald-light);
+        transform: scale(1.35);
+        box-shadow: 0 0 8px var(--emerald-glow-strong);
+      }
+
+      .vocab-quiz-score-ring {
+        --pct: 0;
+        --ring-color: var(--emerald-primary);
+        width: 132px;
+        height: 132px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 4px auto 16px;
+        position: relative;
+        animation: vqCardIn 0.5s ease both, vqRingGrow 1s ease-out;
+      }
+
+      .vocab-quiz-score-ring::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: conic-gradient(
+          var(--ring-color) calc(var(--pct) * 1%),
+          rgba(255, 255, 255, 0.08) 0
+        );
+        transition: background 0.6s ease;
+      }
+
+      .vocab-quiz-score-ring::after {
+        content: "";
+        position: absolute;
+        inset: 10px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(6, 44, 34, 0.98) 60%,
+          rgba(2, 26, 20, 0.98) 100%
+        );
+      }
+
+      .vocab-quiz-score-ring-inner {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+      }
+
+      .vocab-quiz-score-ring-inner strong {
+        display: block;
+        font-size: 1.7rem;
+        font-weight: 800;
+        color: var(--text-main);
+      }
+
+      .vocab-quiz-score-ring-inner span {
+        font-size: 0.65rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .vocab-quiz-reward-row {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+      }
+
+      .vocab-quiz-reward-chip {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid var(--card-border);
+        border-radius: 999px;
+        padding: 5px 14px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--text-main);
+      }
+
+      #vocab-quiz-result-stars {
+        font-size: 1.8rem;
+        letter-spacing: 6px;
+        margin-bottom: 10px;
+      }
+      #vocab-quiz-result-stars .star-dim {
+        filter: grayscale(1);
+        opacity: 0.3;
+      }
+
       .shop-card {
         background: rgba(2, 20, 15, 0.6);
         border: 1px solid var(--card-border);
@@ -1901,7 +2194,7 @@
 
     <!-- 🎮 VOCABULARY MINI-GAME MODAL (Talaffuz + Variantli test) -->
     <div id="vocab-quiz-modal" class="modal-overlay hidden">
-      <div class="modal-card" style="max-width: 480px; text-align: center">
+      <div class="modal-card" style="max-width: 480px; text-align: center; background: linear-gradient(160deg, rgba(6,44,34,0.97), rgba(2,26,20,0.99));">
         <div
           style="
             display: flex;
@@ -1910,7 +2203,9 @@
             margin-bottom: 10px;
           "
         >
-          <h3 style="color: var(--emerald-light)">🎮 Lug'at O'yini</h3>
+          <h3 style="color: var(--emerald-light); display:flex; align-items:center; gap:8px;">
+            <span style="font-size:1.3rem;">🎮</span> Lug'at O'yini
+          </h3>
           <span
             onclick="closeVocabQuiz()"
             style="cursor: pointer; font-size: 1.4rem; color: var(--text-muted)"
@@ -1944,6 +2239,8 @@
           1 / 10
         </p>
 
+        <div id="vocab-quiz-dots" class="vocab-quiz-dots"></div>
+
         <!-- QUESTION VIEW -->
         <div id="vocab-quiz-question-view">
           <p
@@ -1957,57 +2254,60 @@
           >
             Bu so'zning tarjimasi qaysi?
           </p>
-          <div
-            style="
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              gap: 12px;
-              margin-bottom: 24px;
-            "
-          >
-            <div
-              id="vocab-quiz-word"
-              style="font-size: 2rem; font-weight: 800; color: white"
-            >
-              word
+
+          <div class="vocab-quiz-word-box">
+            <div class="vocab-quiz-word-row">
+              <div
+                id="vocab-quiz-word"
+                style="font-size: 2.1rem; font-weight: 800; color: white"
+              >
+                word
+              </div>
+              <button
+                onclick="playVocabQuizAudio()"
+                class="vocab-quiz-audio-btn-lg"
+                title="Talaffuzni eshitish"
+              >
+                🔊
+              </button>
             </div>
-            <button
-              onclick="playVocabQuizAudio()"
-              class="vocab-audio-btn"
-              title="Talaffuzni eshitish"
-              style="font-size: 1.3rem"
-            >
-              🔊
-            </button>
+            <p
+              id="vocab-quiz-phonetic"
+              style="
+                position: relative;
+                color: var(--text-muted);
+                font-size: 0.9rem;
+                margin-top: 6px;
+              "
+            ></p>
           </div>
-          <p
-            id="vocab-quiz-phonetic"
-            style="
-              color: var(--text-muted);
-              font-size: 0.9rem;
-              margin-top: -18px;
-              margin-bottom: 20px;
-            "
-          ></p>
 
           <div id="vocab-quiz-options" style="display: grid; gap: 10px"></div>
         </div>
 
         <!-- RESULT VIEW -->
         <div id="vocab-quiz-result-view" class="hidden">
-          <div style="font-size: 3rem; margin-bottom: 10px" id="vocab-quiz-result-emoji">
-            🎉
+          <div
+            class="vocab-quiz-score-ring"
+            id="vocab-quiz-score-ring"
+            style="--pct: 0"
+          >
+            <div class="vocab-quiz-score-ring-inner">
+              <strong id="vocab-quiz-result-percent">0%</strong>
+              <span>Natija</span>
+            </div>
           </div>
+          <div id="vocab-quiz-result-stars">⭐⭐⭐</div>
           <h3 id="vocab-quiz-result-title" style="margin-bottom: 6px">
             Ajoyib natija!
           </h3>
           <p
             id="vocab-quiz-result-score"
-            style="color: var(--text-muted); margin-bottom: 20px"
+            style="color: var(--text-muted); margin-bottom: 14px"
           >
             10 / 10 to'g'ri
           </p>
+          <div class="vocab-quiz-reward-row" id="vocab-quiz-reward-row"></div>
           <button class="btn-primary" onclick="closeVocabQuiz()">
             Yopish
           </button>
@@ -4882,7 +5182,14 @@ pen — ruchka 🖊"
         if (!l) return;
 
         const completed = currentUser.completedLessons || [];
+        // "isDone" - butun dars (uy vazifasi, umumiy belgi) faqat Lug'at
+        // testi (finishVocabQuiz) orqali "yakunlangan" deb belgilanadi.
         const isDone = completed.includes(l.id);
+        // Grammatika testi o'zining mustaqil bayrog'i bilan qulflanadi,
+        // shu bilan Lug'at testidan mustaqil ravishda bajarilishi mumkin.
+        const grammarDone = (currentUser.completedGrammarQuizzes || []).includes(
+          l.id
+        );
 
         let vocabHtml = "";
         if (l.vocabulary && l.vocabulary.length > 0) {
@@ -4928,11 +5235,15 @@ pen — ruchka 🖊"
                   )
                   .join("")}
               </div>
-              <button class="btn-primary" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; margin-top: 12px;" onclick="startVocabQuiz(${
-                l.id
-              }, '${l.title}')">
-                🧪 Lug'at bo'yicha Test topshirish (+10 🪙 & +15 XP)
-              </button>
+              ${
+                isDone
+                  ? `<button class="btn-primary" style="margin-top: 12px; opacity: 0.6; cursor: not-allowed;" disabled>
+                      🔒 Test yakunlangan — qayta topshirib bo'lmaydi
+                    </button>`
+                  : `<button class="btn-primary" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; margin-top: 12px;" onclick="startVocabQuiz(${l.id}, '${l.title}')">
+                      🧪 Lug'at bo'yicha Test topshirish (+10 🪙 & +15 XP)
+                    </button>`
+              }
             </div>
           `;
         }
@@ -4943,6 +5254,13 @@ pen — ruchka 🖊"
           l.target_level;
 
         document.getElementById("lesson-detail-body").innerHTML = `
+          ${
+            isDone
+              ? `<div style="background: rgba(16,185,129,0.1); border: 1px solid var(--emerald-primary); border-radius: 12px; padding: 10px 14px; margin-bottom: 12px; font-size: 0.85rem; color: var(--emerald-light);">
+                  🔒 Bu dars allaqachon yakunlangan. Siz uni faqat ko'rishingiz mumkin — test va vazifani qayta topshirib bo'lmaydi.
+                </div>`
+              : ""
+          }
           <p style="margin: 10px 0; color: var(--text-muted); white-space: pre-line;">${
             l.content_text
           }</p>
@@ -4956,23 +5274,23 @@ pen — ruchka 🖊"
 
           ${
             l.quiz && l.quiz.question
-              ? `
-            <div class="quiz-box" id="lesson-quiz-box"></div>
-          `
+              ? isDone || grammarDone
+                ? `<div class="quiz-box"><p style="color: var(--text-muted); font-size: 0.85rem;">🔒 Grammatika testi yakunlangan.<br><strong>Savol:</strong> ${l.quiz.question}<br><strong>To'g'ri javob:</strong> ${l.quiz.correct}</p></div>`
+                : `<div class="quiz-box" id="lesson-quiz-box"></div>`
               : ""
           }
 
           <div style="margin-top: 15px;">
-            <textarea id="homework-${
-              l.id
-            }" placeholder="Uy vazifangizni shu yerga yozib yuboring..." rows="2"></textarea>
-            <button class="btn-primary" style="margin-top: 8px;" onclick="submitHomework(${
-              l.id
-            }, '${l.title}')">Vazifani Yuborish</button>
+            ${
+              isDone
+                ? `<p style="font-size: 0.85rem; color: var(--text-muted);">🔒 Vazifa yuborish yakunlangan — bu dars uchun endi vazifa yubora olmaysiz.</p>`
+                : `<textarea id="homework-${l.id}" placeholder="Uy vazifangizni shu yerga yozib yuboring..." rows="2"></textarea>
+                  <button class="btn-primary" style="margin-top: 8px;" onclick="submitHomework(${l.id}, '${l.title}')">Vazifani Yuborish</button>`
+            }
           </div>
         `;
 
-        if (l.quiz && l.quiz.question) {
+        if (l.quiz && l.quiz.question && !isDone && !grammarDone) {
           startLessonQuiz(l);
         }
 
@@ -5047,6 +5365,16 @@ pen — ruchka 🖊"
 
         if (chosen.isCorrect) {
           alert("To'g'ri javob! +20 XP va +15 🪙 Coin to'pladingiz! 🎉");
+
+          // Grammatika testi alohida o'z bayrog'i bilan qulflanadi,
+          // shunda u Lug'at testiga (yoki umumiy dars holatiga) ta'sir
+          // qilmaydi - ikkalasi mustaqil ravishda bajarilishi mumkin.
+          if (!currentUser.completedGrammarQuizzes)
+            currentUser.completedGrammarQuizzes = [];
+          if (!currentUser.completedGrammarQuizzes.includes(state.lessonId)) {
+            currentUser.completedGrammarQuizzes.push(state.lessonId);
+          }
+
           addRewards(20, 15, state.lessonId, `Grammatika: ${state.lessonTitle}`);
         } else {
           alert("Noto'g'ri javob. Qaytadan urinib ko'ring!");
@@ -5079,6 +5407,13 @@ pen — ruchka 🖊"
         const lesson = lessons.find((l) => l.id === lessonId);
         if (!lesson || !lesson.vocabulary || lesson.vocabulary.length === 0)
           return;
+
+        const completed = currentUser.completedLessons || [];
+        if (completed.includes(lessonId)) {
+          return alert(
+            "🔒 Bu dars allaqachon yakunlangan. Testni qayta topshirib bo'lmaydi."
+          );
+        }
 
         // Har bir savol uchun 4 ta variant tayyorlaymiz (1 to'g'ri + 3 xato)
         const allTranslations = lesson.vocabulary.map((v) => v.trans);
@@ -5142,14 +5477,29 @@ pen — ruchka 🖊"
         document.getElementById("vocab-quiz-progress-fill").style.width =
           `${(state.index / state.questions.length) * 100}%`;
 
+        const dotsBox = document.getElementById("vocab-quiz-dots");
+        if (dotsBox) {
+          dotsBox.innerHTML = state.questions
+            .map((_, i) => {
+              const cls =
+                i < state.index ? "done" : i === state.index ? "active" : "";
+              return `<span class="vocab-quiz-dot ${cls}"></span>`;
+            })
+            .join("");
+        }
+
+        const letters = ["A", "B", "C", "D"];
         const optionsBox = document.getElementById("vocab-quiz-options");
         optionsBox.innerHTML = q.options
           .map(
-            (opt) =>
-              `<div class="quiz-option" onclick="selectVocabQuizAnswer(this, '${opt.replace(
-                /'/g,
-                "\\'"
-              )}')">${opt}</div>`
+            (opt, idx) =>
+              `<div class="vocab-quiz-option" id="vocab-quiz-opt-${idx}" style="animation-delay:${
+                idx * 0.06
+              }s" onclick="selectVocabQuizAnswer(${idx})">
+                <span class="vocab-quiz-option-letter">${letters[idx]}</span>
+                <span class="vocab-quiz-option-text">${opt}</span>
+                <span class="vocab-quiz-option-icon"></span>
+              </div>`
           )
           .join("");
 
@@ -5167,30 +5517,30 @@ pen — ruchka 🖊"
         }
       }
 
-      function selectVocabQuizAnswer(el, chosen) {
+      function selectVocabQuizAnswer(idx) {
         const state = vocabQuizState;
         if (!state || state.locked) return;
         state.locked = true;
 
         const q = state.questions[state.index];
+        const chosen = q.options[idx];
         const allOptions = document.querySelectorAll(
-          "#vocab-quiz-options .quiz-option"
+          "#vocab-quiz-options .vocab-quiz-option"
         );
 
-        allOptions.forEach((opt) => {
-          if (opt.innerText === q.correct) {
-            opt.style.background = "rgba(16, 185, 129, 0.35)";
-            opt.style.borderColor = "var(--emerald-primary)";
+        allOptions.forEach((opt, i) => {
+          const iconEl = opt.querySelector(".vocab-quiz-option-icon");
+          if (q.options[i] === q.correct) {
+            opt.classList.add("correct");
+            if (iconEl) iconEl.innerText = "✓";
+          } else if (i === idx) {
+            opt.classList.add("wrong");
+            if (iconEl) iconEl.innerText = "✕";
           }
         });
 
         if (chosen === q.correct) {
           state.correctCount++;
-          el.style.background = "rgba(16, 185, 129, 0.35)";
-          el.style.borderColor = "var(--emerald-primary)";
-        } else {
-          el.style.background = "rgba(239, 68, 68, 0.35)";
-          el.style.borderColor = "var(--danger)";
         }
 
         setTimeout(() => {
@@ -5217,7 +5567,13 @@ pen — ruchka 🖊"
           "hidden"
         );
 
-        const emoji = percent === 100 ? "🏆" : percent >= 60 ? "🎉" : "💪";
+        const dotsBox = document.getElementById("vocab-quiz-dots");
+        if (dotsBox) {
+          dotsBox.innerHTML = state.questions
+            .map(() => `<span class="vocab-quiz-dot done"></span>`)
+            .join("");
+        }
+
         const title =
           percent === 100
             ? "Mukammal natija!"
@@ -5225,36 +5581,84 @@ pen — ruchka 🖊"
             ? "Zo'r ishladingiz!"
             : "Yana mashq qiling!";
 
-        document.getElementById("vocab-quiz-result-emoji").innerText = emoji;
+        const ringColor =
+          percent === 100
+            ? "var(--emerald-primary)"
+            : percent >= 60
+            ? "var(--gold)"
+            : "var(--danger)";
+
+        const ringEl = document.getElementById("vocab-quiz-score-ring");
+        if (ringEl) {
+          ringEl.style.setProperty("--pct", percent);
+          ringEl.style.setProperty("--ring-color", ringColor);
+        }
+        document.getElementById("vocab-quiz-result-percent").innerText =
+          `${percent}%`;
+
         document.getElementById("vocab-quiz-result-title").innerText = title;
         document.getElementById(
           "vocab-quiz-result-score"
-        ).innerText = `${correct} / ${total} to'g'ri (${percent}%)`;
+        ).innerText = `${correct} / ${total} to'g'ri`;
+
+        const starsEl = document.getElementById("vocab-quiz-result-stars");
+        if (starsEl) {
+          const starCount = percent === 100 ? 3 : percent >= 60 ? 2 : 1;
+          starsEl.innerHTML = ["⭐", "⭐", "⭐"]
+            .map((s, i) => `<span class="${i < starCount ? "" : "star-dim"}">⭐</span>`)
+            .join("");
+        }
 
         // Har bir to'g'ri javob uchun mukofot + 100% bo'lsa bonus
         const xp = correct * 2 + (percent === 100 ? 5 : 0);
         const coins = correct * 1 + (percent === 100 ? 5 : 0);
 
+        const rewardRow = document.getElementById("vocab-quiz-reward-row");
+        if (rewardRow) {
+          rewardRow.innerHTML = `
+            <span class="vocab-quiz-reward-chip">✨ +${xp} XP</span>
+            <span class="vocab-quiz-reward-chip">🪙 +${coins} Coin</span>
+          `;
+        }
+
         if (correct > 0) {
           addRewards(xp, coins, state.lessonId, `Lug'at o'yini: ${state.lessonTitle}`);
+        }
+
+        // Lug'at vazifasi tugagach - to'g'ri javoblar sonidan qat'iy nazar
+        // dars "yakunlangan" deb belgilanadi va qulflanadi (qayta bajarib
+        // bo'lmaydi, faqat ko'rish mumkin).
+        if (!currentUser.completedLessons) currentUser.completedLessons = [];
+        if (!currentUser.completedLessons.includes(state.lessonId)) {
+          currentUser.completedLessons.push(state.lessonId);
         }
 
         if (!currentUser.weeklyVocabStats)
           currentUser.weeklyVocabStats = [0, 0, 0, 0, 0, 0, 0];
         currentUser.weeklyVocabStats[6] += correct;
         saveUserData(currentUser);
+
+        renderStudentLessons();
       }
 
       function closeVocabQuiz() {
         document.getElementById("vocab-quiz-modal").classList.add("hidden");
+        const lessonId = vocabQuizState ? vocabQuizState.lessonId : null;
         vocabQuizState = null;
+        // Dars tafsiloti oynasini yangilaymiz, shunda tugma va vazifa
+        // maydoni endi qulflangan holatda ko'rinadi.
+        if (lessonId !== null) openLessonDetail(lessonId);
       }
 
       function addRewards(xpAmount, coinAmount, lessonId, topicTitle) {
-        if (!currentUser.completedLessons) currentUser.completedLessons = [];
-        if (!currentUser.completedLessons.includes(lessonId)) {
-          currentUser.completedLessons.push(lessonId);
-        }
+        // ESLATMA: bu yerda avval currentUser.completedLessons ga ham
+        // yozib qo'yilardi. Bu grammatika testini to'g'ri yechgan
+        // zahoti butun darsni (jumladan Lug'at testini) "yakunlangan"
+        // deb qulflab qo'yardi - talaba hali Lug'at testini
+        // topshirmagan bo'lsa ham. Shu sabab lug'at testi tugmasi
+        // "yakunlangan" bo'lib chiqib, qayta topshirib bo'lmas edi.
+        // Darsni yakunlash faqat Lug'at testi orqali (finishVocabQuiz)
+        // amalga oshadi, shuning uchun bu yerdan olib tashlandi.
 
         currentUser.xp = (currentUser.xp || 0) + xpAmount;
         currentUser.coins = (currentUser.coins || 0) + coinAmount;
