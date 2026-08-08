@@ -2951,6 +2951,13 @@ pen — ruchka 🖊"
               onchange="loadStudentAnalyticsForTeacher()"
             ></select>
           </div>
+          <button
+            class="btn-danger"
+            style="margin-top: 8px;"
+            onclick="teacherDeleteStudent(document.getElementById('analytics-student-dropdown').value)"
+          >
+            🗑️ Tanlangan o'quvchini akkauntini o'chirish
+          </button>
         </div>
 
         <div class="card">
@@ -3391,6 +3398,14 @@ pen — ruchka 🖊"
         if (error) console.error("Supabase (user saqlash) xatolik:", error);
       }
 
+      async function dbDeleteUser(email) {
+        const { error } = await supabaseClient
+          .from("users")
+          .delete()
+          .eq("email", email);
+        if (error) console.error("Supabase (foydalanuvchi o'chirish) xatolik:", error);
+      }
+
       async function dbInsertLesson(lesson) {
         const { error } = await supabaseClient
           .from("lessons")
@@ -3740,6 +3755,7 @@ pen — ruchka 🖊"
           <button class="logout-btn" onclick="logout()">${
             translations[currentLang].logoutBtn
           }</button>
+          <button class="logout-btn" style="background:rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.4); color: var(--danger);" onclick="deleteMyAccount()" title="Akkauntni butunlay o'chirish">🗑️ Akkauntni o'chirish</button>
         </div>
       `;
 
@@ -5238,6 +5254,62 @@ pen — ruchka 🖊"
         location.reload();
       }
 
+      async function deleteMyAccount() {
+        if (!currentUser) return;
+
+        const confirmText = prompt(
+          `Diqqat! Bu amalni ORQAGA QAYTARIB BO'LMAYDI.\n\nAkkauntingiz, barcha XP/Coin, sertifikatlar va topshirilgan ishlaringiz butunlay o'chiriladi.\n\nTasdiqlash uchun pastga "${currentUser.email}" deb yozing:`
+        );
+        if (confirmText !== currentUser.email) {
+          if (confirmText !== null) {
+            alert("Email noto'g'ri kiritildi. Akkaunt o'chirilmadi.");
+          }
+          return;
+        }
+
+        const email = currentUser.email;
+
+        submissions = submissions.filter((s) => s.studentEmail !== email);
+        users = users.filter((u) => u.email !== email);
+
+        await dbDeleteUser(email);
+
+        localStorage.removeItem("emerald_session_email");
+        currentUser = null;
+
+        alert("Akkauntingiz muvaffaqiyatli o'chirildi. Xayr! 👋");
+        location.reload();
+      }
+
+      async function teacherDeleteStudent(email) {
+        const student = users.find((u) => u.email === email);
+        if (!student) return;
+
+        const confirmText = prompt(
+          `"${student.full_name}" (${email}) akkauntini butunlay o'chirmoqchimisiz?\n\nBu amalni ORQAGA QAYTARIB BO'LMAYDI — o'quvchining barcha ma'lumotlari va topshirgan ishlari o'chib ketadi.\n\nTasdiqlash uchun o'quvchi emailini yozing:`
+        );
+        if (confirmText !== email) {
+          if (confirmText !== null) {
+            alert("Email noto'g'ri kiritildi. Akkaunt o'chirilmadi.");
+          }
+          return;
+        }
+
+        submissions = submissions.filter((s) => s.studentEmail !== email);
+        users = users.filter((u) => u.email !== email);
+
+        await dbDeleteUser(email);
+
+        alert(`"${student.full_name}" akkaunti o'chirildi.`);
+
+        if (typeof renderAnalyticsTab === "function") {
+          renderAnalyticsTab();
+        }
+        if (typeof renderLeaderboard === "function") {
+          renderLeaderboard();
+        }
+      }
+
       /* ============================================================
          IELTS WRITING VAZIFALARI TIZIMI
          - "lessons" jadvalidan foydalanamiz, lekin type:"writing"
@@ -5495,20 +5567,44 @@ pen — ruchka 🖊"
                 <span>${typeLabels[t.taskType] || t.taskType}</span>
                 <span class="badge">⏱️ ${t.timeLimit} daq</span>
               </div>
-              <div class="lesson-card-open-btn" onclick="startWritingWorkspace(${t.id})">Yozishni boshlash →</div>
+              <div class="lesson-card-open-btn" ${
+                isDone
+                  ? `onclick="viewSubmittedWritingResult(${t.id})" style="background:rgba(160,160,160,0.25); cursor:pointer;"`
+                  : `onclick="startWritingWorkspace(${t.id})"`
+              }>${isDone ? "🔒 Topshirilgan — Natijani ko'rish" : "Yozishni boshlash →"}</div>
             </div>
           `;
           })
           .join("");
       }
 
+      function viewSubmittedWritingResult(taskId) {
+        const task = lessons.find((l) => l.id === taskId && l.type === "writing");
+        alert(
+          `Siz "${task ? task.title : "bu"}" vazifasini allaqachon topshirgansiz. Vazifani qayta bajarish mumkin emas — natijangizni pastdagi "Yuborilgan Ishlarim" bo'limidan ko'rishingiz mumkin.`
+        );
+        const historyEl = document.getElementById("writing-history-container");
+        if (historyEl) historyEl.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
       function startWritingWorkspace(taskId) {
         const task = lessons.find((l) => l.id === taskId && l.type === "writing");
         if (!task) return;
 
+        const alreadySubmitted = submissions.some(
+          (s) =>
+            s.type === "writing" &&
+            s.studentEmail === currentUser.email &&
+            s.taskId === task.id
+        );
+        if (alreadySubmitted) {
+          viewSubmittedWritingResult(taskId);
+          return;
+        }
+
         if (
           !confirm(
-            `"${task.title}" vazifasini boshlaysizmi? Taymer darhol ishga tushadi (${task.timeLimit} daqiqa) va vaqt tugagach ish avtomatik yuboriladi.`
+            `"${task.title}" vazifasini boshlaysizmi? Taymer darhol ishga tushadi (${task.timeLimit} daqiqa) va vaqt tugagach ish avtomatik yuboriladi. Diqqat: vazifani faqat BIR MARTA topshirish mumkin, qayta ochib bo'lmaydi.`
           )
         )
           return;
@@ -5606,6 +5702,22 @@ pen — ruchka 🖊"
       async function submitWritingTask(isAutoSubmit) {
         if (!activeWritingTask) return;
         const task = activeWritingTask;
+
+        const alreadySubmitted = submissions.some(
+          (s) =>
+            s.type === "writing" &&
+            s.studentEmail === currentUser.email &&
+            s.taskId === task.id
+        );
+        if (alreadySubmitted) {
+          clearInterval(writingTimerInterval);
+          activeWritingTask = null;
+          writingWorkspaceStartedAt = null;
+          document.getElementById("writing-workspace-card").classList.add("hidden");
+          document.getElementById("writing-task-list-card").classList.remove("hidden");
+          renderStudentWritingTasks();
+          return;
+        }
 
         let payload = {};
         let wordCount = 0;
