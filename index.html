@@ -19,6 +19,9 @@
     <!-- Supabase Kutubxonasi (ma'lumotlarni bulutda saqlash uchun) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+    <!-- jsPDF Kutubxonasi (PDF hisobot yaratish uchun) -->
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
     <style>
       :root {
         --bg-gradient: radial-gradient(
@@ -866,6 +869,55 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+      }
+
+      /* Avatar Frames (Do'kondan sotib olinadigan ramkalar) */
+      .avatar-frame-gold {
+        border: 3px solid var(--gold) !important;
+        box-shadow: 0 0 10px rgba(245, 158, 11, 0.7) !important;
+      }
+      .avatar-frame-emerald {
+        border: 3px solid var(--emerald-light) !important;
+        box-shadow: 0 0 12px var(--emerald-glow-strong) !important;
+      }
+
+      /* O'quvchi qidiruv natijalari (Ustoz Paneli) */
+      .student-search-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        border-radius: 10px;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: all 0.2s ease;
+        font-size: 0.85rem;
+      }
+      .student-search-item:hover {
+        background: rgba(16, 185, 129, 0.12);
+        border-color: var(--card-border);
+      }
+      .student-search-item.active {
+        background: rgba(16, 185, 129, 0.2);
+        border-color: var(--emerald-primary);
+      }
+
+      /* Statistika mini kartalar (Ustoz sinf statistikasi) */
+      .class-stat-card {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--card-border);
+        border-radius: 16px;
+        padding: 14px;
+        text-align: center;
+      }
+
+      /* Challenge kartasi */
+      .challenge-card {
+        background: rgba(2, 20, 15, 0.6);
+        border: 1px solid var(--purple);
+        border-radius: 14px;
+        padding: 12px 14px;
+        margin-bottom: 10px;
       }
 
       /* VOCABULARY FLASHCARDS (Mukammallashtirilgan qism) */
@@ -2863,6 +2915,98 @@ pen — ruchka 🖊"
                   150 🪙 Sotib olish
                 </button>
               </div>
+
+              <div class="shop-card">
+                <div>
+                  <div style="font-size: 2rem; text-align: center">🖼️</div>
+                  <h4 style="color: var(--emerald-light)">Oltin Avatar Ramka</h4>
+                  <p
+                    style="
+                      font-size: 0.8rem;
+                      color: var(--text-muted);
+                      margin: 6px 0;
+                    "
+                  >
+                    Profil rasmingiz atrofida yaltiroq oltin ramka paydo bo'ladi.
+                  </p>
+                </div>
+                <button
+                  class="btn-primary"
+                  style="margin-top: 10px"
+                  onclick="buyItem('frame_gold', 80, 'Oltin Avatar Ramka', 'gold')"
+                >
+                  80 🪙 Sotib olish
+                </button>
+              </div>
+
+              <div class="shop-card">
+                <div>
+                  <div style="font-size: 2rem; text-align: center">💚</div>
+                  <h4 style="color: var(--emerald-light)">Zumrad Avatar Ramka</h4>
+                  <p
+                    style="
+                      font-size: 0.8rem;
+                      color: var(--text-muted);
+                      margin: 6px 0;
+                    "
+                  >
+                    Profil rasmingiz atrofida yashil nurli zumrad ramka.
+                  </p>
+                </div>
+                <button
+                  class="btn-primary"
+                  style="margin-top: 10px"
+                  onclick="buyItem('frame_emerald', 130, 'Zumrad Avatar Ramka', 'emerald')"
+                >
+                  130 🪙 Sotib olish
+                </button>
+              </div>
+
+              <div class="shop-card">
+                <div>
+                  <div style="font-size: 2rem; text-align: center">🔥</div>
+                  <h4 style="color: var(--emerald-light)">Alangali Belgi</h4>
+                  <p
+                    style="
+                      font-size: 0.8rem;
+                      color: var(--text-muted);
+                      margin: 6px 0;
+                    "
+                  >
+                    Ismingiz yonida 🔥 maxsus emoji belgisi ko'rinadi.
+                  </p>
+                </div>
+                <button
+                  class="btn-primary"
+                  style="margin-top: 10px"
+                  onclick="buyItem('emoji_fire', 35, 'Alangali Belgi', '🔥')"
+                >
+                  35 🪙 Sotib olish
+                </button>
+              </div>
+
+              <div class="shop-card">
+                <div>
+                  <div style="font-size: 2rem; text-align: center">💎</div>
+                  <h4 style="color: var(--emerald-light)">Olmos Belgi</h4>
+                  <p
+                    style="
+                      font-size: 0.8rem;
+                      color: var(--text-muted);
+                      margin: 6px 0;
+                    "
+                  >
+                    Ismingiz yonida 💎 nodir emoji belgisi ko'rinadi.
+                  </p>
+                </div>
+                <button
+                  class="btn-primary"
+                  style="margin-top: 10px"
+                  onclick="buyItem('emoji_diamond', 70, 'Olmos Belgi', '💎')"
+                >
+                  70 🪙 Sotib olish
+                </button>
+              </div>
             </div>
           </div>
 
@@ -2882,7 +3026,25 @@ pen — ruchka 🖊"
               <button class="nav-tab-btn leaderboard-mode-btn active" data-mode="alltime" onclick="renderLeaderboard('alltime')">🏆 Umumiy</button>
               <button class="nav-tab-btn leaderboard-mode-btn" data-mode="weekly" onclick="renderLeaderboard('weekly')">📅 Bu hafta</button>
               <button class="nav-tab-btn leaderboard-mode-btn" data-mode="daily" onclick="renderLeaderboard('daily')">☀️ Bugun</button>
+              <button class="nav-tab-btn leaderboard-mode-btn" data-mode="friends" onclick="renderLeaderboard('friends')">👥 Do'stlar</button>
             </div>
+
+            <!-- Do'st qo'shish paneli (faqat "Do'stlar" rejimida ko'rinadi) -->
+            <div id="friends-manage-box" class="hidden" style="margin-bottom: 14px;">
+              <div style="display:flex; gap:8px; flex-wrap: wrap; align-items:center;">
+                <input
+                  type="email"
+                  id="add-friend-email-input"
+                  placeholder="Do'stingizning email manzili..."
+                  style="flex: 1; min-width: 200px;"
+                />
+                <button class="btn-primary" style="padding: 10px 16px;" onclick="addFriendByEmail()">
+                  ➕ Do'st qo'shish
+                </button>
+              </div>
+              <div id="challenges-container" style="margin-top: 14px;"></div>
+            </div>
+
             <div style="overflow-x: auto">
               <table class="data-table">
                 <thead>
@@ -2892,6 +3054,7 @@ pen — ruchka 🖊"
                     <th>Unvon</th>
                     <th>Coins</th>
                     <th id="leaderboard-xp-header">To'plangan XP</th>
+                    <th id="leaderboard-action-header" class="hidden">Amal</th>
                   </tr>
                 </thead>
                 <tbody id="leaderboard-body"></tbody>
@@ -3181,23 +3344,78 @@ pen — ruchka 🖊"
 
       <!-- 3. ANALITIKA VA PROGRESS PANEL TAB [YANGI FEATURE 2] -->
       <div id="tab-analytics" class="main-tab-content hidden">
+        <!-- Umumiy sinf statistikasi (faqat Ustoz uchun) -->
+        <div id="teacher-class-stats" class="card hidden">
+          <div class="card-title">📊 Umumiy Sinf Statistikasi</div>
+          <div class="grid-3">
+            <div class="class-stat-card">
+              <div style="font-size: 0.8rem; color: var(--text-muted)">
+                O'rtacha Band Score
+              </div>
+              <div id="class-stat-avg-band" class="stat-number">-</div>
+            </div>
+            <div class="class-stat-card">
+              <div style="font-size: 0.8rem; color: var(--text-muted)">
+                🔥 Eng Faol O'quvchi
+              </div>
+              <div
+                id="class-stat-most-active"
+                class="stat-number"
+                style="font-size: 1.1rem"
+              >
+                -
+              </div>
+            </div>
+            <div class="class-stat-card">
+              <div style="font-size: 0.8rem; color: var(--text-muted)">
+                💤 Eng Kam Faol O'quvchi
+              </div>
+              <div
+                id="class-stat-least-active"
+                class="stat-number"
+                style="font-size: 1.1rem"
+              >
+                -
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Student selection dropdown for Teacher -->
         <div id="teacher-student-selector" class="card hidden">
           <div class="card-title">🔍 O'quvchilar Statistikasini Ko'rish</div>
           <div class="input-group">
-            <label>O'quvchini tanlang:</label>
-            <select
-              id="analytics-student-dropdown"
-              onchange="loadStudentAnalyticsForTeacher()"
-            ></select>
+            <label>O'quvchini ism yoki email bo'yicha qidirish:</label>
+            <input
+              type="text"
+              id="student-search-input"
+              placeholder="Qidirish uchun yozing..."
+              oninput="renderStudentSearchResults()"
+            />
           </div>
-          <button
-            class="btn-danger"
-            style="margin-top: 8px;"
-            onclick="teacherDeleteStudent(document.getElementById('analytics-student-dropdown').value)"
-          >
-            🗑️ Tanlangan o'quvchini akkauntini o'chirish
-          </button>
+          <div
+            id="student-search-results"
+            style="max-height: 220px; overflow-y: auto; margin-bottom: 12px;"
+          ></div>
+          <select
+            id="analytics-student-dropdown"
+            class="hidden"
+            onchange="loadStudentAnalyticsForTeacher()"
+          ></select>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px;">
+            <button
+              class="btn-primary"
+              onclick="generateStudentPdfReport()"
+            >
+              📄 PDF Hisobot Yuklab Olish
+            </button>
+            <button
+              class="btn-danger"
+              onclick="teacherDeleteStudent(document.getElementById('analytics-student-dropdown').value)"
+            >
+              🗑️ Tanlangan o'quvchini akkauntini o'chirish
+            </button>
+          </div>
         </div>
 
         <div class="card">
@@ -4213,9 +4431,14 @@ pen — ruchka 🖊"
         const targetUser = users.find((u) => u.email === email);
         if (!targetUser) return alert("Foydalanuvchi profili topilmadi!");
 
-        document.getElementById("pop-avatar").src =
-          targetUser.avatar || DEFAULT_AVATAR;
-        document.getElementById("pop-name").innerText = targetUser.full_name;
+        const popAvatarEl = document.getElementById("pop-avatar");
+        popAvatarEl.src = targetUser.avatar || DEFAULT_AVATAR;
+        popAvatarEl.className = `profile-large-avatar ${getAvatarFrameClass(
+          targetUser
+        )}`;
+        document.getElementById("pop-name").innerText = `${
+          targetUser.full_name
+        }${targetUser.equippedEmoji ? " " + targetUser.equippedEmoji : ""}`;
         document.getElementById("pop-role-title").innerText = `${
           targetUser.role === "teacher"
             ? "👨‍🏫 Ustoz"
@@ -4990,7 +5213,7 @@ pen — ruchka 🖊"
         loadDashboard(currentUser);
       }
 
-      function buyItem(itemId, price, titleName) {
+      function buyItem(itemId, price, titleName, meta) {
         if ((currentUser.coins || 0) < price) {
           return alert(
             "Tangalaringiz yetarli emas! Darslar va testlarni yechib ko'proq coin to'plang."
@@ -4998,7 +5221,18 @@ pen — ruchka 🖊"
         }
 
         currentUser.coins -= price;
-        if (titleName.includes("👑") || titleName.includes("⚡")) {
+
+        if (itemId.startsWith("frame_")) {
+          currentUser.equippedFrame = meta;
+          alert(
+            `Tabriklaymiz! "${titleName}" xarid qilindi va avatoringizga o'rnatildi!`
+          );
+        } else if (itemId.startsWith("emoji_")) {
+          currentUser.equippedEmoji = meta;
+          alert(
+            `Tabriklaymiz! "${titleName}" xarid qilindi va ismingiz yoniga o'rnatildi!`
+          );
+        } else if (titleName.includes("👑") || titleName.includes("⚡")) {
           currentUser.equippedTitle = titleName;
           alert(
             `Tabriklaymiz! Siz "${titleName}" unvonini xarid qildingiz va profilga o'rnatdingiz!`
@@ -5034,6 +5268,13 @@ pen — ruchka 🖊"
 
       let currentLeaderboardMode = "alltime";
 
+      function getAvatarFrameClass(u) {
+        if (!u || !u.equippedFrame) return "";
+        if (u.equippedFrame === "gold") return "avatar-frame-gold";
+        if (u.equippedFrame === "emerald") return "avatar-frame-emerald";
+        return "";
+      }
+
       function renderLeaderboard(mode) {
         if (mode) currentLeaderboardMode = mode;
         else mode = currentLeaderboardMode;
@@ -5042,43 +5283,72 @@ pen — ruchka 🖊"
           btn.classList.toggle("active", btn.dataset.mode === mode);
         });
 
-        const students = [...users].filter((u) => u.role === "student");
+        const friendsManageBox = document.getElementById("friends-manage-box");
+        const actionHeader = document.getElementById(
+          "leaderboard-action-header"
+        );
+        const isFriendsMode = mode === "friends";
+        if (friendsManageBox)
+          friendsManageBox.classList.toggle("hidden", !isFriendsMode);
+        if (actionHeader)
+          actionHeader.classList.toggle("hidden", !isFriendsMode);
+
+        let students = [...users].filter((u) => u.role === "student");
         students.forEach((u) => ensureXpSnapshots(u));
 
         checkAndAwardPeriodBadges();
 
         const xpHeader = document.getElementById("leaderboard-xp-header");
-        let sorted, getXp, xpLabel;
+        let getXp, xpLabel;
         if (mode === "weekly") {
           getXp = getWeeklyXp;
           xpLabel = "Haftalik XP";
         } else if (mode === "daily") {
           getXp = getDailyXp;
           xpLabel = "Bugungi XP";
+        } else if (mode === "friends") {
+          getXp = (u) => u.xp || 0;
+          xpLabel = "To'plangan XP";
+          const friendEmails = new Set(currentUser.friends || []);
+          friendEmails.add(currentUser.email);
+          students = students.filter((u) => friendEmails.has(u.email));
         } else {
           getXp = (u) => u.xp || 0;
           xpLabel = "To'plangan XP";
         }
         if (xpHeader) xpHeader.innerText = xpLabel;
 
-        sorted = students.sort((a, b) => getXp(b) - getXp(a));
+        const sorted = students.sort((a, b) => getXp(b) - getXp(a));
 
         const medals = ["🥇", "🥈", "🥉"];
 
         const tbody = document.getElementById("leaderboard-body");
         tbody.innerHTML = "";
-        sorted.forEach((u, i) => {
-          const avatar = u.avatar || DEFAULT_AVATAR;
-          const medal = i < 3 && getXp(u) > 0 ? medals[i] + " " : "";
-          tbody.innerHTML += `
+
+        if (isFriendsMode && sorted.length <= 1) {
+          tbody.innerHTML = `<tr><td colspan="6" style="color: var(--text-muted); font-size: 0.85rem;">Hozircha do'stlaringiz yo'q. Yuqoridagi maydonga email kiritib do'st qo'shing!</td></tr>`;
+        } else {
+          sorted.forEach((u, i) => {
+            const avatar = u.avatar || DEFAULT_AVATAR;
+            const medal = i < 3 && getXp(u) > 0 ? medals[i] + " " : "";
+            const frameClass = getAvatarFrameClass(u);
+            const emojiBadge = u.equippedEmoji ? ` ${u.equippedEmoji}` : "";
+            const actionCell = isFriendsMode
+              ? `<td>${
+                  u.email !== currentUser.email
+                    ? `<button class="btn-primary" style="padding:6px 10px; font-size:0.75rem;" onclick="startChallenge('${u.email}')">⚔️ Challenge</button>`
+                    : `<span style="font-size:0.75rem; color:var(--text-muted);">Siz</span>`
+                }</td>`
+              : "";
+            tbody.innerHTML += `
           <tr>
             <td><strong>${medal}#${i + 1}</strong></td>
             <td>
               <div class="clickable-user" onclick="openPublicProfile('${
                 u.email
               }')">
-                <img src="${avatar}" style="width:28px; height:28px; border-radius:50%; object-fit:cover;" />
-                ${u.full_name}
+                <img src="${avatar}" class="${frameClass}" style="width:28px; height:28px; border-radius:50%; object-fit:cover;" />
+                ${u.full_name}${emojiBadge}
               </div>
             </td>
             <td><span class="badge badge-title">${
@@ -5086,9 +5356,168 @@ pen — ruchka 🖊"
             }</span></td>
             <td><span class="badge badge-coin">${u.coins || 0} 🪙</span></td>
             <td><span class="badge badge-gold">${getXp(u)} XP</span></td>
+            ${actionCell}
           </tr>
         `;
-        });
+          });
+        }
+
+        if (isFriendsMode) renderActiveChallenges();
+      }
+
+      /* ============================================================
+         DO'STLAR VA CHALLENGE TIZIMI
+      ============================================================ */
+      async function addFriendByEmail() {
+        const input = document.getElementById("add-friend-email-input");
+        const email = (input.value || "").trim().toLowerCase();
+        if (!email) return alert("Iltimos, email manzilini kiriting!");
+        if (email === currentUser.email)
+          return alert("O'zingizni do'st sifatida qo'sha olmaysiz!");
+
+        const target = users.find(
+          (u) => u.email.toLowerCase() === email && u.role === "student"
+        );
+        if (!target)
+          return alert(
+            "Bu email bilan ro'yxatdan o'tgan o'quvchi topilmadi!"
+          );
+
+        if (!currentUser.friends) currentUser.friends = [];
+        if (currentUser.friends.includes(target.email))
+          return alert("Bu o'quvchi allaqachon do'stlaringiz ro'yxatida!");
+
+        currentUser.friends.push(target.email);
+        if (!target.friends) target.friends = [];
+        if (!target.friends.includes(currentUser.email))
+          target.friends.push(currentUser.email);
+
+        await dbSaveUser(currentUser);
+        await dbSaveUser(target);
+
+        notifyUser(
+          target.email,
+          `👥 ${currentUser.full_name} sizni do'stlar ro'yxatiga qo'shdi!`
+        );
+
+        input.value = "";
+        alert(`✅ ${target.full_name} do'stlar ro'yxatiga qo'shildi!`);
+        renderLeaderboard("friends");
+      }
+
+      async function startChallenge(opponentEmail) {
+        const opponent = users.find((u) => u.email === opponentEmail);
+        if (!opponent) return;
+
+        if (
+          !confirm(
+            `⚔️ ${opponent.full_name} bilan 3 kunlik XP Challenge boshlamoqchimisiz? Kim shu muddatda ko'proq XP to'plasa, g'olib bo'ladi!`
+          )
+        )
+          return;
+
+        const challengeId = "ch_" + Date.now();
+        const challenge = {
+          id: challengeId,
+          participants: [
+            {
+              email: currentUser.email,
+              name: currentUser.full_name,
+              startXp: currentUser.xp || 0,
+            },
+            {
+              email: opponent.email,
+              name: opponent.full_name,
+              startXp: opponent.xp || 0,
+            },
+          ],
+          startAt: Date.now(),
+          durationDays: 3,
+          status: "active",
+        };
+
+        if (!currentUser.challenges) currentUser.challenges = [];
+        currentUser.challenges.push(challenge);
+        if (!opponent.challenges) opponent.challenges = [];
+        opponent.challenges.push(challenge);
+
+        await dbSaveUser(currentUser);
+        await dbSaveUser(opponent);
+
+        notifyUser(
+          opponent.email,
+          `⚔️ ${currentUser.full_name} sizni 3 kunlik XP Challenge'ga taklif qildi! Kim ko'proq XP to'plasa, g'olib bo'ladi!`
+        );
+
+        alert(
+          `⚔️ Challenge boshlandi! 3 kun ichida ${opponent.full_name} bilan kim ko'proq XP to'plashda bellashasiz. Natijani "Do'stlar" bo'limida kuzatib boring!`
+        );
+
+        renderLeaderboard("friends");
+      }
+
+      function renderActiveChallenges() {
+        const container = document.getElementById("challenges-container");
+        if (!container) return;
+
+        const myChallenges = (currentUser.challenges || []).filter(
+          (c) => c.status === "active"
+        );
+
+        if (myChallenges.length === 0) {
+          container.innerHTML = `<p style="font-size:0.8rem; color:var(--text-muted);">Hozircha faol challenge'laringiz yo'q. Do'stingiz nomi qatoridagi "⚔️ Challenge" tugmasini bosing!</p>`;
+          return;
+        }
+
+        container.innerHTML =
+          `<h4 style="color: var(--purple); font-size: 0.9rem; margin-bottom: 8px;">⚔️ Faol Challenge'lar</h4>` +
+          myChallenges
+            .map((c) => {
+              const me = c.participants.find(
+                (p) => p.email === currentUser.email
+              );
+              const opp = c.participants.find(
+                (p) => p.email !== currentUser.email
+              );
+              const oppUser = users.find((u) => u.email === opp.email);
+
+              const myGain = Math.max(0, (currentUser.xp || 0) - me.startXp);
+              const oppGain = Math.max(
+                0,
+                (oppUser ? oppUser.xp || 0 : opp.startXp) - opp.startXp
+              );
+
+              const endsAt = c.startAt + c.durationDays * 24 * 60 * 60 * 1000;
+              const isExpired = Date.now() > endsAt;
+              const daysLeft = Math.max(
+                0,
+                Math.ceil((endsAt - Date.now()) / (24 * 60 * 60 * 1000))
+              );
+
+              let statusText = `⏳ ${daysLeft} kun qoldi`;
+              if (isExpired) {
+                statusText =
+                  myGain === oppGain
+                    ? "🤝 Durrang tugadi"
+                    : myGain > oppGain
+                    ? "🏆 Siz g'olib chiqdingiz!"
+                    : "😔 Raqibingiz g'olib chiqdi";
+              }
+
+              return `
+              <div class="challenge-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                  <strong>Siz vs ${opp.name}</strong>
+                  <span class="badge" style="background: rgba(168,85,247,0.2); color:#c084fc;">${statusText}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:0.85rem;">
+                  <span>Siz: <strong style="color: var(--emerald-light);">+${myGain} XP</strong></span>
+                  <span>${opp.name}: <strong style="color: var(--gold);">+${oppGain} XP</strong></span>
+                </div>
+              </div>
+            `;
+            })
+            .join("");
       }
 
       /* 🎙️ AI SPEAKING ASSISTANT LOGIC [FEATURE 1] */
@@ -5272,10 +5701,12 @@ pen — ruchka 🖊"
         const teacherSelector = document.getElementById(
           "teacher-student-selector"
         );
+        const classStats = document.getElementById("teacher-class-stats");
         const title = document.getElementById("analytics-owner-title");
 
         if (currentUser.role === "teacher") {
           teacherSelector.classList.remove("hidden");
+          classStats.classList.remove("hidden");
           title.innerText = "👨‍🏫 O'quvchilar Analitikasi va Progress Boshqaruvi";
 
           const select = document.getElementById("analytics-student-dropdown");
@@ -5284,6 +5715,9 @@ pen — ruchka 🖊"
 
           if (studentUsers.length === 0) {
             select.innerHTML = `<option>Hozircha o'quvchilar mavjud emas</option>`;
+            document.getElementById("student-search-results").innerHTML =
+              `<p style="font-size:0.85rem; color:var(--text-muted);">Hozircha o'quvchilar mavjud emas.</p>`;
+            renderTeacherClassStats();
             return;
           }
 
@@ -5291,9 +5725,13 @@ pen — ruchka 🖊"
             select.innerHTML += `<option value="${s.email}">${s.full_name} (${s.email})</option>`;
           });
 
+          document.getElementById("student-search-input").value = "";
+          renderStudentSearchResults();
+          renderTeacherClassStats();
           loadStudentAnalyticsForTeacher();
         } else {
           teacherSelector.classList.add("hidden");
+          classStats.classList.add("hidden");
           title.innerText =
             "Sizning O'sish Ko'rsatkichlaringiz va Statistikangiz";
           initCharts(currentUser);
@@ -5308,6 +5746,256 @@ pen — ruchka 🖊"
         if (targetStudent) {
           initCharts(targetStudent);
         }
+      }
+
+      /* ============================================================
+         O'QUVCHI QIDIRISH / FILTRLASH (Ustoz Paneli)
+      ============================================================ */
+      function renderStudentSearchResults() {
+        const container = document.getElementById("student-search-results");
+        const select = document.getElementById("analytics-student-dropdown");
+        if (!container || !select) return;
+
+        const query = (
+          document.getElementById("student-search-input")?.value || ""
+        )
+          .trim()
+          .toLowerCase();
+
+        const studentUsers = users.filter((u) => u.role === "student");
+        const filtered = query
+          ? studentUsers.filter(
+              (s) =>
+                (s.full_name || "").toLowerCase().includes(query) ||
+                (s.email || "").toLowerCase().includes(query)
+            )
+          : studentUsers;
+
+        if (filtered.length === 0) {
+          container.innerHTML = `<p style="font-size:0.85rem; color:var(--text-muted);">Hech qanday o'quvchi topilmadi.</p>`;
+          return;
+        }
+
+        const selectedEmail = select.value;
+
+        container.innerHTML = filtered
+          .map((s) => {
+            const avatar = s.avatar || DEFAULT_AVATAR;
+            const isActive = s.email === selectedEmail ? "active" : "";
+            return `
+            <div class="student-search-item ${isActive}" onclick="selectStudentForAnalytics('${s.email}')">
+              <img src="${avatar}" style="width:26px; height:26px; border-radius:50%; object-fit:cover;" />
+              <span><strong>${s.full_name}</strong> <span style="color:var(--text-muted); font-size:0.75rem;">(${s.email})</span></span>
+            </div>
+          `;
+          })
+          .join("");
+      }
+
+      function selectStudentForAnalytics(email) {
+        const select = document.getElementById("analytics-student-dropdown");
+        select.value = email;
+        loadStudentAnalyticsForTeacher();
+        renderStudentSearchResults();
+      }
+
+      /* ============================================================
+         UMUMIY SINF STATISTIKASI (Ustoz Paneli)
+      ============================================================ */
+      function estimateStudentBand(u) {
+        const scores = [];
+
+        const listeningData = u.listeningGrowth || [];
+        const readingData = u.readingGrowth || [];
+        const lastL = listeningData[listeningData.length - 1];
+        const lastR = readingData[readingData.length - 1];
+        if (lastL) scores.push(lastL);
+        if (lastR) scores.push(lastR);
+
+        const writingSubs = submissions.filter(
+          (s) =>
+            s.type === "writing" &&
+            s.studentEmail === u.email &&
+            s.feedback &&
+            s.feedback.overall
+        );
+        if (writingSubs.length > 0) {
+          const avgWriting =
+            writingSubs.reduce((sum, s) => sum + Number(s.feedback.overall), 0) /
+            writingSubs.length;
+          scores.push(avgWriting);
+        }
+
+        if (scores.length === 0) return null;
+        return scores.reduce((a, b) => a + b, 0) / scores.length;
+      }
+
+      function renderTeacherClassStats() {
+        const students = users.filter((u) => u.role === "student");
+        const avgEl = document.getElementById("class-stat-avg-band");
+        const mostEl = document.getElementById("class-stat-most-active");
+        const leastEl = document.getElementById("class-stat-least-active");
+        if (!avgEl || !mostEl || !leastEl) return;
+
+        if (students.length === 0) {
+          avgEl.innerText = "-";
+          mostEl.innerText = "Hozircha o'quvchi yo'q";
+          leastEl.innerText = "Hozircha o'quvchi yo'q";
+          return;
+        }
+
+        // O'rtacha Band Score
+        const bandValues = students
+          .map((s) => estimateStudentBand(s))
+          .filter((b) => b !== null);
+        avgEl.innerText =
+          bandValues.length > 0
+            ? `${(bandValues.reduce((a, b) => a + b, 0) / bandValues.length).toFixed(1)} Band`
+            : "Ma'lumot yo'q";
+
+        // Faollik: XP + darslar/topshiriqlar soniga qarab
+        const activityScore = (s) =>
+          (s.xp || 0) +
+          (s.lessonHistory ? s.lessonHistory.length : 0) * 2 +
+          submissions.filter((sub) => sub.studentEmail === s.email).length * 3;
+
+        const sortedByActivity = [...students].sort(
+          (a, b) => activityScore(b) - activityScore(a)
+        );
+        const mostActive = sortedByActivity[0];
+        const leastActive = sortedByActivity[sortedByActivity.length - 1];
+
+        mostEl.innerText = mostActive
+          ? `${mostActive.full_name} (${activityScore(mostActive)} ball)`
+          : "-";
+        leastEl.innerText = leastActive
+          ? `${leastActive.full_name} (${activityScore(leastActive)} ball)`
+          : "-";
+      }
+
+      /* ============================================================
+         PDF HISOBOT (O'quvchi progressi bo'yicha)
+      ============================================================ */
+      function generateStudentPdfReport() {
+        const email = document.getElementById(
+          "analytics-student-dropdown"
+        ).value;
+        const student = users.find((u) => u.email === email);
+        if (!student) return alert("Iltimos, avval o'quvchini tanlang!");
+
+        if (!window.jspdf) {
+          return alert(
+            "PDF kutubxonasi hali yuklanmadi. Internet aloqasini tekshirib, sahifani yangilang."
+          );
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        let y = 20;
+
+        doc.setFontSize(18);
+        doc.text("EMERALD LAB - O'quvchi Progress Hisoboti", 14, y);
+        y += 10;
+        doc.setFontSize(11);
+        doc.setTextColor(90);
+        doc.text(
+          `Hisobot sanasi: ${new Date().toLocaleDateString("uz-UZ")}`,
+          14,
+          y
+        );
+        y += 12;
+
+        doc.setTextColor(0);
+        doc.setFontSize(13);
+        doc.text(`Ism: ${student.full_name}`, 14, y);
+        y += 7;
+        doc.text(`Email: ${student.email}`, 14, y);
+        y += 7;
+        doc.text(`Daraja: ${(student.level || "-").toUpperCase()}`, 14, y);
+        y += 7;
+        doc.text(`Unvon: ${student.equippedTitle || "Yo'q"}`, 14, y);
+        y += 10;
+
+        doc.setFontSize(13);
+        doc.text("Umumiy Ko'rsatkichlar", 14, y);
+        y += 7;
+        doc.setFontSize(11);
+        doc.text(`- Jami XP: ${student.xp || 0}`, 16, y);
+        y += 6;
+        doc.text(`- Jami Coin: ${student.coins || 0}`, 16, y);
+        y += 6;
+        doc.text(
+          `- Yakunlangan darslar: ${(student.completedLessons || []).length}`,
+          16,
+          y
+        );
+        y += 6;
+        const band = estimateStudentBand(student);
+        doc.text(
+          `- Taxminiy Umumiy Band Score: ${band ? band.toFixed(1) : "Ma'lumot yo'q"}`,
+          16,
+          y
+        );
+        y += 6;
+        const listeningData = student.listeningGrowth || [];
+        const readingData = student.readingGrowth || [];
+        doc.text(
+          `- Oxirgi Listening Band: ${listeningData[listeningData.length - 1] || "-"}`,
+          16,
+          y
+        );
+        y += 6;
+        doc.text(
+          `- Oxirgi Reading Band: ${readingData[readingData.length - 1] || "-"}`,
+          16,
+          y
+        );
+        y += 10;
+
+        const weakPointsObj = student.weakPoints || {};
+        doc.setFontSize(13);
+        doc.text("Zaif Tomonlar (Weak Points)", 14, y);
+        y += 7;
+        doc.setFontSize(11);
+        const weakKeys = Object.keys(weakPointsObj);
+        if (weakKeys.length === 0) {
+          doc.text("Hozircha aniqlangan zaif tomon yo'q.", 16, y);
+          y += 6;
+        } else {
+          weakKeys.forEach((k) => {
+            doc.text(`- ${k}: ${weakPointsObj[k]}%`, 16, y);
+            y += 6;
+          });
+        }
+        y += 4;
+
+        doc.setFontSize(13);
+        doc.text("Writing Topshiriqlari Tarixi", 14, y);
+        y += 7;
+        doc.setFontSize(11);
+        const writingSubs = submissions.filter(
+          (s) => s.type === "writing" && s.studentEmail === student.email
+        );
+        if (writingSubs.length === 0) {
+          doc.text("Hozircha writing topshirig'i yo'q.", 16, y);
+          y += 6;
+        } else {
+          writingSubs.forEach((s) => {
+            if (y > 270) {
+              doc.addPage();
+              y = 20;
+            }
+            const scoreText = s.feedback
+              ? `Band ${s.feedback.overall}`
+              : "Baholanmagan";
+            doc.text(`- ${s.lessonTitle}: ${scoreText}`, 16, y);
+            y += 6;
+          });
+        }
+
+        doc.save(
+          `${student.full_name.replace(/\s+/g, "_")}_hisobot.pdf`
+        );
       }
 
       function initCharts(targetUser) {
