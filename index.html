@@ -420,6 +420,152 @@
         gap: 15px;
       }
 
+      /* LESSON GRID & PAGINATION (Dars kartochkalari) */
+      .lesson-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 18px;
+        margin-bottom: 1.5rem;
+      }
+
+      .lesson-card {
+        background: linear-gradient(
+          160deg,
+          rgba(6, 44, 34, 0.7),
+          rgba(2, 26, 20, 0.7)
+        );
+        border: 1px solid var(--card-border);
+        border-radius: 18px;
+        padding: 1.3rem;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .lesson-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--emerald-primary), var(--emerald-light));
+        opacity: 0;
+        transition: opacity 0.25s ease;
+      }
+
+      .lesson-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--card-border-hover);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35), 0 0 20px var(--emerald-glow);
+      }
+
+      .lesson-card:hover::before {
+        opacity: 1;
+      }
+
+      .lesson-card.is-done {
+        border-color: rgba(16, 185, 129, 0.5);
+      }
+
+      .lesson-card-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        background: rgba(16, 185, 129, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+      }
+
+      .lesson-card-title {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: var(--text-main);
+        line-height: 1.3;
+      }
+
+      .lesson-card-excerpt {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        line-height: 1.5;
+        flex-grow: 1;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .lesson-card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 4px;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+      }
+
+      .lesson-card-open-btn {
+        background: rgba(16, 185, 129, 0.15);
+        border: 1px solid var(--card-border-hover);
+        color: var(--emerald-light);
+        padding: 8px 0;
+        border-radius: 10px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 0.82rem;
+        margin-top: 4px;
+        transition: all 0.2s ease;
+      }
+
+      .lesson-card:hover .lesson-card-open-btn {
+        background: var(--emerald-primary);
+        color: #022c22;
+      }
+
+      .lesson-pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+      }
+
+      .page-btn {
+        min-width: 38px;
+        height: 38px;
+        padding: 0 10px;
+        border-radius: 10px;
+        border: 1px solid var(--card-border);
+        background: rgba(0, 0, 0, 0.25);
+        color: var(--text-muted);
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .page-btn:hover:not(:disabled) {
+        border-color: var(--card-border-hover);
+        color: white;
+      }
+
+      .page-btn.active {
+        background: var(--emerald-primary);
+        color: #022c22;
+        border-color: var(--emerald-primary);
+      }
+
+      .page-btn:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+
       /* Badges & Tables */
       .data-table {
         width: 100%;
@@ -1576,6 +1722,32 @@
             Yopish
           </button>
         </div>
+      </div>
+    </div>
+
+    <!-- 📖 DARS TAFSILOTLARI MODAL -->
+    <div id="lesson-detail-modal" class="modal-overlay hidden">
+      <div class="modal-card" style="max-width: 720px; text-align: left">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            gap: 12px;
+          "
+        >
+          <div>
+            <h2 id="lesson-detail-title" style="font-size: 1.4rem"></h2>
+            <span id="lesson-detail-level" class="badge" style="margin-top: 6px"></span>
+          </div>
+          <span
+            onclick="closeLessonDetail()"
+            style="cursor: pointer; font-size: 1.6rem; color: var(--text-muted); flex-shrink: 0"
+            >✕</span
+          >
+        </div>
+        <div id="lesson-detail-body"></div>
       </div>
     </div>
 
@@ -2963,6 +3135,8 @@ pen — ruchka 🖊"
       }
 
       let selectedRole = "student";
+      let studentLessonsPage = 1;
+      const LESSONS_PER_PAGE = 6;
       let tempAvatarBase64 = null;
       let tempCertFileBase64 = null;
       let selectedChatFile = null;
@@ -3741,6 +3915,8 @@ pen — ruchka 🖊"
         }
       }
 
+      const LESSON_ICONS = ["📘", "📗", "📙", "📕", "📓", "📔", "📒", "🗂️"];
+
       function renderStudentLessons() {
         const container = document.getElementById("student-lessons-container");
         container.innerHTML = "";
@@ -3763,12 +3939,85 @@ pen — ruchka 🖊"
           return;
         }
 
-        filteredLessons.forEach((l) => {
-          const isDone = completed.includes(l.id);
+        const totalPages = Math.ceil(filteredLessons.length / LESSONS_PER_PAGE);
+        if (studentLessonsPage > totalPages) studentLessonsPage = totalPages;
+        if (studentLessonsPage < 1) studentLessonsPage = 1;
 
-          let vocabHtml = "";
-          if (l.vocabulary && l.vocabulary.length > 0) {
-            vocabHtml = `
+        const startIdx = (studentLessonsPage - 1) * LESSONS_PER_PAGE;
+        const pageLessons = filteredLessons.slice(
+          startIdx,
+          startIdx + LESSONS_PER_PAGE
+        );
+
+        const gridHtml = pageLessons
+          .map((l, i) => {
+            const isDone = completed.includes(l.id);
+            const icon = LESSON_ICONS[(startIdx + i) % LESSON_ICONS.length];
+            const excerpt = (l.content_text || "").slice(0, 90);
+            const vocabCount = l.vocabulary ? l.vocabulary.length : 0;
+
+            return `
+            <div class="lesson-card ${isDone ? "is-done" : ""}" onclick="openLessonDetail(${l.id})">
+              <div style="display:flex; align-items:center; justify-content:space-between;">
+                <div class="lesson-card-icon">${icon}</div>
+                ${isDone ? `<span class="badge" style="background:rgba(16,185,129,0.25); color:var(--emerald-light);">✅ Tugallangan</span>` : ""}
+              </div>
+              <div class="lesson-card-title">${l.title}</div>
+              <div class="lesson-card-excerpt">${excerpt}${
+              (l.content_text || "").length > 90 ? "…" : ""
+            }</div>
+              <div class="lesson-card-footer">
+                <span>🔤 ${vocabCount} ta so'z</span>
+                <span class="badge">${l.target_level}</span>
+              </div>
+              <div class="lesson-card-open-btn">Darsni ochish →</div>
+            </div>
+          `;
+          })
+          .join("");
+
+        let paginationHtml = "";
+        if (totalPages > 1) {
+          let pageButtons = "";
+          for (let p = 1; p <= totalPages; p++) {
+            pageButtons += `<button class="page-btn ${
+              p === studentLessonsPage ? "active" : ""
+            }" onclick="goToLessonsPage(${p})">${p}</button>`;
+          }
+          paginationHtml = `
+          <div class="lesson-pagination">
+            <button class="page-btn" onclick="goToLessonsPage(${
+              studentLessonsPage - 1
+            })" ${studentLessonsPage === 1 ? "disabled" : ""}>‹</button>
+            ${pageButtons}
+            <button class="page-btn" onclick="goToLessonsPage(${
+              studentLessonsPage + 1
+            })" ${studentLessonsPage === totalPages ? "disabled" : ""}>›</button>
+          </div>
+        `;
+        }
+
+        container.innerHTML = `<div class="lesson-grid">${gridHtml}</div>${paginationHtml}`;
+      }
+
+      function goToLessonsPage(page) {
+        studentLessonsPage = page;
+        renderStudentLessons();
+        document
+          .getElementById("student-lessons-container")
+          .scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function openLessonDetail(lessonId) {
+        const l = lessons.find((x) => x.id === lessonId);
+        if (!l) return;
+
+        const completed = currentUser.completedLessons || [];
+        const isDone = completed.includes(l.id);
+
+        let vocabHtml = "";
+        if (l.vocabulary && l.vocabulary.length > 0) {
+          vocabHtml = `
             <div class="vocab-section-wrapper">
               <div class="vocab-controls">
                 <h4 style="color: var(--emerald-light); font-size: 1.05rem; display:flex; align-items:center; gap:8px;">
@@ -3817,48 +4066,52 @@ pen — ruchka 🖊"
               </button>
             </div>
           `;
+        }
+
+        document.getElementById("lesson-detail-title").innerText =
+          l.title + (isDone ? " ✅" : "");
+        document.getElementById("lesson-detail-level").innerText =
+          l.target_level;
+
+        document.getElementById("lesson-detail-body").innerHTML = `
+          <p style="margin: 10px 0; color: var(--text-muted); white-space: pre-line;">${
+            l.content_text
+          }</p>
+          ${
+            l.video_url
+              ? `<a href="${l.video_url}" target="_blank" style="color:var(--emerald-light); font-weight: bold; text-decoration: none;">▶ Videoni tomosha qilish</a>`
+              : ""
           }
 
-          container.innerHTML += `
-          <div class="card">
-            <div style="display:flex; justify-content: space-between; align-items:center;">
-              <h3>${l.title} ${isDone ? "✅" : ""}</h3>
-              <span class="badge">${l.target_level}</span>
+          ${vocabHtml}
+
+          ${
+            l.quiz && l.quiz.question
+              ? `
+            <div class="quiz-box">
+              <p><strong>❓ Grammatika Testi:</strong> ${l.quiz.question}</p>
+              <div class="quiz-option" onclick="answerQuiz(${l.id}, '${l.title}', '${l.quiz.correct}', '${l.quiz.correct}')">A) ${l.quiz.correct}</div>
+              <div class="quiz-option" onclick="answerQuiz(${l.id}, '${l.title}', '${l.quiz.wrong}', '${l.quiz.correct}')">B) ${l.quiz.wrong}</div>
             </div>
-            <p style="margin: 10px 0; color: var(--text-muted); white-space: pre-line;">${
-              l.content_text
-            }</p>
-            ${
-              l.video_url
-                ? `<a href="${l.video_url}" target="_blank" style="color:var(--emerald-light); font-weight: bold; text-decoration: none;">▶ Videoni tomosha qilish</a>`
-                : ""
-            }
+          `
+              : ""
+          }
 
-            ${vocabHtml}
-
-            ${
-              l.quiz && l.quiz.question
-                ? `
-              <div class="quiz-box">
-                <p><strong>❓ Grammatika Testi:</strong> ${l.quiz.question}</p>
-                <div class="quiz-option" onclick="answerQuiz(${l.id}, '${l.title}', '${l.quiz.correct}', '${l.quiz.correct}')">A) ${l.quiz.correct}</div>
-                <div class="quiz-option" onclick="answerQuiz(${l.id}, '${l.title}', '${l.quiz.wrong}', '${l.quiz.correct}')">B) ${l.quiz.wrong}</div>
-              </div>
-            `
-                : ""
-            }
-
-            <div style="margin-top: 15px;">
-              <textarea id="homework-${
-                l.id
-              }" placeholder="Uy vazifangizni shu yerga yozib yuboring..." rows="2"></textarea>
-              <button class="btn-primary" style="margin-top: 8px;" onclick="submitHomework(${
-                l.id
-              }, '${l.title}')">Vazifani Yuborish</button>
-            </div>
+          <div style="margin-top: 15px;">
+            <textarea id="homework-${
+              l.id
+            }" placeholder="Uy vazifangizni shu yerga yozib yuboring..." rows="2"></textarea>
+            <button class="btn-primary" style="margin-top: 8px;" onclick="submitHomework(${
+              l.id
+            }, '${l.title}')">Vazifani Yuborish</button>
           </div>
         `;
-        });
+
+        document.getElementById("lesson-detail-modal").classList.remove("hidden");
+      }
+
+      function closeLessonDetail() {
+        document.getElementById("lesson-detail-modal").classList.add("hidden");
       }
 
       /* 🎮 VOCABULARY MINI-GAME (talaffuz + variantli test) */
