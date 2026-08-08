@@ -4957,11 +4957,7 @@ pen — ruchka 🖊"
           ${
             l.quiz && l.quiz.question
               ? `
-            <div class="quiz-box">
-              <p><strong>❓ Grammatika Testi:</strong> ${l.quiz.question}</p>
-              <div class="quiz-option" onclick="answerQuiz(${l.id}, '${l.title}', '${l.quiz.correct}', '${l.quiz.correct}')">A) ${l.quiz.correct}</div>
-              <div class="quiz-option" onclick="answerQuiz(${l.id}, '${l.title}', '${l.quiz.wrong}', '${l.quiz.correct}')">B) ${l.quiz.wrong}</div>
-            </div>
+            <div class="quiz-box" id="lesson-quiz-box"></div>
           `
               : ""
           }
@@ -4976,11 +4972,95 @@ pen — ruchka 🖊"
           </div>
         `;
 
+        if (l.quiz && l.quiz.question) {
+          startLessonQuiz(l);
+        }
+
         document.getElementById("lesson-detail-modal").classList.remove("hidden");
+      }
+
+      /* ============================================================
+         DARS ICHIDAGI GRAMMATIKA TESTI
+         (Eski kodda javob matnlari to'g'ridan-to'g'ri onclick="..."
+         atributi ichiga qo'yilardi. Agar javobda apostrof (masalan
+         "doesn't", "isn't", "I've") bo'lsa, HTML/JS buzilib, tugma
+         bosilganda hech narsa sodir bo'lmasdi. Endi javob matnlari
+         atributlarga umuman qo'yilmaydi - faqat indeks orqali
+         ishlatiladi, shuning uchun har qanday belgi xavfsiz.)
+      ============================================================ */
+      let currentLessonQuiz = null;
+
+      function startLessonQuiz(l) {
+        const rawOptions = [
+          { text: l.quiz.correct, isCorrect: true },
+          { text: l.quiz.wrong, isCorrect: false },
+        ];
+
+        currentLessonQuiz = {
+          lessonId: l.id,
+          lessonTitle: l.title,
+          question: l.quiz.question,
+          options: shuffleArray(rawOptions),
+          answered: false,
+        };
+
+        renderLessonQuiz();
+      }
+
+      function renderLessonQuiz() {
+        const box = document.getElementById("lesson-quiz-box");
+        if (!box || !currentLessonQuiz) return;
+        const state = currentLessonQuiz;
+
+        const letters = ["A", "B", "C", "D"];
+        box.innerHTML = `
+          <p><strong>❓ Grammatika Testi:</strong> ${state.question}</p>
+          ${state.options
+            .map(
+              (opt, idx) => `
+            <div class="quiz-option" id="lesson-quiz-opt-${idx}" onclick="selectLessonQuizOption(${idx})">${letters[idx]}) ${opt.text}</div>
+          `
+            )
+            .join("")}
+        `;
+      }
+
+      function selectLessonQuizOption(idx) {
+        const state = currentLessonQuiz;
+        if (!state || state.answered) return;
+        state.answered = true;
+
+        const chosen = state.options[idx];
+
+        document
+          .querySelectorAll("#lesson-quiz-box .quiz-option")
+          .forEach((el, i) => {
+            el.style.pointerEvents = "none";
+            if (state.options[i].isCorrect) {
+              el.style.borderColor = "var(--emerald-primary)";
+              el.style.background = "rgba(16, 185, 129, 0.15)";
+            } else if (i === idx) {
+              el.style.borderColor = "var(--danger)";
+              el.style.background = "rgba(239, 68, 68, 0.15)";
+            }
+          });
+
+        if (chosen.isCorrect) {
+          alert("To'g'ri javob! +20 XP va +15 🪙 Coin to'pladingiz! 🎉");
+          addRewards(20, 15, state.lessonId, `Grammatika: ${state.lessonTitle}`);
+        } else {
+          alert("Noto'g'ri javob. Qaytadan urinib ko'ring!");
+
+          if (!currentUser.weakPoints) currentUser.weakPoints = {};
+          currentUser.weakPoints[state.lessonTitle] =
+            (currentUser.weakPoints[state.lessonTitle] || 0) + 10;
+          saveUserData(currentUser);
+        }
       }
 
       function closeLessonDetail() {
         document.getElementById("lesson-detail-modal").classList.add("hidden");
+        currentLessonQuiz = null;
       }
 
       /* 🎮 VOCABULARY MINI-GAME (talaffuz + variantli test) */
@@ -5168,20 +5248,6 @@ pen — ruchka 🖊"
       function closeVocabQuiz() {
         document.getElementById("vocab-quiz-modal").classList.add("hidden");
         vocabQuizState = null;
-      }
-
-      function answerQuiz(lessonId, lessonTitle, chosen, correct) {
-        if (chosen === correct) {
-          alert("To'g'ri javob! +20 XP va +15 🪙 Coin to'pladingiz! 🎉");
-          addRewards(20, 15, lessonId, `Grammatika: ${lessonTitle}`);
-        } else {
-          alert("Noto'g'ri javob. Qaytadan urinib ko'ring!");
-
-          if (!currentUser.weakPoints) currentUser.weakPoints = {};
-          currentUser.weakPoints["Present Perfect Tense"] =
-            (currentUser.weakPoints["Present Perfect Tense"] || 0) + 10;
-          saveUserData(currentUser);
-        }
       }
 
       function addRewards(xpAmount, coinAmount, lessonId, topicTitle) {
