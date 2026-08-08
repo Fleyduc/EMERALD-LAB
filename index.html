@@ -1463,6 +1463,122 @@
       </div>
     </div>
 
+    <!-- 🎮 VOCABULARY MINI-GAME MODAL (Talaffuz + Variantli test) -->
+    <div id="vocab-quiz-modal" class="modal-overlay hidden">
+      <div class="modal-card" style="max-width: 480px; text-align: center">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+          "
+        >
+          <h3 style="color: var(--emerald-light)">🎮 Lug'at O'yini</h3>
+          <span
+            onclick="closeVocabQuiz()"
+            style="cursor: pointer; font-size: 1.4rem; color: var(--text-muted)"
+            >✕</span
+          >
+        </div>
+
+        <div
+          style="
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            height: 8px;
+            overflow: hidden;
+            margin-bottom: 8px;
+          "
+        >
+          <div
+            id="vocab-quiz-progress-fill"
+            style="
+              background: linear-gradient(90deg, #10b981, #34d399);
+              height: 100%;
+              width: 0%;
+              transition: width 0.3s ease;
+            "
+          ></div>
+        </div>
+        <p
+          id="vocab-quiz-progress-text"
+          style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 20px"
+        >
+          1 / 10
+        </p>
+
+        <!-- QUESTION VIEW -->
+        <div id="vocab-quiz-question-view">
+          <p
+            style="
+              font-size: 0.8rem;
+              color: var(--text-muted);
+              text-transform: uppercase;
+              letter-spacing: 1px;
+              margin-bottom: 6px;
+            "
+          >
+            Bu so'zning tarjimasi qaysi?
+          </p>
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 12px;
+              margin-bottom: 24px;
+            "
+          >
+            <div
+              id="vocab-quiz-word"
+              style="font-size: 2rem; font-weight: 800; color: white"
+            >
+              word
+            </div>
+            <button
+              onclick="playVocabQuizAudio()"
+              class="vocab-audio-btn"
+              title="Talaffuzni eshitish"
+              style="font-size: 1.3rem"
+            >
+              🔊
+            </button>
+          </div>
+          <p
+            id="vocab-quiz-phonetic"
+            style="
+              color: var(--text-muted);
+              font-size: 0.9rem;
+              margin-top: -18px;
+              margin-bottom: 20px;
+            "
+          ></p>
+
+          <div id="vocab-quiz-options" style="display: grid; gap: 10px"></div>
+        </div>
+
+        <!-- RESULT VIEW -->
+        <div id="vocab-quiz-result-view" class="hidden">
+          <div style="font-size: 3rem; margin-bottom: 10px" id="vocab-quiz-result-emoji">
+            🎉
+          </div>
+          <h3 id="vocab-quiz-result-title" style="margin-bottom: 6px">
+            Ajoyib natija!
+          </h3>
+          <p
+            id="vocab-quiz-result-score"
+            style="color: var(--text-muted); margin-bottom: 20px"
+          >
+            10 / 10 to'g'ri
+          </p>
+          <button class="btn-primary" onclick="closeVocabQuiz()">
+            Yopish
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- MAIN CONTENT CONTAINER -->
     <main class="main-container">
       <!-- 1. DASHBOARD TAB (STUDENT / TEACHER) -->
@@ -1682,6 +1798,60 @@
               <h4 style="color: var(--emerald-light); margin-bottom: 10px">
                 📖 Dars uchun Lug'at (Vocabulary) Qo'shish
               </h4>
+
+              <div
+                style="
+                  background: rgba(16, 185, 129, 0.08);
+                  border: 1px dashed var(--card-border-hover);
+                  border-radius: 14px;
+                  padding: 14px;
+                  margin-bottom: 15px;
+                "
+              >
+                <label
+                  style="
+                    display: block;
+                    font-size: 0.8rem;
+                    font-weight: 600;
+                    color: var(--text-muted);
+                    margin-bottom: 6px;
+                    text-transform: uppercase;
+                  "
+                  >⚡ Tezkor usul: so'zlarni shu yerga joylashtiring
+                  (paste)</label
+                >
+                <textarea
+                  id="vocab-bulk-paste"
+                  rows="4"
+                  placeholder="Har bir qatorga bitta so'z, masalan:
+hello — salom 👋
+book — kitob 📖
+pen — ruchka 🖊"
+                ></textarea>
+                <p
+                  style="
+                    font-size: 0.75rem;
+                    color: var(--text-muted);
+                    margin: 6px 0 10px;
+                  "
+                >
+                  So'z va tarjimani — (yoki -, :, =) belgisi bilan
+                  ajrating. Har bir qator = bitta so'z.
+                </p>
+                <button
+                  type="button"
+                  class="btn-primary"
+                  style="
+                    background: linear-gradient(135deg, #f59e0b, #d97706);
+                    width: auto;
+                    padding: 10px 20px;
+                    font-size: 0.85rem;
+                  "
+                  onclick="parseBulkVocab()"
+                >
+                  🔍 Avtomatik ajratish va qo'shish
+                </button>
+              </div>
 
               <div id="vocab-inputs-container">
                 <div class="grid-2 vocab-input-row">
@@ -3340,6 +3510,60 @@
         document.getElementById("public-profile-modal").classList.add("hidden");
       }
 
+      function parseBulkVocab() {
+        const raw = document.getElementById("vocab-bulk-paste").value;
+        if (!raw || !raw.trim()) {
+          return alert("Iltimos, avval so'zlarni ustunga joylashtiring.");
+        }
+
+        const lines = raw.split("\n").map((l) => l.trim()).filter((l) => l);
+        if (lines.length === 0) return;
+
+        const container = document.getElementById("vocab-inputs-container");
+        const separatorRegex = /\s*(?:—|–|-|:|=)\s*/;
+
+        let addedCount = 0;
+        lines.forEach((line) => {
+          const parts = line.split(separatorRegex);
+          if (parts.length < 2) return;
+
+          const word = parts[0].trim();
+          const trans = parts.slice(1).join(" - ").trim();
+          if (!word || !trans) return;
+
+          // Bo'sh birinchi qatorni qayta ishlatish, aks holda yangi qator qo'shish
+          let targetRow = null;
+          const existingRows = container.querySelectorAll(".vocab-input-row");
+          for (const r of existingRows) {
+            if (!r.querySelector(".v-word").value.trim()) {
+              targetRow = r;
+              break;
+            }
+          }
+          if (!targetRow) {
+            addVocabRow();
+            const allRows = container.querySelectorAll(".vocab-input-row");
+            targetRow = allRows[allRows.length - 1];
+          }
+
+          targetRow.querySelector(".v-word").value = word;
+          targetRow.querySelector(".v-trans").value = trans;
+          addedCount++;
+        });
+
+        document.getElementById("vocab-bulk-paste").value = "";
+
+        if (addedCount > 0) {
+          alert(
+            `✅ ${addedCount} ta so'z muvaffaqiyatli ajratildi! Xohlasangiz, talaffuz (pronunciation) va misol gap ustunlarini ham to'ldirishingiz mumkin.`
+          );
+        } else {
+          alert(
+            "Hech qanday so'z aniqlanmadi. Format: so'z — tarjima (har bir qator alohida)."
+          );
+        }
+      }
+
       function addVocabRow() {
         const container = document.getElementById("vocab-inputs-container");
         const row = document.createElement("div");
@@ -3637,37 +3861,191 @@
         });
       }
 
+      /* 🎮 VOCABULARY MINI-GAME (talaffuz + variantli test) */
+      let vocabQuizState = null;
+
+      function shuffleArray(arr) {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+
       function startVocabQuiz(lessonId, lessonTitle) {
         const lesson = lessons.find((l) => l.id === lessonId);
         if (!lesson || !lesson.vocabulary || lesson.vocabulary.length === 0)
           return;
 
-        let score = 0;
-        lesson.vocabulary.forEach((v) => {
-          const answer = prompt(`"${v.word}" so'zining tarjimasi nima?`);
-          if (
-            answer &&
-            answer.trim().toLowerCase() === v.trans.trim().toLowerCase()
-          ) {
-            score++;
+        // Har bir savol uchun 4 ta variant tayyorlaymiz (1 to'g'ri + 3 xato)
+        const allTranslations = lesson.vocabulary.map((v) => v.trans);
+        const questions = shuffleArray(lesson.vocabulary).map((v) => {
+          const distractorPool = allTranslations.filter((t) => t !== v.trans);
+          let distractors = shuffleArray(distractorPool).slice(0, 3);
+
+          // Agar darsda so'zlar kam bo'lsa, umumiy zaxiradan to'ldiramiz
+          const fallbackPool = [
+            "olma",
+            "kitob",
+            "uy",
+            "do'st",
+            "quyosh",
+            "suv",
+            "vaqt",
+            "yo'l",
+            "sevgi",
+            "orzu",
+          ].filter((t) => t !== v.trans && !distractors.includes(t));
+          while (distractors.length < 3 && fallbackPool.length > 0) {
+            distractors.push(fallbackPool.pop());
+          }
+
+          const options = shuffleArray([v.trans, ...distractors]);
+          return {
+            word: v.word,
+            phonetic: v.phonetic || "",
+            correct: v.trans,
+            options,
+          };
+        });
+
+        vocabQuizState = {
+          lessonId,
+          lessonTitle,
+          questions,
+          index: 0,
+          correctCount: 0,
+          locked: false,
+        };
+
+        document.getElementById("vocab-quiz-result-view").classList.add("hidden");
+        document
+          .getElementById("vocab-quiz-question-view")
+          .classList.remove("hidden");
+        document.getElementById("vocab-quiz-modal").classList.remove("hidden");
+        renderVocabQuizQuestion();
+      }
+
+      function renderVocabQuizQuestion() {
+        const state = vocabQuizState;
+        const q = state.questions[state.index];
+        state.locked = false;
+
+        document.getElementById("vocab-quiz-word").innerText = q.word;
+        document.getElementById("vocab-quiz-phonetic").innerText = q.phonetic;
+        document.getElementById(
+          "vocab-quiz-progress-text"
+        ).innerText = `${state.index + 1} / ${state.questions.length}`;
+        document.getElementById("vocab-quiz-progress-fill").style.width =
+          `${(state.index / state.questions.length) * 100}%`;
+
+        const optionsBox = document.getElementById("vocab-quiz-options");
+        optionsBox.innerHTML = q.options
+          .map(
+            (opt) =>
+              `<div class="quiz-option" onclick="selectVocabQuizAnswer(this, '${opt.replace(
+                /'/g,
+                "\\'"
+              )}')">${opt}</div>`
+          )
+          .join("");
+
+        // Har savol boshida so'zning talaffuzini avtomatik eshittiramiz
+        playVocabQuizAudio();
+      }
+
+      function playVocabQuizAudio() {
+        if (!vocabQuizState) return;
+        const q = vocabQuizState.questions[vocabQuizState.index];
+        if ("speechSynthesis" in window) {
+          const utterance = new SpeechSynthesisUtterance(q.word);
+          utterance.lang = "en-US";
+          window.speechSynthesis.speak(utterance);
+        }
+      }
+
+      function selectVocabQuizAnswer(el, chosen) {
+        const state = vocabQuizState;
+        if (!state || state.locked) return;
+        state.locked = true;
+
+        const q = state.questions[state.index];
+        const allOptions = document.querySelectorAll(
+          "#vocab-quiz-options .quiz-option"
+        );
+
+        allOptions.forEach((opt) => {
+          if (opt.innerText === q.correct) {
+            opt.style.background = "rgba(16, 185, 129, 0.35)";
+            opt.style.borderColor = "var(--emerald-primary)";
           }
         });
 
-        if (score === lesson.vocabulary.length) {
-          alert(
-            `Ajoyib! Barcha ${score} ta so'z tarjimasini to'g'ri topdingiz! +10 🪙 Coin va +15 XP berildi!`
-          );
-          addRewards(15, 10, lessonId, `Lug'at testi: ${lessonTitle}`);
-
-          if (!currentUser.weeklyVocabStats)
-            currentUser.weeklyVocabStats = [0, 0, 0, 0, 0, 0, 0];
-          currentUser.weeklyVocabStats[6] += lesson.vocabulary.length;
-          saveUserData(currentUser);
+        if (chosen === q.correct) {
+          state.correctCount++;
+          el.style.background = "rgba(16, 185, 129, 0.35)";
+          el.style.borderColor = "var(--emerald-primary)";
         } else {
-          alert(
-            `Natija: ${score}/${lesson.vocabulary.length} to'g'ri. Barcha so'zlarni yodlab qaytadan urinib ko'ring!`
-          );
+          el.style.background = "rgba(239, 68, 68, 0.35)";
+          el.style.borderColor = "var(--danger)";
         }
+
+        setTimeout(() => {
+          state.index++;
+          if (state.index < state.questions.length) {
+            renderVocabQuizQuestion();
+          } else {
+            finishVocabQuiz();
+          }
+        }, 900);
+      }
+
+      function finishVocabQuiz() {
+        const state = vocabQuizState;
+        const total = state.questions.length;
+        const correct = state.correctCount;
+        const percent = Math.round((correct / total) * 100);
+
+        document.getElementById("vocab-quiz-progress-fill").style.width = "100%";
+        document
+          .getElementById("vocab-quiz-question-view")
+          .classList.add("hidden");
+        document.getElementById("vocab-quiz-result-view").classList.remove(
+          "hidden"
+        );
+
+        const emoji = percent === 100 ? "🏆" : percent >= 60 ? "🎉" : "💪";
+        const title =
+          percent === 100
+            ? "Mukammal natija!"
+            : percent >= 60
+            ? "Zo'r ishladingiz!"
+            : "Yana mashq qiling!";
+
+        document.getElementById("vocab-quiz-result-emoji").innerText = emoji;
+        document.getElementById("vocab-quiz-result-title").innerText = title;
+        document.getElementById(
+          "vocab-quiz-result-score"
+        ).innerText = `${correct} / ${total} to'g'ri (${percent}%)`;
+
+        // Har bir to'g'ri javob uchun mukofot + 100% bo'lsa bonus
+        const xp = correct * 2 + (percent === 100 ? 5 : 0);
+        const coins = correct * 1 + (percent === 100 ? 5 : 0);
+
+        if (correct > 0) {
+          addRewards(xp, coins, state.lessonId, `Lug'at o'yini: ${state.lessonTitle}`);
+        }
+
+        if (!currentUser.weeklyVocabStats)
+          currentUser.weeklyVocabStats = [0, 0, 0, 0, 0, 0, 0];
+        currentUser.weeklyVocabStats[6] += correct;
+        saveUserData(currentUser);
+      }
+
+      function closeVocabQuiz() {
+        document.getElementById("vocab-quiz-modal").classList.add("hidden");
+        vocabQuizState = null;
       }
 
       function answerQuiz(lessonId, lessonTitle, chosen, correct) {
