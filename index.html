@@ -1335,6 +1335,9 @@
         <button class="nav-tab-btn" onclick="switchMainTab('speaking', event)">
           🎙️ AI Speaking Assistant
         </button>
+        <button class="nav-tab-btn" onclick="switchMainTab('writing', event)">
+          ✍️ Writing Vazifalari
+        </button>
         <button class="nav-tab-btn" onclick="switchMainTab('analytics', event)">
           📊 Analitika & Progress
         </button>
@@ -1751,6 +1754,69 @@
       </div>
     </div>
 
+    <!-- WRITING BAHOLASH MODALI (Ustoz uchun) -->
+    <div id="writing-grade-modal" class="modal-overlay hidden">
+      <div class="modal-card" style="max-width: 640px; text-align: left">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            gap: 12px;
+          "
+        >
+          <div>
+            <h2 style="font-size: 1.3rem">✍️ Writing Ishini Baholash</h2>
+            <span
+              id="wg-student-name"
+              class="subtitle"
+              style="margin-bottom: 0"
+            ></span>
+          </div>
+          <span
+            onclick="closeGradeWritingModal()"
+            style="cursor: pointer; font-size: 1.6rem; color: var(--text-muted); flex-shrink: 0"
+            >✕</span
+          >
+        </div>
+
+        <div id="wg-submission-text" class="feedback-box" style="max-height: 220px; overflow-y: auto; font-size: 0.85rem; white-space: pre-line;"></div>
+
+        <div class="grid-2" style="margin-top: 15px">
+          <div class="input-group">
+            <label>Task Achievement / Response</label>
+            <input type="number" id="wg-ta" min="0" max="9" step="0.5" value="6" />
+          </div>
+          <div class="input-group">
+            <label>Coherence & Cohesion</label>
+            <input type="number" id="wg-cc" min="0" max="9" step="0.5" value="6" />
+          </div>
+          <div class="input-group">
+            <label>Lexical Resource</label>
+            <input type="number" id="wg-lr" min="0" max="9" step="0.5" value="6" />
+          </div>
+          <div class="input-group">
+            <label>Grammatical Range & Accuracy</label>
+            <input type="number" id="wg-gra" min="0" max="9" step="0.5" value="6" />
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>Ustoz izohi / Feedback</label>
+          <textarea
+            id="wg-comment"
+            rows="4"
+            placeholder="Masalan: Task Achievement yaxshi, lekin Coherence uchun paragraf tuzilishiga e'tibor bering. Grammatikada Present Perfect'da xatolar bor..."
+          ></textarea>
+        </div>
+
+        <button class="submit-btn" onclick="submitWritingGrade()">
+          ✅ Bahoni Saqlash va O'quvchiga Yuborish
+        </button>
+      </div>
+    </div>
+
     <!-- MAIN CONTENT CONTAINER -->
     <main class="main-container">
       <!-- 1. DASHBOARD TAB (STUDENT / TEACHER) -->
@@ -2139,6 +2205,112 @@ pen — ruchka 🖊"
                   </tr>
                 </thead>
                 <tbody id="submissions-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- IELTS WRITING UY VAZIFASI BERISH -->
+          <div class="card">
+            <div class="card-title">
+              <span>✍️</span>
+              <span>IELTS Writing Uy Vazifasi Berish</span>
+            </div>
+            <form onsubmit="addWritingTask(event)">
+              <div class="grid-2">
+                <div class="input-group">
+                  <label>Vazifa Sarlavhasi</label>
+                  <input
+                    type="text"
+                    id="wt-title"
+                    placeholder="Masalan: Bar Chart - Internet Usage"
+                    required
+                  />
+                </div>
+                <div class="input-group">
+                  <label>Vazifa Turi</label>
+                  <select id="wt-tasktype">
+                    <option value="task1">Task 1 (20 daqiqa, 150+ so'z)</option>
+                    <option value="task2">Task 2 (40 daqiqa, 250+ so'z)</option>
+                    <option value="full">
+                      Full Writing - Task 1 + Task 2 (60 daqiqa)
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="input-group">
+                <label>Mavzu / Savol Matni (Prompt)</label>
+                <textarea
+                  id="wt-prompt"
+                  rows="3"
+                  placeholder="Masalan (Task 2): Some people believe that unpaid community service should be a compulsory part of high school programmes. To what extent do you agree or disagree?"
+                  required
+                ></textarea>
+              </div>
+
+              <div class="input-group">
+                <label>Qoidalar / Yo'riqnoma</label>
+                <textarea
+                  id="wt-rules"
+                  rows="3"
+                  placeholder="Masalan: Kamida 250 so'z yozing. Intro, 2 body paragraph va conclusion bo'lishi shart. Xat uslubida emas, essay uslubida yozing."
+                ></textarea>
+              </div>
+
+              <div class="input-group">
+                <label>Namuna Javob (Sample) — ixtiyoriy</label>
+                <textarea
+                  id="wt-sample"
+                  rows="4"
+                  placeholder="O'quvchilarga ko'rsatiladigan namuna band 7-8 javobni shu yerga yozing (ixtiyoriy)..."
+                ></textarea>
+              </div>
+
+              <button type="submit" class="submit-btn" style="margin-top: 10px">
+                Vazifani Saqlash va O'quvchilarga Berish
+              </button>
+            </form>
+          </div>
+
+          <!-- WRITING VAZIFALARI RO'YXATI -->
+          <div class="card">
+            <div class="card-title">
+              <span>🗂️</span>
+              <span>Berilgan Writing Vazifalari</span>
+            </div>
+            <div style="overflow-x: auto">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Sarlavha</th>
+                    <th>Turi</th>
+                    <th>Sana</th>
+                    <th style="text-align: right">Amal</th>
+                  </tr>
+                </thead>
+                <tbody id="writing-tasks-admin-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- WRITING ISHLARINI TEKSHIRISH -->
+          <div class="card">
+            <div class="card-title">
+              <span>📩</span>
+              <span>O'quvchilardan Kelgan Writing Ishlari</span>
+            </div>
+            <div style="overflow-x: auto">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>O'quvchi</th>
+                    <th>Vazifa</th>
+                    <th>So'zlar soni</th>
+                    <th>Baho</th>
+                    <th style="text-align: right">Amal</th>
+                  </tr>
+                </thead>
+                <tbody id="writing-submissions-admin-body"></tbody>
               </table>
             </div>
           </div>
@@ -2598,6 +2770,106 @@ pen — ruchka 🖊"
             <button class="btn-primary" onclick="saveSpeakingSession()">
               💾 Natijani Analitikaga Saqlash (+20 XP)
             </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- WRITING VAZIFALARI TAB -->
+      <div id="tab-writing" class="main-tab-content hidden">
+        <!-- O'QUVCHI KO'RINISHI -->
+        <div id="writing-student-view" class="hidden">
+          <div class="card" id="writing-task-list-card">
+            <div class="card-title">
+              <span>✍️</span>
+              <span>IELTS Writing Vazifalari</span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem">
+              Ustozingiz bergan Writing vazifalaridan birini tanlang. Har
+              birida taymer avtomatik ishga tushadi — vaqtni nazorat qiling!
+            </p>
+            <div
+              id="writing-tasks-container"
+              class="lesson-grid"
+              style="margin-top: 15px"
+            ></div>
+          </div>
+
+          <!-- YOZISH MAYDONI (Workspace) -->
+          <div class="card hidden" id="writing-workspace-card">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-bottom: 10px;
+              "
+            >
+              <div class="card-title" style="margin-bottom: 0">
+                <span>⏱️</span>
+                <span id="writing-workspace-title">Writing</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px">
+                <span
+                  id="writing-timer"
+                  style="
+                    font-size: 1.6rem;
+                    font-weight: 800;
+                    color: var(--gold);
+                  "
+                  >20:00</span
+                >
+                <button
+                  class="btn-danger"
+                  style="padding: 8px 14px; font-size: 0.8rem"
+                  onclick="cancelWritingWorkspace()"
+                >
+                  ✕ Bekor qilish
+                </button>
+              </div>
+            </div>
+
+            <div
+              id="writing-rules-box"
+              class="feedback-box"
+              style="margin-bottom: 15px; font-size: 0.85rem; white-space: pre-line"
+            ></div>
+
+            <div id="writing-fields-container"></div>
+
+            <button
+              class="btn-primary"
+              style="margin-top: 12px"
+              onclick="submitWritingTask()"
+            >
+              📤 Yuborish (Ustozga jo'natish)
+            </button>
+          </div>
+
+          <!-- NATIJALAR TARIXI -->
+          <div class="card" style="margin-top: 20px">
+            <div class="card-title">
+              <span>📜</span>
+              <span>Mening Writing Natijalarim</span>
+            </div>
+            <div id="writing-history-container"></div>
+          </div>
+        </div>
+
+        <!-- USTOZ KO'RINISHI (yo'naltiruvchi eslatma) -->
+        <div id="writing-teacher-view" class="hidden">
+          <div class="card">
+            <div class="card-title">
+              <span>✍️</span>
+              <span>Writing Boshqaruvi</span>
+            </div>
+            <p style="color: var(--text-muted)">
+              Writing vazifa berish va o'quvchilar ishlarini tekshirish uchun
+              <strong>📚 Darslar & Dashboard</strong> bo'limiga o'ting — u
+              yerda "IELTS Writing Uy Vazifasi Berish" va "Writing Ishlarini
+              Tekshirish" kartalari mavjud.
+            </p>
           </div>
         </div>
       </div>
@@ -3209,6 +3481,9 @@ pen — ruchka 🖊"
           document.getElementById("tab-dashboard").classList.remove("hidden");
         } else if (tab === "speaking") {
           document.getElementById("tab-speaking").classList.remove("hidden");
+        } else if (tab === "writing") {
+          document.getElementById("tab-writing").classList.remove("hidden");
+          renderWritingTab();
         } else if (tab === "analytics") {
           document.getElementById("tab-analytics").classList.remove("hidden");
           renderAnalyticsTab();
@@ -3414,6 +3689,8 @@ pen — ruchka 🖊"
           renderTeacherLessonsList();
           renderSubmissions();
           renderTeacherCertificates();
+          renderWritingTasksAdminList();
+          renderWritingSubmissionsAdmin();
         } else {
           document
             .getElementById("student-dashboard")
@@ -3794,12 +4071,14 @@ pen — ruchka 🖊"
         const tbody = document.getElementById("teacher-lessons-body");
         tbody.innerHTML = "";
 
-        if (lessons.length === 0) {
+        const normalLessons = lessons.filter((l) => l.type !== "writing");
+
+        if (normalLessons.length === 0) {
           tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">Hozircha hech qanday dars qo'shilmagan.</td></tr>`;
           return;
         }
 
-        lessons.forEach((lesson) => {
+        normalLessons.forEach((lesson) => {
           tbody.innerHTML += `
           <tr>
             <td><strong>${lesson.title}</strong></td>
@@ -3922,7 +4201,7 @@ pen — ruchka 🖊"
         container.innerHTML = "";
 
         const filteredLessons = lessons.filter(
-          (l) => l.target_level === currentUser.level
+          (l) => l.target_level === currentUser.level && l.type !== "writing"
         );
 
         const completed = currentUser.completedLessons || [];
@@ -4885,6 +5164,485 @@ pen — ruchka 🖊"
       function logout() {
         localStorage.removeItem("emerald_session_email");
         location.reload();
+      }
+
+      /* ============================================================
+         IELTS WRITING VAZIFALARI TIZIMI
+         - "lessons" jadvalidan foydalanamiz, lekin type:"writing"
+           bilan belgilanadi, shu sababli alohida SQL jadval kerak emas.
+         - "submissions" jadvalidan foydalanamiz, submission.type
+           === "writing" bilan ajratiladi.
+      ============================================================ */
+
+      const WRITING_TIME_LIMITS = { task1: 20, task2: 40, full: 60 };
+      const WRITING_MIN_WORDS = { task1: 150, task2: 250 };
+
+      let writingTimerInterval = null;
+      let writingTimerSecondsLeft = 0;
+      let activeWritingTask = null;
+      let writingWorkspaceStartedAt = null;
+
+      function renderWritingTab() {
+        if (!currentUser) return;
+        if (currentUser.role === "teacher") {
+          document
+            .getElementById("writing-teacher-view")
+            .classList.remove("hidden");
+          document.getElementById("writing-student-view").classList.add("hidden");
+        } else {
+          document
+            .getElementById("writing-student-view")
+            .classList.remove("hidden");
+          document.getElementById("writing-teacher-view").classList.add("hidden");
+          renderStudentWritingTasks();
+          renderStudentWritingHistory();
+        }
+      }
+
+      /* ---------- USTOZ: Writing vazifa qo'shish / ro'yxat ---------- */
+
+      async function addWritingTask(e) {
+        e.preventDefault();
+
+        const taskType = document.getElementById("wt-tasktype").value;
+        const newTask = {
+          id: Date.now(),
+          type: "writing",
+          title: document.getElementById("wt-title").value,
+          taskType,
+          target_level: "ielts",
+          prompt: document.getElementById("wt-prompt").value,
+          rules: document.getElementById("wt-rules").value,
+          sample: document.getElementById("wt-sample").value,
+          timeLimit: WRITING_TIME_LIMITS[taskType],
+          created_at: new Date().toLocaleDateString(),
+        };
+
+        lessons.push(newTask);
+        await dbInsertLesson(newTask);
+
+        alert("✅ Writing vazifasi muvaffaqiyatli saqlandi va o'quvchilarga ko'rinadigan bo'ldi!");
+        e.target.reset();
+        renderWritingTasksAdminList();
+      }
+
+      function renderWritingTasksAdminList() {
+        const tbody = document.getElementById("writing-tasks-admin-body");
+        if (!tbody) return;
+        tbody.innerHTML = "";
+
+        const tasks = lessons.filter((l) => l.type === "writing");
+
+        if (tasks.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">Hozircha Writing vazifasi berilmagan.</td></tr>`;
+          return;
+        }
+
+        const typeLabels = {
+          task1: "Task 1",
+          task2: "Task 2",
+          full: "Full Writing",
+        };
+
+        tasks.forEach((t) => {
+          tbody.innerHTML += `
+          <tr>
+            <td><strong>${t.title}</strong></td>
+            <td><span class="badge">${typeLabels[t.taskType] || t.taskType}</span></td>
+            <td>${t.created_at}</td>
+            <td style="text-align: right;">
+              <button class="btn-danger" onclick="deleteLesson(${t.id}); renderWritingTasksAdminList();">O'chirish</button>
+            </td>
+          </tr>
+        `;
+        });
+      }
+
+      /* ---------- USTOZ: Writing ishlarini tekshirish / baholash ---------- */
+
+      function renderWritingSubmissionsAdmin() {
+        const tbody = document.getElementById("writing-submissions-admin-body");
+        if (!tbody) return;
+        tbody.innerHTML = "";
+
+        const writingSubs = submissions.filter((s) => s.type === "writing");
+
+        if (writingSubs.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">Hozircha Writing ishi kelib tushmagan.</td></tr>`;
+          return;
+        }
+
+        writingSubs.forEach((s) => {
+          const idx = submissions.indexOf(s);
+          const student = users.find((u) => u.email === s.studentEmail);
+          const avatar = student ? student.avatar || DEFAULT_AVATAR : DEFAULT_AVATAR;
+          const isGraded = !!s.feedback;
+
+          tbody.innerHTML += `
+          <tr>
+            <td>
+              <div class="clickable-user" onclick="openPublicProfile('${s.studentEmail}')">
+                <img src="${avatar}" style="width:28px; height:28px; border-radius:50%; object-fit:cover;" />
+                ${s.studentName}
+              </div>
+            </td>
+            <td>${s.lessonTitle}</td>
+            <td>${s.wordCount || 0} so'z</td>
+            <td><span class="badge ${isGraded ? "badge-gold" : ""}">${
+              isGraded ? "Band " + s.feedback.overall : "Baholanmagan"
+            }</span></td>
+            <td style="text-align: right;">
+              <button class="btn-primary" style="padding: 6px 12px; font-size: 0.75rem;" onclick="openGradeWritingModal(${idx})">
+                ${isGraded ? "Qayta ko'rish" : "Baholash"}
+              </button>
+            </td>
+          </tr>
+        `;
+        });
+      }
+
+      let currentGradingSubmissionIdx = null;
+
+      function openGradeWritingModal(idx) {
+        const s = submissions[idx];
+        if (!s) return;
+        currentGradingSubmissionIdx = idx;
+
+        document.getElementById("wg-student-name").innerText =
+          `${s.studentName} — ${s.lessonTitle}`;
+
+        let bodyText = "";
+        if (s.taskType === "full" && s.textTask1 && s.textTask2) {
+          bodyText = `TASK 1:\n${s.textTask1}\n\n---\n\nTASK 2:\n${s.textTask2}`;
+        } else {
+          bodyText = s.text || "";
+        }
+        document.getElementById("wg-submission-text").innerText = bodyText;
+
+        const f = s.feedback || {};
+        document.getElementById("wg-ta").value = f.ta || 6;
+        document.getElementById("wg-cc").value = f.cc || 6;
+        document.getElementById("wg-lr").value = f.lr || 6;
+        document.getElementById("wg-gra").value = f.gra || 6;
+        document.getElementById("wg-comment").value = f.comment || "";
+
+        document.getElementById("writing-grade-modal").classList.remove("hidden");
+      }
+
+      function closeGradeWritingModal() {
+        document.getElementById("writing-grade-modal").classList.add("hidden");
+        currentGradingSubmissionIdx = null;
+      }
+
+      async function submitWritingGrade() {
+        if (currentGradingSubmissionIdx === null) return;
+        const idx = currentGradingSubmissionIdx;
+        const s = submissions[idx];
+        if (!s) return;
+
+        const ta = parseFloat(document.getElementById("wg-ta").value) || 0;
+        const cc = parseFloat(document.getElementById("wg-cc").value) || 0;
+        const lr = parseFloat(document.getElementById("wg-lr").value) || 0;
+        const gra = parseFloat(document.getElementById("wg-gra").value) || 0;
+        const comment = document.getElementById("wg-comment").value;
+
+        const rawAvg = (ta + cc + lr + gra) / 4;
+        const overall = Math.round(rawAvg * 2) / 2; // 0.5 ga yaxlitlash
+
+        s.feedback = { ta, cc, lr, gra, overall, comment };
+        s.grade = `Band ${overall}`;
+
+        await dbUpdateSubmission(s);
+
+        const student = users.find((u) => u.email === s.studentEmail);
+        if (student) {
+          student.xp = (student.xp || 0) + 50;
+          student.coins = (student.coins || 0) + 25;
+
+          if (!student.lessonHistory) student.lessonHistory = [];
+          student.lessonHistory.push({
+            lessonTitle: `✍️ Writing baholandi: ${s.lessonTitle} (Band ${overall})`,
+            date: new Date().toLocaleString("uz-UZ", {
+              dateStyle: "short",
+              timeStyle: "short",
+            }),
+            xp: 50,
+            coins: 25,
+          });
+
+          await dbSaveUser(student);
+        }
+
+        alert("✅ Baho saqlandi va o'quvchiga yetkazildi!");
+        closeGradeWritingModal();
+        renderWritingSubmissionsAdmin();
+      }
+
+      /* ---------- O'QUVCHI: Writing vazifalarini bajarish ---------- */
+
+      function renderStudentWritingTasks() {
+        const container = document.getElementById("writing-tasks-container");
+        if (!container) return;
+
+        const tasks = lessons.filter(
+          (l) => l.type === "writing" && l.target_level === currentUser.level
+        );
+
+        if (tasks.length === 0) {
+          container.innerHTML = `<div class="card"><p style="color: var(--text-muted);">Hozircha sizga Writing vazifasi berilmagan.</p></div>`;
+          return;
+        }
+
+        const typeLabels = {
+          task1: "📊 Task 1",
+          task2: "📝 Task 2",
+          full: "📊📝 Full Writing (Task 1 + 2)",
+        };
+
+        container.innerHTML = tasks
+          .map((t) => {
+            const mySubs = submissions.filter(
+              (s) =>
+                s.type === "writing" &&
+                s.studentEmail === currentUser.email &&
+                s.taskId === t.id
+            );
+            const isDone = mySubs.length > 0;
+
+            return `
+            <div class="lesson-card ${isDone ? "is-done" : ""}">
+              <div style="display:flex; align-items:center; justify-content:space-between;">
+                <div class="lesson-card-icon">✍️</div>
+                ${isDone ? `<span class="badge" style="background:rgba(16,185,129,0.25); color:var(--emerald-light);">✅ Yuborilgan</span>` : ""}
+              </div>
+              <div class="lesson-card-title">${t.title}</div>
+              <div class="lesson-card-excerpt">${(t.prompt || "").slice(0, 90)}${
+              (t.prompt || "").length > 90 ? "…" : ""
+            }</div>
+              <div class="lesson-card-footer">
+                <span>${typeLabels[t.taskType] || t.taskType}</span>
+                <span class="badge">⏱️ ${t.timeLimit} daq</span>
+              </div>
+              <div class="lesson-card-open-btn" onclick="startWritingWorkspace(${t.id})">Yozishni boshlash →</div>
+            </div>
+          `;
+          })
+          .join("");
+      }
+
+      function startWritingWorkspace(taskId) {
+        const task = lessons.find((l) => l.id === taskId && l.type === "writing");
+        if (!task) return;
+
+        if (
+          !confirm(
+            `"${task.title}" vazifasini boshlaysizmi? Taymer darhol ishga tushadi (${task.timeLimit} daqiqa) va vaqt tugagach ish avtomatik yuboriladi.`
+          )
+        )
+          return;
+
+        activeWritingTask = task;
+        writingWorkspaceStartedAt = Date.now();
+
+        document.getElementById("writing-task-list-card").classList.add("hidden");
+        document
+          .getElementById("writing-workspace-card")
+          .classList.remove("hidden");
+        document.getElementById("writing-workspace-title").innerText = task.title;
+
+        let rulesHtml = `<strong>📌 Mavzu:</strong> ${task.prompt}`;
+        if (task.rules) {
+          rulesHtml += `<br><br><strong>📋 Qoidalar:</strong> ${task.rules}`;
+        }
+        if (task.sample) {
+          rulesHtml += `<br><br><strong>💡 Namuna javob:</strong><br><em>${task.sample}</em>`;
+        }
+        document.getElementById("writing-rules-box").innerHTML = rulesHtml;
+
+        const fieldsContainer = document.getElementById(
+          "writing-fields-container"
+        );
+        if (task.taskType === "full") {
+          fieldsContainer.innerHTML = `
+            <div class="input-group">
+              <label>Task 1 Javobingiz (kamida ${WRITING_MIN_WORDS.task1} so'z)</label>
+              <textarea id="writing-field-task1" rows="6" oninput="updateWritingWordCount('task1')" placeholder="Task 1 javobingizni shu yerga yozing..."></textarea>
+              <span id="writing-wordcount-task1" style="font-size:0.75rem; color:var(--text-muted);">0 so'z</span>
+            </div>
+            <div class="input-group">
+              <label>Task 2 Javobingiz (kamida ${WRITING_MIN_WORDS.task2} so'z)</label>
+              <textarea id="writing-field-task2" rows="10" oninput="updateWritingWordCount('task2')" placeholder="Task 2 javobingizni shu yerga yozing..."></textarea>
+              <span id="writing-wordcount-task2" style="font-size:0.75rem; color:var(--text-muted);">0 so'z</span>
+            </div>
+          `;
+        } else {
+          const minWords = WRITING_MIN_WORDS[task.taskType] || 150;
+          fieldsContainer.innerHTML = `
+            <div class="input-group">
+              <label>Javobingiz (kamida ${minWords} so'z)</label>
+              <textarea id="writing-field-single" rows="14" oninput="updateWritingWordCount('single')" placeholder="Javobingizni shu yerga yozing..."></textarea>
+              <span id="writing-wordcount-single" style="font-size:0.75rem; color:var(--text-muted);">0 so'z</span>
+            </div>
+          `;
+        }
+
+        startWritingTimer(task.timeLimit);
+      }
+
+      function updateWritingWordCount(fieldKey) {
+        const el = document.getElementById(`writing-field-${fieldKey}`);
+        const counter = document.getElementById(`writing-wordcount-${fieldKey}`);
+        if (!el || !counter) return;
+        const words = el.value.trim().split(/\s+/).filter((w) => w).length;
+        counter.innerText = `${words} so'z`;
+      }
+
+      function startWritingTimer(minutes) {
+        clearInterval(writingTimerInterval);
+        writingTimerSecondsLeft = minutes * 60;
+        updateWritingTimerDisplay();
+
+        writingTimerInterval = setInterval(() => {
+          writingTimerSecondsLeft--;
+          updateWritingTimerDisplay();
+
+          if (writingTimerSecondsLeft <= 0) {
+            clearInterval(writingTimerInterval);
+            alert("⏰ Vaqt tugadi! Ishingiz avtomatik ustozga yuborilmoqda.");
+            submitWritingTask(true);
+          }
+        }, 1000);
+      }
+
+      function updateWritingTimerDisplay() {
+        const el = document.getElementById("writing-timer");
+        if (!el) return;
+        const m = Math.max(0, Math.floor(writingTimerSecondsLeft / 60));
+        const s = Math.max(0, writingTimerSecondsLeft % 60);
+        el.innerText = `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+        el.style.color = writingTimerSecondsLeft <= 60 ? "var(--danger)" : "var(--gold)";
+      }
+
+      function cancelWritingWorkspace() {
+        if (!confirm("Rostdan ham bekor qilasizmi? Yozganlaringiz saqlanmaydi.")) return;
+        clearInterval(writingTimerInterval);
+        activeWritingTask = null;
+        document.getElementById("writing-workspace-card").classList.add("hidden");
+        document.getElementById("writing-task-list-card").classList.remove("hidden");
+      }
+
+      async function submitWritingTask(isAutoSubmit) {
+        if (!activeWritingTask) return;
+        const task = activeWritingTask;
+
+        let payload = {};
+        let wordCount = 0;
+
+        if (task.taskType === "full") {
+          const t1 = document.getElementById("writing-field-task1").value.trim();
+          const t2 = document.getElementById("writing-field-task2").value.trim();
+          if (!isAutoSubmit && !t1 && !t2) {
+            return alert("Iltimos, kamida bitta qismni yozing!");
+          }
+          payload.textTask1 = t1;
+          payload.textTask2 = t2;
+          wordCount =
+            (t1 ? t1.split(/\s+/).filter((w) => w).length : 0) +
+            (t2 ? t2.split(/\s+/).filter((w) => w).length : 0);
+        } else {
+          const text = document.getElementById("writing-field-single").value.trim();
+          if (!isAutoSubmit && !text) {
+            return alert("Iltimos, javobingizni yozing!");
+          }
+          payload.text = text;
+          wordCount = text ? text.split(/\s+/).filter((w) => w).length : 0;
+        }
+
+        clearInterval(writingTimerInterval);
+
+        const timeTakenSec = writingWorkspaceStartedAt
+          ? Math.round((Date.now() - writingWorkspaceStartedAt) / 1000)
+          : null;
+
+        const newSubmission = {
+          id: Date.now(),
+          type: "writing",
+          taskId: task.id,
+          taskType: task.taskType,
+          studentName: currentUser.full_name,
+          studentEmail: currentUser.email,
+          lessonTitle: task.title,
+          wordCount,
+          timeTakenSec,
+          grade: null,
+          feedback: null,
+          ...payload,
+        };
+
+        submissions.push(newSubmission);
+        await dbInsertSubmission(newSubmission);
+
+        currentUser.xp = (currentUser.xp || 0) + 15;
+        currentUser.coins = (currentUser.coins || 0) + 5;
+        await dbSaveUser(currentUser);
+
+        activeWritingTask = null;
+        writingWorkspaceStartedAt = null;
+
+        alert("✅ Writing ishingiz muvaffaqiyatli ustozga yuborildi! Baholanganda shu bo'limda ko'rasiz. (+15 XP & +5 Coin)");
+
+        document.getElementById("writing-workspace-card").classList.add("hidden");
+        document.getElementById("writing-task-list-card").classList.remove("hidden");
+
+        loadDashboard(currentUser);
+        renderStudentWritingTasks();
+        renderStudentWritingHistory();
+      }
+
+      function renderStudentWritingHistory() {
+        const container = document.getElementById("writing-history-container");
+        if (!container) return;
+
+        const mySubs = submissions
+          .filter((s) => s.type === "writing" && s.studentEmail === currentUser.email)
+          .reverse();
+
+        if (mySubs.length === 0) {
+          container.innerHTML = `<p style="color: var(--text-muted); font-size: 0.9rem;">Siz hali Writing vazifasi topshirmagansiz.</p>`;
+          return;
+        }
+
+        container.innerHTML = mySubs
+          .map((s) => {
+            if (s.feedback) {
+              const f = s.feedback;
+              return `
+              <div class="feedback-box" style="margin-bottom: 12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <strong>${s.lessonTitle}</strong>
+                  <span class="score-badge-large" style="font-size:1.1rem;">Band ${f.overall}</span>
+                </div>
+                <div class="grid-2" style="margin: 10px 0; font-size: 0.8rem; color: var(--text-muted);">
+                  <span>Task Achievement: <strong style="color:var(--text-main)">${f.ta}</strong></span>
+                  <span>Coherence & Cohesion: <strong style="color:var(--text-main)">${f.cc}</strong></span>
+                  <span>Lexical Resource: <strong style="color:var(--text-main)">${f.lr}</strong></span>
+                  <span>Grammar: <strong style="color:var(--text-main)">${f.gra}</strong></span>
+                </div>
+                ${f.comment ? `<p style="font-style: italic; font-size: 0.85rem;">💬 "${f.comment}"</p>` : ""}
+              </div>
+            `;
+            } else {
+              return `
+              <div class="feedback-box" style="margin-bottom: 12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <strong>${s.lessonTitle}</strong>
+                  <span class="badge">⏳ Ustoz tekshirmoqda...</span>
+                </div>
+              </div>
+            `;
+            }
+          })
+          .join("");
       }
 
     </script>
