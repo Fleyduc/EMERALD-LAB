@@ -91,9 +91,9 @@
       /* Navbar Header */
       .navbar {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 2rem;
+        flex-direction: column;
+        gap: 10px;
+        padding: 0.85rem 1.75rem;
         background: rgba(2, 26, 20, 0.85);
         border-bottom: 1px solid var(--card-border);
         backdrop-filter: blur(16px);
@@ -102,10 +102,27 @@
         z-index: 100;
       }
 
+      .navbar-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+
+      .navbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-left: auto;
+      }
+
       .logo {
         display: flex;
         align-items: center;
         gap: 12px;
+        flex-shrink: 0;
       }
 
       .logo-icon {
@@ -118,6 +135,7 @@
         justify-content: center;
         font-size: 1.2rem;
         box-shadow: 0 0 15px var(--emerald-glow-strong);
+        flex-shrink: 0;
       }
 
       .logo h2 {
@@ -127,6 +145,7 @@
         background: linear-gradient(to right, #ffffff, var(--emerald-light));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        white-space: nowrap;
       }
 
       .logo span {
@@ -136,7 +155,25 @@
       .nav-tabs {
         display: flex;
         gap: 8px;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--emerald-primary) transparent;
+        padding-bottom: 2px;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .nav-tabs::-webkit-scrollbar {
+        height: 5px;
+      }
+
+      .nav-tabs::-webkit-scrollbar-thumb {
+        background: var(--emerald-primary);
+        border-radius: 10px;
+      }
+
+      .nav-tabs::-webkit-scrollbar-track {
+        background: transparent;
       }
 
       .nav-tab-btn {
@@ -149,6 +186,8 @@
         cursor: pointer;
         border-radius: 12px;
         transition: all 0.3s ease;
+        white-space: nowrap;
+        flex-shrink: 0;
       }
 
       .nav-tab-btn:hover,
@@ -165,6 +204,7 @@
         border-radius: 12px;
         gap: 4px;
         border: 1px solid var(--card-border);
+        flex-shrink: 0;
       }
 
       .lang-btn {
@@ -185,16 +225,87 @@
         box-shadow: 0 0 12px var(--emerald-glow-strong);
       }
 
+      /* Icon button (bell etc.) */
+      .icon-btn {
+        position: relative;
+        width: 38px;
+        height: 38px;
+        flex-shrink: 0;
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--card-border);
+        color: var(--text-muted);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.25s ease;
+      }
+
+      .icon-btn:hover {
+        border-color: var(--card-border-hover);
+        color: var(--emerald-light);
+        background: rgba(16, 185, 129, 0.12);
+      }
+
+      .icon-btn .notif-count {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        background: var(--danger);
+        color: white;
+        font-size: 0.6rem;
+        font-weight: 800;
+        padding: 1px 5px;
+        border-radius: 10px;
+        min-width: 15px;
+        line-height: 1.4;
+        text-align: center;
+        box-shadow: 0 0 6px var(--danger-glow);
+      }
+
+      /* User menu (dropdown) */
+      .user-menu-wrapper {
+        position: relative;
+        flex-shrink: 0;
+      }
+
       .user-badge {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 10px;
         background: rgba(16, 185, 129, 0.1);
-        padding: 6px 14px;
+        padding: 6px 12px 6px 6px;
         border-radius: 30px;
         border: 1px solid var(--card-border);
         font-size: 0.85rem;
         font-weight: 600;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        white-space: nowrap;
+      }
+
+      .user-badge:hover,
+      .user-badge.open {
+        border-color: var(--card-border-hover);
+        background: rgba(16, 185, 129, 0.18);
+      }
+
+      .user-badge .user-name-text {
+        max-width: 140px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .user-badge .chevron {
+        color: var(--text-muted);
+        font-size: 0.7rem;
+        transition: transform 0.25s ease;
+      }
+
+      .user-badge.open .chevron {
+        transform: rotate(180deg);
       }
 
       .user-avatar-small {
@@ -203,7 +314,71 @@
         border-radius: 50%;
         object-fit: cover;
         border: 2px solid var(--emerald-light);
+        flex-shrink: 0;
+      }
+
+      .user-menu-dropdown {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        min-width: 230px;
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 16px;
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55), 0 0 30px var(--emerald-glow);
+        backdrop-filter: blur(16px);
+        z-index: 200;
+        animation: menuFadeIn 0.18s ease;
+      }
+
+      @keyframes menuFadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .user-menu-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        background: transparent;
+        border: none;
+        color: var(--text-main);
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 10px 12px;
+        border-radius: 10px;
         cursor: pointer;
+        text-align: left;
+        transition: background 0.2s ease;
+      }
+
+      .user-menu-item:hover {
+        background: rgba(16, 185, 129, 0.15);
+      }
+
+      .user-menu-item.danger {
+        color: #fca5a5;
+      }
+
+      .user-menu-item.danger:hover {
+        background: rgba(239, 68, 68, 0.15);
+      }
+
+      .user-menu-divider {
+        height: 1px;
+        background: var(--card-border);
+        margin: 4px 4px;
       }
 
       /* Modal / Auth UI */
@@ -1300,15 +1475,34 @@
 
       @media (max-width: 768px) {
         .navbar {
-          flex-direction: column;
+          padding: 0.75rem 1rem;
+        }
+        .navbar-top {
           gap: 10px;
-          padding: 1rem;
+        }
+        .navbar-actions {
+          gap: 8px;
+        }
+        .logo h2 {
+          font-size: 1.1rem;
+        }
+        .user-badge .user-name-text {
+          max-width: 90px;
         }
         .grid-2 {
           grid-template-columns: 1fr;
         }
         .chat-sidebar {
           display: none;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .user-badge .user-name-text {
+          display: none;
+        }
+        .lang-switcher {
+          order: 3;
         }
       }
     </style>
@@ -1319,9 +1513,22 @@
 
     <!-- HEADER NAVBAR -->
     <header class="navbar">
-      <div class="logo">
-        <div class="logo-icon">🧪</div>
-        <h2>EMERALD<span>LAB</span></h2>
+      <div class="navbar-top">
+        <div class="logo">
+          <div class="logo-icon">🧪</div>
+          <h2>EMERALD<span>LAB</span></h2>
+        </div>
+
+        <div class="navbar-actions">
+          <!-- LANG SWITCHER -->
+          <div class="lang-switcher">
+            <button class="lang-btn active" onclick="changeLang('UZB')">UZB</button>
+            <button class="lang-btn" onclick="changeLang('ENG')">ENG</button>
+            <button class="lang-btn" onclick="changeLang('RUS')">RUS</button>
+          </div>
+
+          <div id="user-info"></div>
+        </div>
       </div>
 
       <!-- TABS -->
@@ -1345,15 +1552,6 @@
           💬 Telegram Chat
         </button>
       </div>
-
-      <!-- LANG SWITCHER -->
-      <div class="lang-switcher">
-        <button class="lang-btn active" onclick="changeLang('UZB')">UZB</button>
-        <button class="lang-btn" onclick="changeLang('ENG')">ENG</button>
-        <button class="lang-btn" onclick="changeLang('RUS')">RUS</button>
-      </div>
-
-      <div id="user-info"></div>
     </header>
 
     <!-- AUTH MODAL -->
@@ -3802,15 +4000,22 @@ pen — ruchka 🖊"
         const avatarSrc = user.avatar || DEFAULT_AVATAR;
 
         document.getElementById("user-info").innerHTML = `
-        <div class="user-badge">
-          <img src="${avatarSrc}" class="user-avatar-small" onclick="openMyOwnProfile()" title="Profilni ko'rish" />
-          <span>${user.full_name} (${user.role.toUpperCase()})</span>
-          <button class="logout-btn" id="notif-bell-btn" onclick="openNotifications()" title="Bildirishnomalar">🔔</button>
-          <button class="logout-btn" onclick="connectTelegram()" title="Telegram orqali xabar olish">✈️ Telegram</button>
-          <button class="logout-btn" onclick="logout()">${
-            translations[currentLang].logoutBtn
-          }</button>
-          <button class="logout-btn" style="background:rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.4); color: var(--danger);" onclick="deleteMyAccount()" title="Akkauntni butunlay o'chirish">🗑️ Akkauntni o'chirish</button>
+        <button class="icon-btn" id="notif-bell-btn" onclick="openNotifications()" title="Bildirishnomalar">🔔</button>
+        <div class="user-menu-wrapper">
+          <div class="user-badge" id="user-badge-trigger" onclick="toggleUserMenu(event)">
+            <img src="${avatarSrc}" class="user-avatar-small" title="Profil" />
+            <span class="user-name-text">${user.full_name} (${user.role.toUpperCase()})</span>
+            <span class="chevron">▾</span>
+          </div>
+          <div class="user-menu-dropdown hidden" id="user-menu-dropdown">
+            <button class="user-menu-item" onclick="closeUserMenu(); openMyOwnProfile();">👤 Profilni ko'rish</button>
+            <button class="user-menu-item" onclick="closeUserMenu(); connectTelegram();">✈️ Telegram ulash</button>
+            <div class="user-menu-divider"></div>
+            <button class="user-menu-item" onclick="logout()">🚪 ${
+              translations[currentLang].logoutBtn
+            }</button>
+            <button class="user-menu-item danger" onclick="closeUserMenu(); deleteMyAccount();">🗑️ Akkauntni o'chirish</button>
+          </div>
         </div>
       `;
         renderNotificationBell();
@@ -5554,8 +5759,43 @@ pen — ruchka 🖊"
         const list = currentUser.notifications || [];
         const unread = list.filter((n) => !n.read).length;
         const btn = document.getElementById("notif-bell-btn");
-        if (btn) btn.innerText = unread > 0 ? `🔔 ${unread}` : `🔔`;
+        if (!btn) return;
+        btn.innerHTML =
+          "🔔" +
+          (unread > 0
+            ? `<span class="notif-count">${unread > 9 ? "9+" : unread}</span>`
+            : "");
       }
+
+      function toggleUserMenu(event) {
+        if (event) event.stopPropagation();
+        const dropdown = document.getElementById("user-menu-dropdown");
+        const trigger = document.getElementById("user-badge-trigger");
+        if (!dropdown) return;
+        const isHidden = dropdown.classList.contains("hidden");
+        dropdown.classList.toggle("hidden", !isHidden);
+        if (trigger) trigger.classList.toggle("open", isHidden);
+      }
+
+      function closeUserMenu() {
+        const dropdown = document.getElementById("user-menu-dropdown");
+        const trigger = document.getElementById("user-badge-trigger");
+        if (dropdown) dropdown.classList.add("hidden");
+        if (trigger) trigger.classList.remove("open");
+      }
+
+      document.addEventListener("click", (e) => {
+        const dropdown = document.getElementById("user-menu-dropdown");
+        const wrapper = document.getElementById("user-badge-trigger");
+        if (!dropdown || dropdown.classList.contains("hidden")) return;
+        if (
+          !dropdown.contains(e.target) &&
+          wrapper &&
+          !wrapper.contains(e.target)
+        ) {
+          closeUserMenu();
+        }
+      });
 
       function openNotifications() {
         if (!currentUser) return;
