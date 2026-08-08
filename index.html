@@ -5487,7 +5487,8 @@ pen — ruchka 🖊"
          ishlayveradi (bu har doim ishlaydi, tokensiz ham).
       ============================================================ */
 
-      const TELEGRAM_BOT_TOKEN = "";
+      const TELEGRAM_BOT_TOKEN = "8813822540:AAEY78b6P0w0MgpNl0evmMH1YKCayU2KI-o";
+      const TELEGRAM_BOT_USERNAME = "emeraldlab_bot"; // masalan: "EmeraldLabBot" (@ belgisisiz)
 
       async function sendTelegramNotification(chatId, text) {
         if (!TELEGRAM_BOT_TOKEN || !chatId) return;
@@ -5510,15 +5511,20 @@ pen — ruchka 🖊"
 
       function connectTelegram() {
         if (!currentUser) return;
+
+        const botLine = TELEGRAM_BOT_USERNAME
+          ? `1) Telegram'da @${TELEGRAM_BOT_USERNAME} botini toping va unga /start yozing (bu SHART, aks holda xabar kelmaydi).\n\n`
+          : "1) Ustoz hali botni sozlamagan bo'lishi mumkin \u2014 shunda bu funksiya ishlamaydi, ustozdan so'rang.\n\n";
+
         const chatId = prompt(
-          "Telegram Chat ID raqamingizni kiriting.\n\nOlish uchun: Telegram'da @userinfobot ga /start deb yozing, u sizga ID raqamingizni yuboradi.\n\n(Eslatma: xabarlar yuborilishi uchun ustoz avval o'z Telegram botini @BotFather orqali yaratib, TELEGRAM_BOT_TOKEN'ni sozlashi kerak.)",
+          `${botLine}2) So'ng @userinfobot ga /start yozing \u2014 u sizga Chat ID raqamingizni beradi (masalan: 123456789).\n\n3) Shu raqamni pastga kiriting:`,
           currentUser.telegramChatId || ""
         );
         if (chatId === null) return;
         currentUser.telegramChatId = chatId.trim();
         saveUserData(currentUser);
         alert(
-          "✅ Telegram ulandi! Ustoz baho qo'yganda yoki maxsus mukofot yutganingizda shu yerga xabar boradi (bot sozlangan bo'lsa)."
+          "\u2705 Telegram Chat ID saqlandi! Ustoz baho qo'yganda yoki maxsus mukofot yutganingizda shu yerga xabar boradi \u2014 lekin FAQAT agar siz botga /start yozgan bo'lsangiz va ustoz bot tokenini sozlagan bo'lsa."
         );
       }
 
