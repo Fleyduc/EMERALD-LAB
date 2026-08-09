@@ -5240,7 +5240,7 @@ pen — ruchka 🖊"
                   ? `<button class="btn-primary" style="margin-top: 12px; opacity: 0.6; cursor: not-allowed;" disabled>
                       🔒 Test yakunlangan — qayta topshirib bo'lmaydi
                     </button>`
-                  : `<button class="btn-primary" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; margin-top: 12px;" onclick="startVocabQuiz(${l.id}, '${l.title}')">
+                  : `<button class="btn-primary" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; margin-top: 12px;" onclick="startVocabQuiz(${l.id})">
                       🧪 Lug'at bo'yicha Test topshirish (+10 🪙 & +15 XP)
                     </button>`
               }
@@ -5403,10 +5403,11 @@ pen — ruchka 🖊"
         return a;
       }
 
-      function startVocabQuiz(lessonId, lessonTitle) {
+      function startVocabQuiz(lessonId) {
         const lesson = lessons.find((l) => l.id === lessonId);
         if (!lesson || !lesson.vocabulary || lesson.vocabulary.length === 0)
           return;
+        const lessonTitle = lesson.title;
 
         const completed = currentUser.completedLessons || [];
         if (completed.includes(lessonId)) {
