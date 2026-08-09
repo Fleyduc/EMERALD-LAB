@@ -4470,6 +4470,8 @@ pen — ruchka 🖊"
             equippedTitle: "",
             certificates: [],
             completedLessons: [],
+            completedVocabQuizzes: [],
+            completedHomeworks: [],
             lessonHistory: [],
             learnedTopics: [],
             weeklyVocabStats: [0, 0, 0, 0, 0, 0, 0],
@@ -5183,12 +5185,19 @@ pen — ruchka 🖊"
         if (!l) return;
 
         const completed = currentUser.completedLessons || [];
-        // "isDone" - butun dars (uy vazifasi, umumiy belgi) faqat Lug'at
-        // testi (finishVocabQuiz) orqali "yakunlangan" deb belgilanadi.
+        // "isDone" - butun dars UCHTA qismning barchasi (Lug'at testi 100%,
+        // Grammatika testi va Uy vazifasi) bajarilgandagina "yakunlangan"
+        // deb belgilanadi (qarang: checkLessonFullCompletion).
         const isDone = completed.includes(l.id);
-        // Grammatika testi o'zining mustaqil bayrog'i bilan qulflanadi,
-        // shu bilan Lug'at testidan mustaqil ravishda bajarilishi mumkin.
+        // Har bir qism o'z mustaqil bayrog'i bilan qulflanadi, shunda
+        // ular bir-biridan mustaqil ravishda bajarilishi mumkin.
+        const vocabDone = (currentUser.completedVocabQuizzes || []).includes(
+          l.id
+        );
         const grammarDone = (currentUser.completedGrammarQuizzes || []).includes(
+          l.id
+        );
+        const homeworkDone = (currentUser.completedHomeworks || []).includes(
           l.id
         );
 
@@ -5237,7 +5246,7 @@ pen — ruchka 🖊"
                   .join("")}
               </div>
               ${
-                isDone
+                vocabDone
                   ? `<button class="btn-primary" style="margin-top: 12px; opacity: 0.6; cursor: not-allowed;" disabled>
                       🔒 Test yakunlangan — qayta topshirib bo'lmaydi
                     </button>`
@@ -5260,7 +5269,9 @@ pen — ruchka 🖊"
               ? `<div style="background: rgba(16,185,129,0.1); border: 1px solid var(--emerald-primary); border-radius: 12px; padding: 10px 14px; margin-bottom: 12px; font-size: 0.85rem; color: var(--emerald-light);">
                   🔒 Bu dars allaqachon yakunlangan. Siz uni faqat ko'rishingiz mumkin — test va vazifani qayta topshirib bo'lmaydi.
                 </div>`
-              : ""
+              : `<div style="background: rgba(16,185,129,0.06); border: 1px solid var(--card-border); border-radius: 12px; padding: 10px 14px; margin-bottom: 12px; font-size: 0.78rem; color: var(--text-muted);">
+                  ℹ️ Dars to'liq yakunlanishi uchun: Lug'at testini 100% xatosiz topshiring, Grammatika testiga to'g'ri javob bering va Uy vazifasini yozib yuboring.
+                </div>`
           }
           <p style="margin: 10px 0; color: var(--text-muted); white-space: pre-line;">${
             l.content_text
@@ -5275,7 +5286,7 @@ pen — ruchka 🖊"
 
           ${
             l.quiz && l.quiz.question
-              ? isDone || grammarDone
+              ? grammarDone
                 ? `<div class="quiz-box"><p style="color: var(--text-muted); font-size: 0.85rem;">🔒 Grammatika testi yakunlangan.<br><strong>Savol:</strong> ${l.quiz.question}<br><strong>To'g'ri javob:</strong> ${l.quiz.correct}</p></div>`
                 : `<div class="quiz-box" id="lesson-quiz-box"></div>`
               : ""
@@ -5283,15 +5294,15 @@ pen — ruchka 🖊"
 
           <div style="margin-top: 15px;">
             ${
-              isDone
-                ? `<p style="font-size: 0.85rem; color: var(--text-muted);">🔒 Vazifa yuborish yakunlangan — bu dars uchun endi vazifa yubora olmaysiz.</p>`
+              homeworkDone
+                ? `<p style="font-size: 0.85rem; color: var(--text-muted);">🔒 Vazifa yuborilgan — bu dars uchun endi qayta vazifa yubora olmaysiz.</p>`
                 : `<textarea id="homework-${l.id}" placeholder="Uy vazifangizni shu yerga yozib yuboring..." rows="2"></textarea>
-                  <button class="btn-primary" style="margin-top: 8px;" onclick="submitHomework(${l.id}, '${l.title}')">Vazifani Yuborish</button>`
+                  <button class="btn-primary" style="margin-top: 8px;" onclick="submitHomework(${l.id})">Vazifani Yuborish</button>`
             }
           </div>
         `;
 
-        if (l.quiz && l.quiz.question && !isDone && !grammarDone) {
+        if (l.quiz && l.quiz.question && !grammarDone) {
           startLessonQuiz(l);
         }
 
@@ -5377,6 +5388,17 @@ pen — ruchka 🖊"
           }
 
           addRewards(20, 15, state.lessonId, `Grammatika: ${state.lessonTitle}`);
+
+          const fullyDone = checkLessonFullCompletion(state.lessonId);
+          if (fullyDone) {
+            setTimeout(() => {
+              alert(
+                "🎉 Tabriklaymiz! Siz ushbu darsni to'liq yakunladingiz — Lug'at, Grammatika va Uy vazifasi barchasi bajarildi!"
+              );
+            }, 300);
+          }
+
+          openLessonDetail(state.lessonId);
         } else {
           alert("Noto'g'ri javob. Qaytadan urinib ko'ring!");
 
@@ -5410,8 +5432,8 @@ pen — ruchka 🖊"
           return;
         const lessonTitle = lesson.title;
 
-        const completed = currentUser.completedLessons || [];
-        if (completed.includes(lessonId)) {
+        const vocabDone = currentUser.completedVocabQuizzes || [];
+        if (vocabDone.includes(lessonId)) {
           return alert(
             "🔒 Bu dars allaqachon yakunlangan. Testni qayta topshirib bo'lmaydi."
           );
@@ -5562,6 +5584,7 @@ pen — ruchka 🖊"
         const total = state.questions.length;
         const correct = state.correctCount;
         const percent = Math.round((correct / total) * 100);
+        const passed = percent === 100;
 
         document.getElementById("vocab-quiz-progress-fill").style.width = "100%";
         document
@@ -5578,19 +5601,14 @@ pen — ruchka 🖊"
             .join("");
         }
 
-        const title =
-          percent === 100
-            ? "Mukammal natija!"
-            : percent >= 60
-            ? "Zo'r ishladingiz!"
-            : "Yana mashq qiling!";
+        // Lug'at testi FAQAT 100% xatosiz topshirilganda "yakunlangan"
+        // deb hisoblanadi. Aks holda talaba qaytadan urinishi shart -
+        // shu sabab pastda hech qanday qulflash yoki mukofot berilmaydi.
+        const title = passed
+          ? "Mukammal natija!"
+          : "Xatolar bor — qaytadan urining!";
 
-        const ringColor =
-          percent === 100
-            ? "var(--emerald-primary)"
-            : percent >= 60
-            ? "var(--gold)"
-            : "var(--danger)";
+        const ringColor = passed ? "var(--emerald-primary)" : "var(--danger)";
 
         const ringEl = document.getElementById("vocab-quiz-score-ring");
         if (ringEl) {
@@ -5607,40 +5625,57 @@ pen — ruchka 🖊"
 
         const starsEl = document.getElementById("vocab-quiz-result-stars");
         if (starsEl) {
-          const starCount = percent === 100 ? 3 : percent >= 60 ? 2 : 1;
+          const starCount = passed ? 3 : percent >= 60 ? 2 : 1;
           starsEl.innerHTML = ["⭐", "⭐", "⭐"]
             .map((s, i) => `<span class="${i < starCount ? "" : "star-dim"}">⭐</span>`)
             .join("");
         }
 
-        // Har bir to'g'ri javob uchun mukofot + 100% bo'lsa bonus
-        const xp = correct * 2 + (percent === 100 ? 5 : 0);
-        const coins = correct * 1 + (percent === 100 ? 5 : 0);
-
-        const rewardRow = document.getElementById("vocab-quiz-reward-row");
-        if (rewardRow) {
-          rewardRow.innerHTML = `
-            <span class="vocab-quiz-reward-chip">✨ +${xp} XP</span>
-            <span class="vocab-quiz-reward-chip">🪙 +${coins} Coin</span>
-          `;
-        }
-
-        if (correct > 0) {
-          addRewards(xp, coins, state.lessonId, `Lug'at o'yini: ${state.lessonTitle}`);
-        }
-
-        // Lug'at vazifasi tugagach - to'g'ri javoblar sonidan qat'iy nazar
-        // dars "yakunlangan" deb belgilanadi va qulflanadi (qayta bajarib
-        // bo'lmaydi, faqat ko'rish mumkin).
-        if (!currentUser.completedLessons) currentUser.completedLessons = [];
-        if (!currentUser.completedLessons.includes(state.lessonId)) {
-          currentUser.completedLessons.push(state.lessonId);
-        }
-
         if (!currentUser.weeklyVocabStats)
           currentUser.weeklyVocabStats = [0, 0, 0, 0, 0, 0, 0];
         currentUser.weeklyVocabStats[6] += correct;
-        saveUserData(currentUser);
+
+        const rewardRow = document.getElementById("vocab-quiz-reward-row");
+
+        if (passed) {
+          // Har bir to'g'ri javob uchun mukofot + 100% bonus
+          const xp = correct * 2 + 5;
+          const coins = correct * 1 + 5;
+
+          if (rewardRow) {
+            rewardRow.innerHTML = `
+              <span class="vocab-quiz-reward-chip">✨ +${xp} XP</span>
+              <span class="vocab-quiz-reward-chip">🪙 +${coins} Coin</span>
+            `;
+          }
+
+          if (!currentUser.completedVocabQuizzes)
+            currentUser.completedVocabQuizzes = [];
+          if (!currentUser.completedVocabQuizzes.includes(state.lessonId)) {
+            currentUser.completedVocabQuizzes.push(state.lessonId);
+          }
+
+          addRewards(xp, coins, state.lessonId, `Lug'at o'yini: ${state.lessonTitle}`);
+
+          const fullyDone = checkLessonFullCompletion(state.lessonId);
+          if (fullyDone) {
+            setTimeout(() => {
+              alert(
+                "🎉 Tabriklaymiz! Siz ushbu darsni to'liq yakunladingiz — Lug'at, Grammatika va Uy vazifasi barchasi bajarildi!"
+              );
+            }, 300);
+          }
+        } else {
+          if (rewardRow) {
+            rewardRow.innerHTML = `
+              <span class="vocab-quiz-reward-chip" style="background: rgba(239,68,68,0.15); border-color: var(--danger); color: var(--danger);">
+                🔁 Xato javoblar bor. Mukofot olish va darsni yakunlash uchun testni 100% to'g'ri topshirishingiz kerak.
+              </span>
+            `;
+          }
+          saveUserData(currentUser);
+          loadDashboard(currentUser);
+        }
 
         renderStudentLessons();
       }
@@ -5687,6 +5722,44 @@ pen — ruchka 🖊"
         loadDashboard(currentUser);
       }
 
+      /* ============================================================
+         DARSNI TO'LIQ YAKUNLASH TEKSHIRUVI
+         Dars faqat UCHALA qismi ham bajarilgandagina "yakunlangan"
+         (completedLessons) deb belgilanadi:
+           1) Lug'at testi - 100% xatosiz topshirilgan bo'lishi kerak
+           2) Grammatika testi - to'g'ri javob berilgan bo'lishi kerak
+           3) Uy vazifasi - yuborilgan bo'lishi kerak
+         Agar darsda vocabulary yoki grammatika testi umuman bo'lmasa,
+         o'sha qism talabidan ozod qilinadi (chunki bajarish imkoni yo'q).
+      ============================================================ */
+      function checkLessonFullCompletion(lessonId) {
+        const l = lessons.find((x) => x.id === lessonId);
+        if (!l) return false;
+
+        const vocabRequired = !!(l.vocabulary && l.vocabulary.length > 0);
+        const grammarRequired = !!(l.quiz && l.quiz.question);
+
+        const vocabOk =
+          !vocabRequired ||
+          (currentUser.completedVocabQuizzes || []).includes(lessonId);
+        const grammarOk =
+          !grammarRequired ||
+          (currentUser.completedGrammarQuizzes || []).includes(lessonId);
+        const homeworkOk = (currentUser.completedHomeworks || []).includes(
+          lessonId
+        );
+
+        if (!vocabOk || !grammarOk || !homeworkOk) return false;
+
+        if (!currentUser.completedLessons) currentUser.completedLessons = [];
+        if (currentUser.completedLessons.includes(lessonId)) return false;
+
+        currentUser.completedLessons.push(lessonId);
+        saveUserData(currentUser);
+        renderStudentLessons();
+        return true;
+      }
+
       function buyItem(itemId, price, titleName, meta) {
         if ((currentUser.coins || 0) < price) {
           return alert(
@@ -5719,12 +5792,17 @@ pen — ruchka 🖊"
         loadDashboard(currentUser);
       }
 
-      async function submitHomework(lessonId, lessonTitle) {
-        const text = document.getElementById(`homework-${lessonId}`).value;
+      async function submitHomework(lessonId) {
+        const lesson = lessons.find((l) => l.id === lessonId);
+        const lessonTitle = lesson ? lesson.title : "";
+
+        const textEl = document.getElementById(`homework-${lessonId}`);
+        const text = textEl ? textEl.value : "";
         if (!text) return alert("Iltimos, matn kiriting!");
 
         const newSubmission = {
           id: Date.now(),
+          lessonId,
           studentName: currentUser.full_name,
           studentEmail: currentUser.email,
           lessonTitle,
@@ -5734,10 +5812,27 @@ pen — ruchka 🖊"
         submissions.push(newSubmission);
         await dbInsertSubmission(newSubmission);
 
+        if (!currentUser.completedHomeworks) currentUser.completedHomeworks = [];
+        if (!currentUser.completedHomeworks.includes(lessonId)) {
+          currentUser.completedHomeworks.push(lessonId);
+        }
+
+        const fullyDone = checkLessonFullCompletion(lessonId);
+        saveUserData(currentUser);
+
         alert(
           "Vazifa muvaffaqiyatli ustozga yuborildi va ko'rinadigan bo'ldi!"
         );
-        document.getElementById(`homework-${lessonId}`).value = "";
+
+        if (fullyDone) {
+          setTimeout(() => {
+            alert(
+              "🎉 Tabriklaymiz! Siz ushbu darsni to'liq yakunladingiz — Lug'at, Grammatika va Uy vazifasi barchasi bajarildi!"
+            );
+          }, 300);
+        }
+
+        openLessonDetail(lessonId);
       }
 
       let currentLeaderboardMode = "alltime";
