@@ -458,6 +458,29 @@
       }
 
       /* ===== IELTS READING: savol turlari uchun uslublar ===== */
+      /* ===== IELTS READING: passage matni (oddiy matn vs yuklangan HTML) ===== */
+      .reading-passage-body {
+        white-space: pre-line;
+      }
+
+      .reading-passage-body.is-html {
+        white-space: normal;
+      }
+
+      .reading-passage-body.is-html p,
+      .reading-passage-body.is-html h1,
+      .reading-passage-body.is-html h2,
+      .reading-passage-body.is-html h3,
+      .reading-passage-body.is-html ul,
+      .reading-passage-body.is-html ol {
+        margin-bottom: 0.8em;
+      }
+
+      .reading-passage-body.is-html img {
+        max-width: 100%;
+        border-radius: 8px;
+      }
+
       .reading-choice-group {
         display: flex;
         flex-wrap: wrap;
@@ -8116,6 +8139,30 @@ pen — ruchka 🖊"
           .join("");
       }
 
+      function handleReadingHtmlUpload(inputEl, pIdx) {
+        const file = inputEl.files && inputEl.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          let content = String(e.target.result || "");
+
+          // Agar to'liq HTML hujjat yuklangan bo'lsa (<!DOCTYPE>, <html>, <head> bilan),
+          // faqat <body> ichidagi qismini olamiz — shunda sarlavha/uslub kod aralashmaydi.
+          const bodyMatch = content.match(/<body[^>]*>([\s\S]*)<\/body>/i);
+          if (bodyMatch) content = bodyMatch[1];
+
+          const textarea = document.getElementById(`rt-passage-text-${pIdx}`);
+          if (textarea) {
+            textarea.value = content.trim();
+          }
+        };
+        reader.onerror = () => {
+          alert("\u274c Faylni o'qishda xatolik yuz berdi. Boshqa faylni sinab ko'ring.");
+        };
+        reader.readAsText(file, "UTF-8");
+      }
+
       function renderReadingPassageInputs() {
         const modeEl = document.getElementById("rt-mode");
         const container = document.getElementById("rt-passages-container");
@@ -8144,7 +8191,14 @@ pen — ruchka 🖊"
               <strong style="color: var(--emerald-light);">\ud83d\udcd6 ${labels[i]}</strong>
               <div class="input-group" style="margin-top: 10px;">
                 <label>Matn (Passage matni)</label>
-                <textarea id="rt-passage-text-${i}" rows="8" placeholder="Reading passage matnini shu yerga joylashtiring..." required></textarea>
+                <textarea id="rt-passage-text-${i}" rows="8" placeholder="Reading passage matnini shu yerga joylashtiring... (yoki pastdan tayyor HTML fayl yuklang)" required></textarea>
+              </div>
+              <div class="input-group">
+                <label>Yoki tayyor HTML fayl yuklang (ixtiyoriy)</label>
+                <input type="file" accept=".html,.htm,text/html" onchange="handleReadingHtmlUpload(this, ${i})" />
+                <p style="font-size:0.75rem; color: var(--text-muted); margin-top:6px;">
+                  Fayl tanlansangiz, uning matni yuqoridagi katakchaga avtomatik joylanadi — kerak bo'lsa tahrirlashingiz mumkin.
+                </p>
               </div>
               <div class="input-group">
                 <label>Savollar</label>
@@ -8483,6 +8537,12 @@ pen — ruchka 🖊"
         }));
       }
 
+      // Matnda haqiqiy HTML teglar bormi (masalan <p>, <h1>, <div>) — shunga qarab
+      // "oddiy matn" (qatorlarni saqlab qolish) yoki "HTML kontent" sifatida ko'rsatamiz
+      function looksLikeHtml(text) {
+        return /<[a-z][\s\S]*>/i.test(text || "");
+      }
+
       function extractOptionValue(optionLine) {
         const m = optionLine.match(/^([A-Za-z])[).]\s*(.*)$/);
         return m ? m[1].toUpperCase() : optionLine;
@@ -8588,7 +8648,11 @@ pen — ruchka 🖊"
             return `
               <div class="feedback-box" style="margin: 14px 0; padding: 14px;">
                 <strong style="color: var(--emerald-light);">\ud83d\udcd6 ${p.label}</strong>
-                <div style="max-height: 260px; overflow-y: auto; white-space: pre-line; margin: 10px 0; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px; font-size: 0.9rem;">${p.text}</div>
+                <div class="reading-passage-body ${
+                  looksLikeHtml(p.text) ? "is-html" : ""
+                }" style="max-height: 260px; overflow-y: auto; margin: 10px 0; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px; font-size: 0.9rem;">${
+              p.text
+            }</div>
                 ${qHtml}
               </div>
             `;
