@@ -461,6 +461,8 @@
       /* ===== IELTS READING: passage matni (oddiy matn vs yuklangan HTML) ===== */
       .reading-passage-body {
         white-space: pre-line;
+        font-size: 0.92rem;
+        line-height: 1.7;
       }
 
       .reading-passage-body.is-html {
@@ -479,6 +481,59 @@
       .reading-passage-body.is-html img {
         max-width: 100%;
         border-radius: 8px;
+      }
+
+      /* Chap: savollar ustuni, O'ng: passage matni ustuni */
+      .reading-split-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-top: 12px;
+        align-items: start;
+      }
+
+      .reading-questions-col {
+        max-height: 520px;
+        overflow-y: auto;
+        padding-right: 8px;
+        order: 1;
+      }
+
+      .reading-passage-col {
+        order: 2;
+        max-height: 520px;
+        overflow-y: auto;
+        padding: 12px 14px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        border: 1px solid var(--card-border);
+      }
+
+      .reading-instruction-box {
+        font-style: italic;
+        color: var(--text-muted);
+        background: rgba(16, 185, 129, 0.08);
+        border-left: 3px solid var(--emerald-primary);
+        padding: 8px 12px;
+        border-radius: 6px;
+        margin-bottom: 14px;
+        font-size: 0.85rem;
+        line-height: 1.5;
+      }
+
+      @media (max-width: 760px) {
+        .reading-split-layout {
+          grid-template-columns: 1fr;
+        }
+        .reading-passage-col {
+          order: 1;
+          max-height: 260px;
+        }
+        .reading-questions-col {
+          order: 2;
+          max-height: none;
+          overflow-y: visible;
+        }
       }
 
       .reading-choice-group {
@@ -8075,56 +8130,6 @@ pen — ruchka 🖊"
       let activeReadingTask = null;
       let activeReadingSubmission = null; // mavjud progress yozuvi (bo'lsa)
 
-      // HTML fayl ichida o'z-o'zini tekshiradigan passage'lardan kelgan natijalar
-      // Kalit: passage indexi (pIdx), Qiymat: { correct, total, details }
-      let emeraldReadingSelfResults = {};
-
-      /* HTML fayl ichidagi test (masalan, o'z JS'i bilan tekshiradigan interaktiv
-         savollar) yakunlanganda quyidagi formatda xabar yuborishi kerak:
-
-         window.parent.postMessage({
-           emeraldReading: true,
-           correct: 7,      // to'g'ri javoblar soni
-           total: 10,       // jami savollar soni
-           details: [       // ixtiyoriy: har bir savol tafsiloti
-             { question: "1-savol matni", studentAnswer: "A", correctAnswer: "A", isCorrect: true }
-           ]
-         }, "*");
-
-         Shu xabar kelganda platforma uni ushlab, o'quvchiga ham, ustozga ham
-         natijani ko'rsatadi (Reading natijalari jadvalida). */
-      window.addEventListener("message", handleEmeraldReadingMessage);
-
-      function handleEmeraldReadingMessage(event) {
-        const data = event.data;
-        if (!data || data.emeraldReading !== true) return;
-        if (!activeReadingTask) return;
-
-        // Xabar qaysi passage(iframe)dan kelganini contentWindow orqali aniqlaymiz
-        let matchedPIdx = null;
-        activeReadingTask.passages.forEach((p, pIdx) => {
-          if (p.contentType !== "html_file") return;
-          const frame = document.getElementById(`reading-passage-iframe-${pIdx}`);
-          if (frame && frame.contentWindow === event.source) {
-            matchedPIdx = pIdx;
-          }
-        });
-        if (matchedPIdx === null) return;
-
-        const correct = Math.max(0, parseInt(data.correct, 10) || 0);
-        const total = Math.max(0, parseInt(data.total, 10) || 0);
-        const details = Array.isArray(data.details) ? data.details : null;
-
-        emeraldReadingSelfResults[matchedPIdx] = { correct, total, details };
-
-        const statusEl = document.getElementById(
-          `reading-selfgraded-status-${matchedPIdx}`
-        );
-        if (statusEl) {
-          statusEl.innerHTML = `<span style="color: var(--emerald-light);">\u2705 Ushbu qism yakunlandi: ${correct}/${total} to'g'ri javob.</span> Endi pastdagi "Javoblarni Tekshirish" tugmasini bosing.`;
-        }
-      }
-
       function renderReadingTab() {
         if (!currentUser) return;
         if (currentUser.role === "teacher") {
@@ -8189,38 +8194,6 @@ pen — ruchka 🖊"
           .join("");
       }
 
-      function handleReadingHtmlUpload(inputEl, pIdx) {
-        const file = inputEl.files && inputEl.files[0];
-        const statusEl = document.getElementById(`rt-passage-filestatus-${pIdx}`);
-        const hiddenEl = document.getElementById(`rt-passage-htmlfile-${pIdx}`);
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          if (hiddenEl) hiddenEl.value = String(e.target.result || "");
-          if (statusEl) {
-            statusEl.innerHTML = `
-              <span style="color: var(--emerald-light);">\u2705 "${file.name}" yuklandi</span>
-              — bu passage aynan shu fayl ko'rinishida ko'rsatiladi (yuqoridagi matn maydoni e'tiborga olinmaydi).
-              <button type="button" class="btn-danger" style="padding:4px 10px; font-size:0.75rem; margin-left:8px;" onclick="clearReadingHtmlUpload(${pIdx})">\u2715 Olib tashlash</button>
-            `;
-          }
-        };
-        reader.onerror = () => {
-          alert("\u274c Faylni o'qishda xatolik yuz berdi. Boshqa faylni sinab ko'ring.");
-        };
-        reader.readAsText(file, "UTF-8");
-      }
-
-      function clearReadingHtmlUpload(pIdx) {
-        const hiddenEl = document.getElementById(`rt-passage-htmlfile-${pIdx}`);
-        const statusEl = document.getElementById(`rt-passage-filestatus-${pIdx}`);
-        const fileInput = document.getElementById(`rt-passage-filepick-${pIdx}`);
-        if (hiddenEl) hiddenEl.value = "";
-        if (statusEl) statusEl.innerHTML = "";
-        if (fileInput) fileInput.value = "";
-      }
-
       function renderReadingPassageInputs() {
         const modeEl = document.getElementById("rt-mode");
         const container = document.getElementById("rt-passages-container");
@@ -8248,25 +8221,15 @@ pen — ruchka 🖊"
             <div class="feedback-box" style="margin: 14px 0; padding: 14px;">
               <strong style="color: var(--emerald-light);">\ud83d\udcd6 ${labels[i]}</strong>
               <div class="input-group" style="margin-top: 10px;">
-                <label>Matn (Passage matni) — qo'lda yozing</label>
+                <label>Matn (Passage matni) — o'ng tomonda o'quvchiga shu ko'rsatiladi</label>
                 <textarea id="rt-passage-text-${i}" rows="8" placeholder="Reading passage matnini shu yerga joylashtiring..."></textarea>
               </div>
               <div class="input-group">
-                <label>Yoki tayyor HTML faylni yuklang (tanlansa, shu fayl aynan o'zi ko'rsatiladi)</label>
-                <input type="file" id="rt-passage-filepick-${i}" accept=".html,.htm,text/html" onchange="handleReadingHtmlUpload(this, ${i})" />
-                <textarea id="rt-passage-htmlfile-${i}" style="display:none;"></textarea>
-                <div id="rt-passage-filestatus-${i}" style="font-size:0.8rem; margin-top:8px;"></div>
-                <div style="font-size:0.78rem; color: var(--text-muted); margin-top:6px; line-height:1.5;">
-                  \ud83d\udca1 Agar HTML faylning o'zida savollar va to'g'ri javoblar bo'lsa
-                  (o'quvchi to'g'ridan-to'g'ri o'sha fayl ichida ishlaydi), pastdagi
-                  "Savollar" bo'limini bo'sh qoldiring — tizim faylni o'z-o'zini
-                  tekshiradigan test deb qabul qiladi. Bunday holda HTML fayl
-                  yakunda quyidagi kodni ishga tushirishi kerak:
-                  <code style="display:block; background:rgba(0,0,0,0.35); padding:6px 8px; border-radius:6px; margin-top:4px; white-space:pre-wrap; font-size:0.72rem;">window.parent.postMessage({emeraldReading:true, correct:7, total:10}, "*");</code>
-                </div>
+                <label>Instruksiya (savollar tepasida ko'rinadi, masalan: "Quyidagi gaplar matnga mos keladimi, aniqlang.")</label>
+                <textarea id="rt-passage-instruction-${i}" rows="2" placeholder="Masalan: Do the following statements agree with the information given in the passage?"></textarea>
               </div>
               <div class="input-group">
-                <label>Savollar (ixtiyoriy — HTML fayl o'zi tekshiradigan bo'lsa bo'sh qoldiring)</label>
+                <label>Savollar (chap tomonda instruksiya ostida ko'rsatiladi)</label>
                 <div id="rt-questions-${i}"></div>
                 <button type="button" class="q-add-btn" onclick="addReadingQuestionBlock(${i})">+ Savol qo'shish</button>
                 <button type="button" class="btn-danger" style="margin-left:8px; padding:8px 12px; font-size:0.78rem;" onclick="clearReadingQuestionBlocks(${i})">Savollarni tozalash</button>
@@ -8379,10 +8342,11 @@ pen — ruchka 🖊"
 
         for (let i = 0; i < count; i++) {
           const textEl = document.getElementById(`rt-passage-text-${i}`);
-          const htmlFileEl = document.getElementById(`rt-passage-htmlfile-${i}`);
+          const instructionEl = document.getElementById(
+            `rt-passage-instruction-${i}`
+          );
           const text = textEl.value.trim();
-          const htmlFileContent = htmlFileEl ? htmlFileEl.value : "";
-          const hasHtmlFile = htmlFileContent.trim().length > 0;
+          const instruction = instructionEl ? instructionEl.value.trim() : "";
 
           const holder = document.getElementById(`rt-questions-${i}`);
           const blocks = holder ? [...holder.children] : [];
@@ -8405,14 +8369,9 @@ pen — ruchka 🖊"
             questions.push({ type, text: qText, answer, options });
           }
 
-          // HTML fayl yuklangan bo'lsa va o'sha fayl o'zi savol-javoblarni
-          // o'z ichiga olgan (o'z-o'zini tekshiradigan) bo'lsa, qo'lda savol
-          // kiritish shart emas — bunday holda "selfGraded" deb belgilaymiz.
-          const isSelfGraded = hasHtmlFile && questions.length === 0;
-
-          if ((!hasHtmlFile && !text) || (!hasHtmlFile && questions.length === 0)) {
+          if (!text || questions.length === 0) {
             alert(
-              "Iltimos, har bir passage uchun matn (yoki HTML fayl) va kamida bitta savol (to'g'ri javobi bilan) kiriting!"
+              "Iltimos, har bir passage uchun matn va kamida bitta savol (to'g'ri javobi bilan) kiriting!"
             );
             return;
           }
@@ -8424,11 +8383,9 @@ pen — ruchka 🖊"
 
           passages.push({
             label: defaultLabel,
-            contentType: hasHtmlFile ? "html_file" : "text",
-            text: hasHtmlFile ? "" : text,
-            html: hasHtmlFile ? htmlFileContent : "",
+            text,
+            instruction,
             questions,
-            selfGraded: isSelfGraded,
           });
         }
 
@@ -8708,7 +8665,6 @@ pen — ruchka 🖊"
 
         activeReadingTask = task;
         activeReadingSubmission = existing || null;
-        emeraldReadingSelfResults = {};
 
         document.getElementById("reading-task-list-card").classList.add("hidden");
         document.getElementById("reading-result-card").classList.add("hidden");
@@ -8722,54 +8678,39 @@ pen — ruchka 🖊"
         wrap.innerHTML = task.passages
           .map((p, pIdx) => {
             let qHtml = "";
-            if (p.selfGraded) {
-              const prior = emeraldReadingSelfResults[pIdx];
-              qHtml = `
-                <div id="reading-selfgraded-status-${pIdx}" class="feedback-box" style="margin-top: 10px; font-size: 0.85rem; color: var(--text-muted);">
-                  ${
-                    prior
-                      ? `<span style="color: var(--emerald-light);">\u2705 Ushbu qism yakunlandi: ${prior.correct}/${prior.total} to'g'ri javob.</span>`
-                      : "\u23f3 Yuqoridagi test oynasida savollarni bajaring — yakunlagach natija shu yerda ko'rinadi."
-                  }
+            const qs = normalizeReadingQuestions(p);
+            qs.forEach((q, i) => {
+              qCounter++;
+              const qText = q.text ? q.text : `Savol ${qCounter}`;
+              qHtml += `
+                <div class="input-group" style="margin-bottom: 8px;">
+                  <label>${qCounter}. ${qText}</label>
+                  ${renderReadingAnswerInput(pIdx, i, q)}
                 </div>
               `;
-            } else {
-              const qs = normalizeReadingQuestions(p);
-              qs.forEach((q, i) => {
-                qCounter++;
-                const qText = q.text ? q.text : `Savol ${qCounter}`;
-                qHtml += `
-                  <div class="input-group" style="margin-bottom: 8px;">
-                    <label>${qCounter}. ${qText}</label>
-                    ${renderReadingAnswerInput(pIdx, i, q)}
-                  </div>
-                `;
-              });
-            }
-            const passageContentHtml =
-              p.contentType === "html_file"
-                ? `<iframe id="reading-passage-iframe-${pIdx}" style="width:100%; min-height:420px; height:420px; border:1px solid var(--card-border); border-radius:8px; background:#fff; margin:10px 0;" sandbox="allow-same-origin allow-scripts"></iframe>`
-                : `<div class="reading-passage-body ${
-                    looksLikeHtml(p.text) ? "is-html" : ""
-                  }" style="max-height: 260px; overflow-y: auto; margin: 10px 0; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px; font-size: 0.9rem;">${p.text}</div>`;
+            });
+            const instructionHtml = p.instruction
+              ? `<div class="reading-instruction-box">${p.instruction}</div>`
+              : "";
+            const passageContentHtml = `<div class="reading-passage-body ${
+              looksLikeHtml(p.text) ? "is-html" : ""
+            }">${p.text}</div>`;
             return `
               <div class="feedback-box" style="margin: 14px 0; padding: 14px;">
                 <strong style="color: var(--emerald-light);">\ud83d\udcd6 ${p.label}</strong>
-                ${passageContentHtml}
-                ${qHtml}
+                <div class="reading-split-layout">
+                  <div class="reading-questions-col">
+                    ${instructionHtml}
+                    ${qHtml}
+                  </div>
+                  <div class="reading-passage-col">
+                    ${passageContentHtml}
+                  </div>
+                </div>
               </div>
             `;
           })
           .join("");
-
-        // HTML fayl orqali yuklangan passagelar uchun srcdoc'ni JS orqali beramiz
-        // (shunda ichidagi qo'shtirnoq/teglar bilan bog'liq muammolar bo'lmaydi)
-        task.passages.forEach((p, pIdx) => {
-          if (p.contentType === "html_file") {
-            const frame = document.getElementById(`reading-passage-iframe-${pIdx}`);
-            if (frame) frame.srcdoc = p.html;
-          }
-        });
 
         if (task.timeMode === "unlimited") {
           clearInterval(readingTimerInterval);
@@ -8823,35 +8764,11 @@ pen — ruchka 🖊"
         if (!activeReadingTask) return;
         const task = activeReadingTask;
 
-        // HTML fayl ichida o'z-o'zini tekshiradigan passage'lar hali natija
-        // yubormagan bo'lsa, vaqt tugab avtomatik yuborilayotgan bo'lmasa,
-        // o'quvchidan avval o'sha qismni yakunlashni so'raymiz.
-        if (!isAutoSubmit) {
-          const notReady = task.passages.find(
-            (p) => p.selfGraded && !emeraldReadingSelfResults[task.passages.indexOf(p)]
-          );
-          if (notReady) {
-            alert(
-              "\u26a0\ufe0f Iltimos, avval yuqoridagi HTML test oynasidagi barcha savollarni bajarib, uni yakunlang."
-            );
-            return;
-          }
-        }
-
         const answers = {};
         let correctCount = 0;
         let totalQuestions = 0;
 
         task.passages.forEach((p, pIdx) => {
-          if (p.selfGraded) {
-            const res = emeraldReadingSelfResults[pIdx] || { correct: 0, total: 0, details: null };
-            totalQuestions += res.total;
-            correctCount += res.correct;
-            answers[`${pIdx}-self`] = res.details
-              ? res.details
-              : `${res.correct}/${res.total}`;
-            return;
-          }
           const qs = normalizeReadingQuestions(p);
           qs.forEach((q, i) => {
             totalQuestions++;
@@ -8948,38 +8865,6 @@ pen — ruchka 🖊"
         let detailsHtml = "";
         task.passages.forEach((p, pIdx) => {
           detailsHtml += `<div style="margin-top: 14px;"><strong style="color: var(--emerald-light);">\ud83d\udcd6 ${p.label}</strong></div>`;
-
-          if (p.selfGraded) {
-            const raw = (sub.answers && sub.answers[`${pIdx}-self`]) || null;
-            const selfDetails = Array.isArray(raw) ? raw : null;
-            const passageTotal = selfDetails
-              ? selfDetails.length
-              : null;
-            if (selfDetails) {
-              selfDetails.forEach((d) => {
-                qCounter++;
-                const isRight = !!d.isCorrect;
-                detailsHtml += `
-                  <div style="display:flex; justify-content:space-between; gap:10px; padding:8px 0; border-bottom:1px solid var(--card-border); font-size:0.85rem;">
-                    <span>${isRight ? "\u2705" : "\u274c"} ${qCounter}. ${d.question || `Savol ${qCounter}`}</span>
-                    <span style="text-align:right; color: var(--text-muted);">
-                      Sizniki: <strong style="color:${
-                        isRight ? "var(--emerald-light)" : "var(--danger)"
-                      }">${d.studentAnswer || "\u2014"}</strong>
-                      ${
-                        isRight
-                          ? ""
-                          : ` | To'g'ri: <strong style="color:var(--gold)">${d.correctAnswer || ""}</strong>`
-                      }
-                    </span>
-                  </div>
-                `;
-              });
-            } else {
-              detailsHtml += `<div style="padding:8px 0; font-size:0.85rem; color: var(--text-muted);">HTML test ichida bajarildi — natija: <strong style="color:var(--emerald-light);">${raw || "—"}</strong></div>`;
-            }
-            return;
-          }
 
           const qs = normalizeReadingQuestions(p);
           qs.forEach((q, i) => {
