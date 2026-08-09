@@ -798,6 +798,175 @@
         margin-bottom: 8px;
       }
 
+      /* ===== IELTS LISTENING: audio player, transkript va savol turlari uslublari ===== */
+      .listening-audio-box {
+        background: rgba(0, 0, 0, 0.25);
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 14px;
+      }
+
+      .listening-audio-box audio {
+        width: 100%;
+        height: 40px;
+        border-radius: 8px;
+      }
+
+      .listening-audio-label {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .listening-no-audio {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        font-style: italic;
+      }
+
+      .listening-instruction-box {
+        font-style: italic;
+        color: var(--text-muted);
+        background: rgba(16, 185, 129, 0.08);
+        border-left: 3px solid var(--emerald-primary);
+        padding: 8px 12px;
+        border-radius: 6px;
+        margin-bottom: 14px;
+        font-size: 0.85rem;
+        line-height: 1.5;
+      }
+
+      .listening-gapfill-item {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--card-border);
+        font-size: 0.92rem;
+        line-height: 1.9;
+      }
+
+      .listening-gapfill-badge {
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: rgba(52, 211, 153, 0.2);
+        color: var(--emerald-light);
+        font-size: 0.75rem;
+        font-weight: 800;
+      }
+
+      .listening-gapfill-text {
+        flex: 1;
+      }
+
+      .listening-gapfill-input {
+        display: inline-block;
+        width: 160px;
+        max-width: 60%;
+        border: none;
+        border-bottom: 2px solid var(--emerald-primary);
+        background: transparent;
+        color: var(--text-main);
+        font-size: 0.92rem;
+        font-weight: 600;
+        text-align: center;
+        padding: 2px 4px;
+        margin: 0 4px;
+      }
+
+      .listening-gapfill-input:focus {
+        outline: none;
+        border-bottom-color: var(--emerald-light);
+        box-shadow: 0 2px 6px -2px var(--emerald-glow-strong);
+      }
+
+      .listening-choice-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 6px;
+      }
+
+      .listening-choice-btn {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--card-border);
+        color: var(--text-main);
+        padding: 8px 14px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        border-radius: 10px;
+        transition: all 0.2s ease;
+      }
+
+      .listening-choice-btn:hover {
+        border-color: var(--card-border-hover);
+      }
+
+      .listening-choice-btn.active {
+        background: var(--emerald-primary);
+        color: #022c22;
+        border-color: var(--emerald-primary);
+        box-shadow: 0 0 12px var(--emerald-glow-strong);
+      }
+
+      .listening-choice-btn-mc {
+        text-align: left;
+        max-width: 100%;
+        white-space: normal;
+      }
+
+      .listening-choice-group-mc {
+        flex-direction: column;
+      }
+
+      .listening-section-block {
+        margin: 14px 0;
+        padding: 14px;
+      }
+
+      .listening-transcript-box {
+        margin-top: 14px;
+        background: rgba(0, 0, 0, 0.25);
+        border: 1px dashed var(--card-border);
+        border-radius: 10px;
+        padding: 12px 14px;
+      }
+
+      .listening-transcript-text {
+        white-space: pre-line;
+        font-size: 0.85rem;
+        line-height: 1.7;
+        color: var(--text-muted);
+        margin-top: 8px;
+      }
+
+      .listening-upload-status {
+        font-size: 0.78rem;
+        margin-top: 6px;
+        color: var(--text-muted);
+      }
+
+      .listening-upload-status.ok {
+        color: var(--emerald-light);
+      }
+
+      .listening-upload-status.err {
+        color: var(--danger);
+      }
+
       .q-add-btn {
         background: rgba(16, 185, 129, 0.15);
         border: 1px dashed var(--emerald-primary);
@@ -2252,6 +2421,9 @@
         <button class="nav-tab-btn" onclick="switchMainTab('reading', event)">
           📖 Reading Vazifalari
         </button>
+        <button class="nav-tab-btn" onclick="switchMainTab('listening', event)">
+          🎧 Listening Vazifalari
+        </button>
         <button class="nav-tab-btn" onclick="switchMainTab('analytics', event)">
           📊 Analitika & Progress
         </button>
@@ -3357,6 +3529,101 @@ pen — ruchka 🖊"
               </table>
             </div>
           </div>
+
+          <!-- IELTS LISTENING TESTI BERISH -->
+          <div class="card">
+            <div class="card-title">
+              <span>🎧</span>
+              <span>IELTS Listening Testi Berish</span>
+            </div>
+            <form onsubmit="addListeningTask(event)">
+              <div class="grid-2">
+                <div class="input-group">
+                  <label>Test Sarlavhasi</label>
+                  <input
+                    type="text"
+                    id="lt-title"
+                    placeholder="Masalan: Academic Listening - Test 3"
+                    required
+                  />
+                </div>
+                <div class="input-group">
+                  <label>Format</label>
+                  <select id="lt-mode" onchange="renderListeningSectionInputs()">
+                    <option value="s1">Faqat Section 1</option>
+                    <option value="s2">Faqat Section 2</option>
+                    <option value="s3">Faqat Section 3</option>
+                    <option value="s4">Faqat Section 4</option>
+                    <option value="full">Full Test (Section 1+2+3+4)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid-2">
+                <div class="input-group">
+                  <label>Vaqt Rejimi</label>
+                  <select id="lt-timemode" onchange="toggleListeningTimeLimit()">
+                    <option value="limited">Vaqt chegaralangan</option>
+                    <option value="unlimited">Cheksiz vaqt</option>
+                  </select>
+                </div>
+                <div class="input-group" id="lt-timelimit-group">
+                  <label>Vaqt chegarasi (daqiqa)</label>
+                  <input type="number" id="lt-timelimit" min="1" value="10" />
+                </div>
+              </div>
+
+              <div id="lt-sections-container"></div>
+
+              <button type="submit" class="submit-btn" style="margin-top: 10px">
+                Testni Saqlash va O'quvchilarga Berish
+              </button>
+            </form>
+          </div>
+
+          <!-- LISTENING TESTLARI RO'YXATI -->
+          <div class="card">
+            <div class="card-title">
+              <span>🗂️</span>
+              <span>Berilgan Listening Testlari</span>
+            </div>
+            <div style="overflow-x: auto">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Sarlavha</th>
+                    <th>Format</th>
+                    <th>Vaqt</th>
+                    <th>Sana</th>
+                    <th style="text-align: right">Amal</th>
+                  </tr>
+                </thead>
+                <tbody id="listening-tasks-admin-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- O'QUVCHILAR LISTENING NATIJALARI -->
+          <div class="card">
+            <div class="card-title">
+              <span>📈</span>
+              <span>O'quvchilar Listening Natijalari</span>
+            </div>
+            <div style="overflow-x: auto">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>O'quvchi</th>
+                    <th>Test</th>
+                    <th>Natija</th>
+                    <th>Urinishlar</th>
+                    <th>Holati</th>
+                  </tr>
+                </thead>
+                <tbody id="listening-submissions-admin-body"></tbody>
+              </table>
+            </div>
+          </div>
         </section>
 
         <!-- O'QUVCHI PANELI -->
@@ -4249,6 +4516,121 @@ pen — ruchka 🖊"
         </div>
       </div>
 
+      <!-- LISTENING VAZIFALARI TAB -->
+      <div id="tab-listening" class="main-tab-content hidden">
+        <!-- O'QUVCHI KO'RINISHI -->
+        <div id="listening-student-view" class="hidden">
+          <div class="card" id="listening-task-list-card">
+            <div class="card-title">
+              <span>🎧</span>
+              <span>IELTS Listening Testlari</span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem">
+              Ustozingiz bergan Listening testlaridan birini tanlang. Audioni
+              tinglab, javoblaringizni kiriting — avtomatik tekshiriladi,
+              hammasini to'g'ri topmaguningizcha qayta urinishingiz mumkin,
+              100% natijadan keyin test qulflanadi. Javob berib bo'lgach har
+              bir bo'lim uchun transkriptni ham ko'rishingiz mumkin bo'ladi.
+            </p>
+            <div
+              id="listening-tasks-container"
+              class="lesson-grid"
+              style="margin-top: 15px"
+            ></div>
+          </div>
+
+          <!-- TEST MAYDONI (Workspace) -->
+          <div class="card hidden" id="listening-workspace-card">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-bottom: 10px;
+              "
+            >
+              <div class="card-title" style="margin-bottom: 0">
+                <span>⏱️</span>
+                <span id="listening-workspace-title">Listening</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px">
+                <span
+                  id="listening-timer"
+                  style="
+                    font-size: 1.6rem;
+                    font-weight: 800;
+                    color: var(--gold);
+                  "
+                  >--:--</span
+                >
+                <button
+                  class="btn-danger"
+                  style="padding: 8px 14px; font-size: 0.8rem"
+                  onclick="cancelListeningWorkspace()"
+                >
+                  ✕ Bekor qilish
+                </button>
+              </div>
+            </div>
+
+            <div id="listening-sections-workspace"></div>
+
+            <button
+              class="btn-primary"
+              style="margin-top: 12px"
+              onclick="submitListeningTask()"
+            >
+              ✅ Javoblarni Tekshirish
+            </button>
+          </div>
+
+          <!-- NATIJA KO'RISH -->
+          <div class="card hidden" id="listening-result-card">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-bottom: 10px;
+              "
+            >
+              <div class="card-title" style="margin-bottom: 0">
+                <span>📊</span>
+                <span id="listening-result-title">Natija</span>
+              </div>
+              <button
+                class="btn-danger"
+                style="padding: 8px 14px; font-size: 0.8rem"
+                onclick="closeListeningResult()"
+              >
+                ✕ Yopish
+              </button>
+            </div>
+            <div id="listening-result-body"></div>
+          </div>
+        </div>
+
+        <!-- USTOZ KO'RINISHI (yo'naltiruvchi eslatma) -->
+        <div id="listening-teacher-view" class="hidden">
+          <div class="card">
+            <div class="card-title">
+              <span>🎧</span>
+              <span>Listening Boshqaruvi</span>
+            </div>
+            <p style="color: var(--text-muted)">
+              Listening testi berish va o'quvchilar natijalarini kuzatish
+              uchun <strong>📚 Darslar & Dashboard</strong> bo'limiga o'ting —
+              u yerda "IELTS Listening Testi Berish" va "O'quvchilar
+              Listening Natijalari" kartalari mavjud.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <!-- 3. ANALITIKA VA PROGRESS PANEL TAB [YANGI FEATURE 2] -->
       <div id="tab-analytics" class="main-tab-content hidden">
         <!-- Umumiy sinf statistikasi (faqat Ustoz uchun) -->
@@ -4838,6 +5220,23 @@ pen — ruchka 🖊"
         return data.publicUrl;
       }
 
+      // IELTS Listening uchun audio faylni Supabase Storage'ga yuklaydi
+      // ("listening-audio" nomli bucket kerak — chat-media kabi public bo'lishi kerak)
+      async function dbUploadListeningAudio(file) {
+        const path = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
+        const { error } = await supabaseClient.storage
+          .from("listening-audio")
+          .upload(path, file);
+        if (error) {
+          console.error("Supabase (audio yuklash) xatolik:", error);
+          return null;
+        }
+        const { data } = supabaseClient.storage
+          .from("listening-audio")
+          .getPublicUrl(path);
+        return data.publicUrl;
+      }
+
       function subscribeRealtimeChat() {
         supabaseClient
           .channel("chat_messages_realtime")
@@ -4860,6 +5259,7 @@ pen — ruchka 🖊"
       let tempAvatarBase64 = null;
       let tempCertFileBase64 = null;
       let selectedChatFile = null;
+      let tempListeningAudioUrls = {}; // { sectionIndex: uploadedAudioUrl }
 
       // Chart Global Instances
       let chartVocabInstance = null;
@@ -4936,6 +5336,9 @@ pen — ruchka 🖊"
         } else if (tab === "reading") {
           document.getElementById("tab-reading").classList.remove("hidden");
           renderReadingTab();
+        } else if (tab === "listening") {
+          document.getElementById("tab-listening").classList.remove("hidden");
+          renderListeningTab();
         } else if (tab === "analytics") {
           document.getElementById("tab-analytics").classList.remove("hidden");
           renderAnalyticsTab();
@@ -5169,6 +5572,8 @@ pen — ruchka 🖊"
           renderWritingSubmissionsAdmin();
           renderReadingTasksAdminList();
           renderReadingSubmissionsAdmin();
+          renderListeningTasksAdminList();
+          renderListeningSubmissionsAdmin();
         } else {
           document
             .getElementById("student-dashboard")
@@ -9417,6 +9822,902 @@ pen — ruchka 🖊"
           .getElementById("reading-task-list-card")
           .classList.remove("hidden");
         renderStudentReadingTasks();
+      }
+
+      /* ============================================================
+         IELTS LISTENING TESTLARI TIZIMI
+         - "lessons" jadvalidan foydalanamiz, lekin type:"listening"
+           bilan belgilanadi.
+         - "submissions" jadvalidan foydalanamiz, submission.type
+           === "listening" bilan ajratiladi. Har bir (o'quvchi, test)
+           juftligi uchun BITTA yozuv bo'ladi va u har urinishda
+           yangilanadi (upsert) — 100% natija olinguncha qulflanmaydi.
+         - Har bir "section" o'zining audio fayli (yoki tashqi URL),
+           instruksiyasi, savollari va transkriptiga ega. Transkript
+           faqat o'quvchi javob yuborgandan (natija chiqqandan) keyin
+           ko'rinadi.
+      ============================================================ */
+
+      const LISTENING_TIME_DEFAULTS = { s1: 10, s2: 10, s3: 10, s4: 10, full: 40 };
+      const LISTENING_MODE_LABELS = {
+        s1: "\ud83c\udfa7 Section 1",
+        s2: "\ud83c\udfa7 Section 2",
+        s3: "\ud83c\udfa7 Section 3",
+        s4: "\ud83c\udfa7 Section 4",
+        full: "\ud83c\udfbc Full Test (1+2+3+4)",
+      };
+
+      let listeningTimerInterval = null;
+      let listeningTimerSecondsLeft = 0;
+      let activeListeningTask = null;
+      let activeListeningSubmission = null;
+
+      function renderListeningTab() {
+        if (!currentUser) return;
+        if (currentUser.role === "teacher") {
+          document
+            .getElementById("listening-teacher-view")
+            .classList.remove("hidden");
+          document.getElementById("listening-student-view").classList.add("hidden");
+        } else {
+          document
+            .getElementById("listening-student-view")
+            .classList.remove("hidden");
+          document.getElementById("listening-teacher-view").classList.add("hidden");
+          document.getElementById("listening-workspace-card").classList.add("hidden");
+          document.getElementById("listening-result-card").classList.add("hidden");
+          document
+            .getElementById("listening-task-list-card")
+            .classList.remove("hidden");
+          renderStudentListeningTasks();
+        }
+      }
+
+      /* ---------- USTOZ: test yaratish formasi ---------- */
+
+      function toggleListeningTimeLimit() {
+        const mode = document.getElementById("lt-timemode").value;
+        const group = document.getElementById("lt-timelimit-group");
+        if (!group) return;
+        group.style.display = mode === "unlimited" ? "none" : "block";
+      }
+
+      /* ---------- Savol turlari (IELTS Listening'dagi BARCHA rasmiy turlar) ---------- */
+      const LISTENING_QUESTION_TYPES = {
+        short_answer: { label: "\u270f\ufe0f Short-answer Question (qisqa javob)", hasOptions: false },
+        multiple_choice: { label: "\ud83d\udd18 Multiple Choice (A/B/C/D)", hasOptions: true },
+        matching: { label: "\ud83d\udd17 Matching (ro'yxatdan tanlash)", hasOptions: true },
+        plan_map_diagram: { label: "\ud83d\uddfa\ufe0f Plan / Map / Diagram Labelling", hasOptions: true },
+        form_completion: { label: "\ud83d\udccb Form Completion (gap fill)", hasOptions: false, isGapFill: true },
+        note_completion: { label: "\ud83d\uddd2\ufe0f Note Completion (gap fill)", hasOptions: false, isGapFill: true },
+        table_completion: { label: "\ud83d\udcca Table Completion (gap fill)", hasOptions: false, isGapFill: true },
+        flow_chart_completion: { label: "\ud83d\udd04 Flow-Chart Completion (gap fill)", hasOptions: false, isGapFill: true },
+        summary_completion: { label: "\ud83d\udcc4 Summary Completion (gap fill)", hasOptions: false, isGapFill: true },
+        sentence_completion: { label: "\ud83d\udcdd Sentence Completion (gap fill)", hasOptions: false, isGapFill: true },
+      };
+
+      function listeningQuestionTypeOptionsHtml(selected) {
+        return Object.entries(LISTENING_QUESTION_TYPES)
+          .map(
+            ([val, cfg]) =>
+              `<option value="${val}" ${
+                val === selected ? "selected" : ""
+              }>${cfg.label}</option>`
+          )
+          .join("");
+      }
+
+      async function handleListeningAudioUpload(event, idx) {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+        const statusEl = document.getElementById(`lt-audio-status-${idx}`);
+        const urlEl = document.getElementById(`lt-audio-url-${idx}`);
+        if (statusEl) {
+          statusEl.textContent = "\u23f3 Audio yuklanmoqda, biroz kuting...";
+          statusEl.className = "listening-upload-status";
+        }
+        const url = await dbUploadListeningAudio(file);
+        if (url) {
+          tempListeningAudioUrls[idx] = url;
+          if (urlEl) urlEl.value = url;
+          if (statusEl) {
+            statusEl.textContent = "\u2705 Audio muvaffaqiyatli yuklandi!";
+            statusEl.className = "listening-upload-status ok";
+          }
+        } else {
+          if (statusEl) {
+            statusEl.textContent =
+              "\u274c Audio yuklashda xatolik. Qayta urinib ko'ring yoki pastga to'g'ridan-to'g'ri audio URL manzilini kiriting.";
+            statusEl.className = "listening-upload-status err";
+          }
+        }
+      }
+
+      function renderListeningSectionInputs() {
+        const modeEl = document.getElementById("lt-mode");
+        const container = document.getElementById("lt-sections-container");
+        if (!modeEl || !container) return;
+        const mode = modeEl.value;
+
+        const timeLimitEl = document.getElementById("lt-timelimit");
+        if (timeLimitEl) timeLimitEl.value = LISTENING_TIME_DEFAULTS[mode];
+
+        const count = mode === "full" ? 4 : 1;
+        const labels =
+          mode === "full"
+            ? ["Section 1", "Section 2", "Section 3", "Section 4"]
+            : [
+                mode === "s1"
+                  ? "Section 1"
+                  : mode === "s2"
+                  ? "Section 2"
+                  : mode === "s3"
+                  ? "Section 3"
+                  : "Section 4",
+              ];
+
+        tempListeningAudioUrls = {};
+
+        let html = "";
+        for (let i = 0; i < count; i++) {
+          html += `
+            <div class="feedback-box listening-section-block">
+              <strong style="color: var(--emerald-light);">\ud83c\udfa7 ${labels[i]}</strong>
+              <div class="input-group" style="margin-top: 10px;">
+                <label>Audio faylni yuklang (mp3/wav) YOKI pastga audio URL manzilini kiriting</label>
+                <input type="file" accept="audio/*" onchange="handleListeningAudioUpload(event, ${i})" />
+                <input type="text" id="lt-audio-url-${i}" placeholder="https://... (audio faylga to'g'ridan-to'g'ri havola)" style="margin-top:8px;" />
+                <div id="lt-audio-status-${i}" class="listening-upload-status"></div>
+              </div>
+              <div class="input-group">
+                <label>Instruksiya (savollar tepasida ko'rinadi, masalan: "Complete the notes below. Write ONE WORD AND/OR A NUMBER for each answer.")</label>
+                <textarea id="lt-section-instruction-${i}" rows="2" placeholder="Masalan: Complete the notes below. Write ONE WORD AND/OR A NUMBER for each answer."></textarea>
+              </div>
+              <div class="input-group">
+                <label>Savollar</label>
+                <div id="lt-questions-${i}"></div>
+                <button type="button" class="q-add-btn" onclick="addListeningQuestionBlock(${i})">+ Savol qo'shish</button>
+                <button type="button" class="btn-danger" style="margin-left:8px; padding:8px 12px; font-size:0.78rem;" onclick="clearListeningQuestionBlocks(${i})">Savollarni tozalash</button>
+              </div>
+              <div class="input-group">
+                <label>\ud83d\udcdc Audio Transkripti (audio matni) — o'quvchi javob yuborgandan keyin natija sahifasida ko'rsatiladi</label>
+                <textarea id="lt-section-transcript-${i}" rows="6" placeholder="Audio matnini (to'liq transkriptini) shu yerga joylashtiring..."></textarea>
+              </div>
+            </div>
+          `;
+        }
+        container.innerHTML = html;
+
+        for (let i = 0; i < count; i++) {
+          addListeningQuestionBlock(i);
+        }
+      }
+
+      function addListeningQuestionBlock(pIdx) {
+        const holder = document.getElementById(`lt-questions-${pIdx}`);
+        if (!holder) return;
+        const qIdx = holder.children.length;
+        const block = document.createElement("div");
+        block.className = "reading-question-block";
+        block.dataset.pidx = pIdx;
+        block.innerHTML = `
+          <button type="button" class="q-remove-btn" onclick="removeListeningQuestionBlock(this, ${pIdx})">\u2715</button>
+          <span class="q-number-badge">Savol #${qIdx + 1}</span>
+          <div class="input-group" style="margin-bottom:8px;">
+            <label>Savol turi</label>
+            <select class="q-type" onchange="updateListeningQuestionFields(this)">
+              ${listeningQuestionTypeOptionsHtml("short_answer")}
+            </select>
+          </div>
+          <div class="input-group" style="margin-bottom:8px;">
+            <label class="q-text-label">Savol matni</label>
+            <input type="text" class="q-text" placeholder="Masalan: What is the name of the museum?" />
+          </div>
+          <div class="q-type-fields"></div>
+        `;
+        holder.appendChild(block);
+        updateListeningQuestionFields(block.querySelector(".q-type"));
+      }
+
+      function clearListeningQuestionBlocks(pIdx) {
+        const holder = document.getElementById(`lt-questions-${pIdx}`);
+        if (holder) holder.innerHTML = "";
+      }
+
+      function removeListeningQuestionBlock(btn, pIdx) {
+        const holder = document.getElementById(`lt-questions-${pIdx}`);
+        btn.closest(".reading-question-block").remove();
+        if (holder) {
+          [...holder.children].forEach((block, idx) => {
+            const badge = block.querySelector(".q-number-badge");
+            if (badge) badge.innerText = `Savol #${idx + 1}`;
+          });
+        }
+      }
+
+      function updateListeningQuestionFields(selectEl) {
+        const block = selectEl.closest(".reading-question-block");
+        const fieldsEl = block.querySelector(".q-type-fields");
+        const textLabelEl = block.querySelector(".q-text-label");
+        const textInputEl = block.querySelector(".q-text");
+        const type = selectEl.value;
+        const cfg = LISTENING_QUESTION_TYPES[type];
+
+        if (cfg.isGapFill) {
+          if (textLabelEl) textLabelEl.textContent = "Gap bilan gap/matn (bo'sh joy o'rniga ___ yozing)";
+          if (textInputEl)
+            textInputEl.placeholder =
+              "Masalan: The museum was founded in ___.";
+        } else {
+          if (textLabelEl) textLabelEl.textContent = "Savol matni";
+          if (textInputEl)
+            textInputEl.placeholder = "Masalan: What is the name of the museum?";
+        }
+
+        if (cfg.isGapFill) {
+          fieldsEl.innerHTML = `
+            <div class="input-group" style="font-size:0.78rem; color: var(--text-muted); line-height:1.5;">
+              \ud83d\udca1 Gap o'rnida uch pastki chiziqcha <code>___</code> yozing — o'quvchiga aynan shu joyda
+              raqamlangan bo'sh maydon chiqadi.
+            </div>
+            <div class="input-group">
+              <label>To'g'ri javob (bo'sh joy uchun)</label>
+              <input type="text" class="q-answer" placeholder="Masalan: 1985" />
+            </div>
+          `;
+        } else if (cfg.hasOptions) {
+          fieldsEl.innerHTML = `
+            <div class="input-group">
+              <label>Variantlar (har biri yangi qatordan, masalan "A) matn")</label>
+              <textarea class="q-options" rows="4" placeholder="A) library&#10;B) museum&#10;C) theatre&#10;D) stadium"></textarea>
+            </div>
+            <div class="input-group">
+              <label>To'g'ri javob (variant harfi, masalan A)</label>
+              <input type="text" class="q-answer" placeholder="A" />
+            </div>
+          `;
+        } else {
+          fieldsEl.innerHTML = `
+            <div class="input-group">
+              <label>To'g'ri javob</label>
+              <input type="text" class="q-answer" placeholder="Masalan: museum" />
+            </div>
+          `;
+        }
+      }
+
+      /* ---------- USTOZ: Listening test qo'shish / ro'yxat ---------- */
+
+      async function addListeningTask(e) {
+        e.preventDefault();
+
+        const mode = document.getElementById("lt-mode").value;
+        const timeMode = document.getElementById("lt-timemode").value;
+        const timeLimitInput =
+          parseInt(document.getElementById("lt-timelimit").value) ||
+          LISTENING_TIME_DEFAULTS[mode];
+
+        const count = mode === "full" ? 4 : 1;
+        const sections = [];
+
+        for (let i = 0; i < count; i++) {
+          const audioUrlEl = document.getElementById(`lt-audio-url-${i}`);
+          const audioUrl = audioUrlEl ? audioUrlEl.value.trim() : "";
+          const instructionEl = document.getElementById(
+            `lt-section-instruction-${i}`
+          );
+          const instruction = instructionEl ? instructionEl.value.trim() : "";
+          const transcriptEl = document.getElementById(
+            `lt-section-transcript-${i}`
+          );
+          const transcript = transcriptEl ? transcriptEl.value.trim() : "";
+
+          const holder = document.getElementById(`lt-questions-${i}`);
+          const blocks = holder ? [...holder.children] : [];
+
+          const questions = [];
+          for (const block of blocks) {
+            const type = block.querySelector(".q-type").value;
+            const qText = block.querySelector(".q-text").value.trim();
+            const answerEl = block.querySelector(".q-answer");
+            const answer = answerEl ? answerEl.value.trim() : "";
+            const optionsEl = block.querySelector(".q-options");
+            const options = optionsEl
+              ? optionsEl.value
+                  .split("\n")
+                  .map((o) => o.trim())
+                  .filter((o) => o)
+              : [];
+
+            if (!answer) continue;
+            questions.push({ type, text: qText, answer, options });
+          }
+
+          if (!audioUrl || questions.length === 0) {
+            alert(
+              "Iltimos, har bir section uchun audio (fayl yuklang yoki URL kiriting) va kamida bitta savol (to'g'ri javobi bilan) kiriting!"
+            );
+            return;
+          }
+
+          const defaultLabel =
+            mode === "full"
+              ? `Section ${i + 1}`
+              : LISTENING_MODE_LABELS[mode].replace(/^\S+\s/, "");
+
+          sections.push({
+            label: defaultLabel,
+            audioUrl,
+            transcript,
+            instruction,
+            questions,
+          });
+        }
+
+        const totalQuestions = sections.reduce(
+          (sum, p) => sum + p.questions.length,
+          0
+        );
+
+        const newTask = {
+          id: Date.now(),
+          type: "listening",
+          title: document.getElementById("lt-title").value,
+          mode,
+          target_level: "ielts",
+          timeMode,
+          timeLimit: timeMode === "unlimited" ? null : timeLimitInput,
+          sections,
+          totalQuestions,
+          created_at: new Date().toLocaleDateString(),
+        };
+
+        lessons.push(newTask);
+        await dbInsertLesson(newTask);
+
+        alert(
+          "\u2705 Listening testi muvaffaqiyatli saqlandi va o'quvchilarga ko'rinadigan bo'ldi!"
+        );
+        e.target.reset();
+        tempListeningAudioUrls = {};
+        renderListeningSectionInputs();
+        renderListeningTasksAdminList();
+      }
+
+      function renderListeningTasksAdminList() {
+        const tbody = document.getElementById("listening-tasks-admin-body");
+        if (!tbody) return;
+        tbody.innerHTML = "";
+
+        const tasks = lessons.filter((l) => l.type === "listening");
+
+        if (tasks.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">Hozircha Listening testi berilmagan.</td></tr>`;
+          return;
+        }
+
+        tasks.forEach((t) => {
+          tbody.innerHTML += `
+          <tr>
+            <td><strong>${t.title}</strong></td>
+            <td><span class="badge">${
+              LISTENING_MODE_LABELS[t.mode] || t.mode
+            }</span></td>
+            <td>${
+              t.timeMode === "unlimited" ? "Cheksiz" : `\u23f1\ufe0f ${t.timeLimit} daq`
+            }</td>
+            <td>${t.created_at}</td>
+            <td style="text-align: right;">
+              <button class="btn-danger" onclick="deleteLesson(${t.id}); renderListeningTasksAdminList();">O'chirish</button>
+            </td>
+          </tr>
+        `;
+        });
+      }
+
+      /* ---------- USTOZ: Listening natijalarini kuzatish ---------- */
+
+      function renderListeningSubmissionsAdmin() {
+        const tbody = document.getElementById("listening-submissions-admin-body");
+        if (!tbody) return;
+        tbody.innerHTML = "";
+
+        const listeningSubs = submissions.filter((s) => s.type === "listening");
+
+        if (listeningSubs.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">Hozircha Listening natijasi yo'q.</td></tr>`;
+          return;
+        }
+
+        listeningSubs.forEach((s) => {
+          const student = users.find((u) => u.email === s.studentEmail);
+          const avatar = student ? student.avatar || DEFAULT_AVATAR : DEFAULT_AVATAR;
+
+          tbody.innerHTML += `
+          <tr>
+            <td>
+              <div class="clickable-user" onclick="openPublicProfile('${s.studentEmail}')">
+                <img src="${avatar}" style="width:28px; height:28px; border-radius:50%; object-fit:cover;" />
+                ${s.studentName}
+              </div>
+            </td>
+            <td>${s.lessonTitle}</td>
+            <td><strong>${s.correctCount}/${s.totalQuestions}</strong></td>
+            <td>${s.attempts || 1}</td>
+            <td><span class="badge ${s.isComplete ? "badge-gold" : ""}">${
+            s.isComplete ? "\u2705 Yakunlangan" : "\ud83d\udd04 Davom etmoqda"
+          }</span></td>
+          </tr>
+        `;
+        });
+      }
+
+      /* ---------- O'QUVCHI: Listening testlarini bajarish ---------- */
+
+      function getMyListeningSubmission(taskId) {
+        return submissions.find(
+          (s) =>
+            s.type === "listening" &&
+            s.studentEmail === currentUser.email &&
+            s.taskId === taskId
+        );
+      }
+
+      function renderStudentListeningTasks() {
+        const container = document.getElementById("listening-tasks-container");
+        if (!container) return;
+
+        const tasks = lessons.filter(
+          (l) => l.type === "listening" && l.target_level === currentUser.level
+        );
+
+        if (tasks.length === 0) {
+          container.innerHTML = `<div class="card"><p style="color: var(--text-muted);">Hozircha sizga Listening testi berilmagan.</p></div>`;
+          return;
+        }
+
+        container.innerHTML = tasks
+          .map((t) => {
+            const mySub = getMyListeningSubmission(t.id);
+            const isComplete = mySub && mySub.isComplete;
+            const attempted = !!mySub;
+
+            let statusBadge = "";
+            let btnLabel = "Boshlash \u2192";
+            let btnAction = `onclick="startListeningWorkspace(${t.id})"`;
+
+            if (isComplete) {
+              statusBadge = `<span class="badge" style="background:rgba(16,185,129,0.25); color:var(--emerald-light);">\u2705 ${mySub.correctCount}/${mySub.totalQuestions}</span>`;
+              btnLabel = "\ud83d\udd12 Yakunlangan — Natijani ko'rish";
+              btnAction = `onclick="viewListeningResult(${t.id})" style="background:rgba(160,160,160,0.25); cursor:pointer;"`;
+            } else if (attempted) {
+              statusBadge = `<span class="badge">\ud83d\udd04 ${mySub.correctCount}/${mySub.totalQuestions}</span>`;
+              btnLabel = "Qayta urinish \u2192";
+            }
+
+            const sectionCount = t.sections ? t.sections.length : 0;
+
+            return `
+            <div class="lesson-card ${isComplete ? "is-done" : ""}">
+              <div style="display:flex; align-items:center; justify-content:space-between;">
+                <div class="lesson-card-icon">\ud83c\udfa7</div>
+                ${statusBadge}
+              </div>
+              <div class="lesson-card-title">${t.title}</div>
+              <div class="lesson-card-excerpt">\ud83d\udd0a ${sectionCount} ta bo'lim \u2022 ${t.totalQuestions || 0} ta savol \u2014 audio orqali tinglang</div>
+              <div class="lesson-card-footer">
+                <span>${LISTENING_MODE_LABELS[t.mode] || t.mode}</span>
+                <span class="badge">${
+                  t.timeMode === "unlimited" ? "\u267e\ufe0f Cheksiz" : `\u23f1\ufe0f ${t.timeLimit} daq`
+                }</span>
+              </div>
+              <div class="lesson-card-open-btn" ${btnAction}>${btnLabel}</div>
+            </div>
+          `;
+          })
+          .join("");
+      }
+
+      function viewListeningResult(taskId) {
+        const task = lessons.find((l) => l.id === taskId && l.type === "listening");
+        const sub = getMyListeningSubmission(taskId);
+        if (!task || !sub) return;
+        renderListeningResultView(task, sub);
+      }
+
+      function normalizeListeningQuestions(p) {
+        return p.questions || [];
+      }
+
+      function selectListeningChoice(btn) {
+        const hidden = document.getElementById(btn.dataset.target);
+        if (hidden) hidden.value = btn.dataset.value;
+        const group = btn.parentElement;
+        group
+          .querySelectorAll(".listening-choice-btn")
+          .forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+      }
+
+      function renderListeningAnswerInput(pIdx, i, q) {
+        const inputId = `listening-ans-${pIdx}-${i}`;
+
+        if (q.type === "multiple_choice") {
+          const btns = (q.options || [])
+            .map((opt) => {
+              const val = extractOptionValue(opt);
+              return `<button type="button" class="listening-choice-btn listening-choice-btn-mc" data-target="${inputId}" data-value="${val}" onclick="selectListeningChoice(this)">${opt}</button>`;
+            })
+            .join("");
+          return `<input type="hidden" id="${inputId}" />
+            <div class="listening-choice-group listening-choice-group-mc">${btns}</div>`;
+        }
+
+        if (q.type === "matching" || q.type === "plan_map_diagram") {
+          const opts = (q.options || [])
+            .map((opt) => {
+              const val = extractOptionValue(opt);
+              return `<option value="${val}">${opt}</option>`;
+            })
+            .join("");
+          return `<select id="${inputId}"><option value="">\u2014 Tanlang \u2014</option>${opts}</select>`;
+        }
+
+        return `<input type="text" id="${inputId}" placeholder="Javobingiz..." />`;
+      }
+
+      function renderListeningQuestionItem(pIdx, i, q, qCounter) {
+        const inputId = `listening-ans-${pIdx}-${i}`;
+        const cfg = LISTENING_QUESTION_TYPES[q.type] || {};
+
+        if (cfg.isGapFill) {
+          const raw = q.text || "";
+          const gapIdx = raw.indexOf("___");
+          const before = gapIdx >= 0 ? raw.slice(0, gapIdx) : raw;
+          const after = gapIdx >= 0 ? raw.slice(gapIdx + 3) : "";
+          return `
+            <div class="listening-gapfill-item">
+              <span class="listening-gapfill-badge">${qCounter}</span>
+              <span class="listening-gapfill-text">
+                ${before}
+                <input type="text" id="${inputId}" class="listening-gapfill-input" placeholder="javob..." />
+                ${after}
+              </span>
+            </div>
+          `;
+        }
+
+        const qText = q.text ? q.text : `Savol ${qCounter}`;
+        return `
+          <div class="input-group" style="margin-bottom: 8px;">
+            <label>${qCounter}. ${qText}</label>
+            ${renderListeningAnswerInput(pIdx, i, q)}
+          </div>
+        `;
+      }
+
+      function startListeningWorkspace(taskId) {
+        const task = lessons.find((l) => l.id === taskId && l.type === "listening");
+        if (!task) return;
+
+        const existing = getMyListeningSubmission(taskId);
+        if (existing && existing.isComplete) {
+          viewListeningResult(taskId);
+          return;
+        }
+
+        const confirmMsg = existing
+          ? `"${task.title}" testini qayta urinasizmi? Oldingi natijangiz: ${existing.correctCount}/${existing.totalQuestions}. Hammasini to'g'ri topguningizcha qayta urinishingiz mumkin.`
+          : `"${task.title}" testini boshlaysizmi? ${
+              task.timeMode === "unlimited"
+                ? "Vaqt cheklanmagan."
+                : `Taymer darhol ishga tushadi (${task.timeLimit} daqiqa) va vaqt tugagach javoblaringiz avtomatik tekshiriladi.`
+            }`;
+        if (!confirm(confirmMsg)) return;
+
+        activeListeningTask = task;
+        activeListeningSubmission = existing || null;
+
+        document.getElementById("listening-task-list-card").classList.add("hidden");
+        document.getElementById("listening-result-card").classList.add("hidden");
+        document
+          .getElementById("listening-workspace-card")
+          .classList.remove("hidden");
+        document.getElementById("listening-workspace-title").innerText = task.title;
+
+        const wrap = document.getElementById("listening-sections-workspace");
+        let qCounter = 0;
+        wrap.innerHTML = task.sections
+          .map((p, pIdx) => {
+            let qHtml = "";
+            const qs = normalizeListeningQuestions(p);
+            qs.forEach((q, i) => {
+              qCounter++;
+              qHtml += renderListeningQuestionItem(pIdx, i, q, qCounter);
+            });
+            const instructionHtml = p.instruction
+              ? `<div class="listening-instruction-box">${p.instruction}</div>`
+              : "";
+            const audioHtml = p.audioUrl
+              ? `<div class="listening-audio-box">
+                   <div class="listening-audio-label">\ud83d\udd0a Audio — ${p.label}</div>
+                   <audio controls preload="metadata" src="${p.audioUrl}"></audio>
+                 </div>`
+              : `<div class="listening-audio-box"><span class="listening-no-audio">Audio biriktirilmagan.</span></div>`;
+            return `
+              <div class="feedback-box listening-section-block">
+                <strong style="color: var(--emerald-light);">\ud83c\udfa7 ${p.label}</strong>
+                ${audioHtml}
+                ${instructionHtml}
+                ${qHtml}
+              </div>
+            `;
+          })
+          .join("");
+
+        if (task.timeMode === "unlimited") {
+          clearInterval(listeningTimerInterval);
+          const timerEl = document.getElementById("listening-timer");
+          timerEl.innerText = "\u267e\ufe0f";
+          timerEl.style.color = "var(--text-muted)";
+        } else {
+          startListeningTimer(task.timeLimit);
+        }
+      }
+
+      function startListeningTimer(minutes) {
+        clearInterval(listeningTimerInterval);
+        listeningTimerSecondsLeft = minutes * 60;
+        updateListeningTimerDisplay();
+
+        listeningTimerInterval = setInterval(() => {
+          listeningTimerSecondsLeft--;
+          updateListeningTimerDisplay();
+
+          if (listeningTimerSecondsLeft <= 0) {
+            clearInterval(listeningTimerInterval);
+            alert("\u23f0 Vaqt tugadi! Javoblaringiz avtomatik tekshirilmoqda.");
+            submitListeningTask(true);
+          }
+        }, 1000);
+      }
+
+      function updateListeningTimerDisplay() {
+        const el = document.getElementById("listening-timer");
+        if (!el) return;
+        const m = Math.max(0, Math.floor(listeningTimerSecondsLeft / 60));
+        const s = Math.max(0, listeningTimerSecondsLeft % 60);
+        el.innerText = `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+        el.style.color =
+          listeningTimerSecondsLeft <= 60 ? "var(--danger)" : "var(--gold)";
+      }
+
+      function cancelListeningWorkspace() {
+        if (!confirm("Rostdan ham bekor qilasizmi? Javoblaringiz saqlanmaydi.")) return;
+        clearInterval(listeningTimerInterval);
+        activeListeningTask = null;
+        activeListeningSubmission = null;
+        document.getElementById("listening-workspace-card").classList.add("hidden");
+        document
+          .getElementById("listening-task-list-card")
+          .classList.remove("hidden");
+      }
+
+      async function submitListeningTask(isAutoSubmit) {
+        if (!activeListeningTask) return;
+        const task = activeListeningTask;
+
+        const answers = {};
+        let correctCount = 0;
+        let totalQuestions = 0;
+
+        task.sections.forEach((p, pIdx) => {
+          const qs = normalizeListeningQuestions(p);
+          qs.forEach((q, i) => {
+            totalQuestions++;
+            const el = document.getElementById(`listening-ans-${pIdx}-${i}`);
+            const studentAns = el ? el.value.trim() : "";
+            answers[`${pIdx}-${i}`] = studentAns;
+            if (
+              studentAns &&
+              studentAns.toLowerCase() === q.answer.trim().toLowerCase()
+            ) {
+              correctCount++;
+            }
+          });
+        });
+
+        clearInterval(listeningTimerInterval);
+
+        const isComplete = totalQuestions > 0 && correctCount === totalQuestions;
+        const wasAlreadyComplete =
+          activeListeningSubmission && activeListeningSubmission.isComplete;
+        const percentScore =
+          totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
+
+        // ===== Listening natijasini Analitika & Progress bo'limiga ulash =====
+        const estimatedListeningBand = Math.max(
+          4,
+          Math.min(9, Math.round((4 + (percentScore / 100) * 5) * 2) / 2)
+        );
+        if (!currentUser.listeningGrowth || currentUser.listeningGrowth.length === 0) {
+          currentUser.listeningGrowth = [0, 0, 0, 0, 0];
+        }
+        currentUser.listeningGrowth[currentUser.listeningGrowth.length - 1] =
+          estimatedListeningBand;
+
+        if (!currentUser.listeningStats) {
+          currentUser.listeningStats = { attempts: 0, totalPercent: 0, bestPercent: 0 };
+        }
+        currentUser.listeningStats.attempts =
+          (currentUser.listeningStats.attempts || 0) + 1;
+        currentUser.listeningStats.totalPercent =
+          (currentUser.listeningStats.totalPercent || 0) + percentScore;
+        currentUser.listeningStats.bestPercent = Math.max(
+          currentUser.listeningStats.bestPercent || 0,
+          percentScore
+        );
+
+        if (!isComplete) {
+          if (!currentUser.weakPoints) currentUser.weakPoints = {};
+          const wrongCount = totalQuestions - correctCount;
+          currentUser.weakPoints[`\ud83c\udfa7 ${task.title}`] =
+            (currentUser.weakPoints[`\ud83c\udfa7 ${task.title}`] || 0) + wrongCount * 5;
+        }
+
+        let sub = activeListeningSubmission;
+        if (sub) {
+          sub.answers = answers;
+          sub.correctCount = correctCount;
+          sub.totalQuestions = totalQuestions;
+          sub.attempts = (sub.attempts || 1) + 1;
+          sub.isComplete = isComplete;
+          sub.lastAttemptAt = new Date().toLocaleString("uz-UZ", {
+            dateStyle: "short",
+            timeStyle: "short",
+          });
+          await dbUpdateSubmission(sub);
+        } else {
+          sub = {
+            id: Date.now(),
+            type: "listening",
+            taskId: task.id,
+            mode: task.mode,
+            studentName: currentUser.full_name,
+            studentEmail: currentUser.email,
+            lessonTitle: task.title,
+            answers,
+            correctCount,
+            totalQuestions,
+            attempts: 1,
+            isComplete,
+            lastAttemptAt: new Date().toLocaleString("uz-UZ", {
+              dateStyle: "short",
+              timeStyle: "short",
+            }),
+          };
+          submissions.push(sub);
+          await dbInsertSubmission(sub);
+        }
+
+        if (isComplete && !wasAlreadyComplete) {
+          currentUser.xp = (currentUser.xp || 0) + 15;
+          currentUser.coins = (currentUser.coins || 0) + 5;
+          if (!currentUser.lessonHistory) currentUser.lessonHistory = [];
+          currentUser.lessonHistory.push({
+            lessonTitle: `\ud83c\udfa7 Listening yakunlandi: ${task.title} (${correctCount}/${totalQuestions})`,
+            date: new Date().toLocaleString("uz-UZ", {
+              dateStyle: "short",
+              timeStyle: "short",
+            }),
+            xp: 15,
+            coins: 5,
+          });
+          loadDashboard(currentUser);
+        }
+
+        await dbSaveUser(currentUser);
+        if (typeof renderAnalyticsTab === "function") {
+          renderAnalyticsTab();
+        }
+
+        activeListeningTask = null;
+        activeListeningSubmission = null;
+
+        document.getElementById("listening-workspace-card").classList.add("hidden");
+        renderListeningResultView(task, sub);
+        renderStudentListeningTasks();
+        renderListeningSubmissionsAdmin();
+      }
+
+      function renderListeningResultView(task, sub) {
+        document.getElementById("listening-task-list-card").classList.add("hidden");
+        document.getElementById("listening-workspace-card").classList.add("hidden");
+        document.getElementById("listening-result-card").classList.remove("hidden");
+        document.getElementById("listening-result-title").innerText = task.title;
+
+        const percent = sub.totalQuestions
+          ? Math.round((sub.correctCount / sub.totalQuestions) * 100)
+          : 0;
+
+        let qCounter = 0;
+        let detailsHtml = "";
+        task.sections.forEach((p, pIdx) => {
+          const audioHtml = p.audioUrl
+            ? `<div class="listening-audio-box">
+                 <div class="listening-audio-label">\ud83d\udd0a Audio — ${p.label}</div>
+                 <audio controls preload="metadata" src="${p.audioUrl}"></audio>
+               </div>`
+            : "";
+          detailsHtml += `<div style="margin-top: 14px;"><strong style="color: var(--emerald-light);">\ud83c\udfa7 ${p.label}</strong></div>${audioHtml}`;
+
+          const qs = normalizeListeningQuestions(p);
+          qs.forEach((q, i) => {
+            qCounter++;
+            const correctAns = q.answer;
+            const studentAns = (sub.answers && sub.answers[`${pIdx}-${i}`]) || "";
+            const isRight =
+              studentAns.trim().toLowerCase() === correctAns.trim().toLowerCase();
+            const qText = (q.text ? q.text : `Savol ${qCounter}`).replace(
+              /___/g,
+              "\u2007\u2007\u2007\u2007\u2007"
+            );
+            detailsHtml += `
+              <div style="display:flex; justify-content:space-between; gap:10px; padding:8px 0; border-bottom:1px solid var(--card-border); font-size:0.85rem;">
+                <span>${isRight ? "\u2705" : "\u274c"} ${qCounter}. ${qText}</span>
+                <span style="text-align:right; color: var(--text-muted);">
+                  Sizniki: <strong style="color:${
+                    isRight ? "var(--emerald-light)" : "var(--danger)"
+                  }">${studentAns || "—"}</strong>
+                  ${
+                    isRight
+                      ? ""
+                      : ` | To'g'ri: <strong style="color:var(--gold)">${correctAns}</strong>`
+                  }
+                </span>
+              </div>
+            `;
+          });
+
+          if (p.transcript) {
+            detailsHtml += `
+              <details class="listening-transcript-box">
+                <summary style="cursor:pointer; font-weight:700; color: var(--emerald-light);">\ud83d\udcdc Transkriptni ko'rish — ${p.label}</summary>
+                <div class="listening-transcript-text">${p.transcript}</div>
+              </details>
+            `;
+          }
+        });
+
+        document.getElementById("listening-result-body").innerHTML = `
+          <div class="feedback-box" style="text-align:center; margin-bottom:15px;">
+            <span class="score-badge-large" style="font-size:1.6rem;">${
+              sub.correctCount
+            }/${sub.totalQuestions} (${percent}%)</span>
+            <p style="margin-top:8px; color: var(--text-muted); font-size:0.85rem;">
+              ${
+                sub.isComplete
+                  ? "\ud83c\udf89 Barcha javoblar to'g'ri! Test qulflandi."
+                  : "Hammasi to'g'ri emas — qayta urinib ko'rishingiz mumkin."
+              }
+              Urinishlar soni: ${sub.attempts || 1}
+            </p>
+          </div>
+          ${detailsHtml}
+          ${
+            sub.isComplete
+              ? ""
+              : `<button class="btn-primary" style="margin-top:15px;" onclick="closeListeningResult(); startListeningWorkspace(${task.id});">\ud83d\udd04 Qayta urinish</button>`
+          }
+        `;
+      }
+
+      function closeListeningResult() {
+        document.getElementById("listening-result-card").classList.add("hidden");
+        document
+          .getElementById("listening-task-list-card")
+          .classList.remove("hidden");
+        renderStudentListeningTasks();
       }
 
     </script>
