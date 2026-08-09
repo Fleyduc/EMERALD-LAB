@@ -629,8 +629,6 @@
 
       .reading-passage-col.highlight-mode-active {
         cursor: text;
-        outline: 2px dashed var(--emerald-primary);
-        outline-offset: 2px;
       }
 
       #reading-passages-workspace mark.user-highlight {
@@ -639,6 +637,25 @@
         border-radius: 3px;
         padding: 0 1px;
         cursor: pointer;
+      }
+
+      .reading-highlight-popup {
+        position: fixed;
+        z-index: 999;
+        background: var(--emerald-primary);
+        color: #022c22;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 20px;
+        font-size: 0.78rem;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45), 0 0 12px var(--emerald-glow-strong);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transform: translate(-50%, -100%);
+        white-space: nowrap;
       }
 
       @media (max-width: 760px) {
@@ -4164,14 +4181,9 @@ pen — ruchka 🖊"
                 ↺
               </button>
               <span class="reading-toolbar-divider"></span>
-              <button
-                id="reading-highlight-toggle-btn"
-                class="reading-toolbar-btn"
-                onclick="toggleReadingHighlightMode()"
-                title="Passage matnini belgilash rejimini yoqish/o'chirish"
-              >
-                🖍️ Belgilash: OFF
-              </button>
+              <span class="reading-toolbar-label" style="text-transform: none">
+                🖍️ Belgilash uchun matnni tanlang
+              </span>
               <button
                 class="reading-toolbar-btn"
                 onclick="clearReadingHighlights()"
@@ -8945,20 +8957,17 @@ pen — ruchka 🖊"
       }
 
       // ===== IELTS READING: passage matnini highlight (belgilash) qilish =====
-      function toggleReadingHighlightMode() {
-        readingHighlightModeOn = !readingHighlightModeOn;
-        const btn = document.getElementById("reading-highlight-toggle-btn");
-        if (btn) {
-          btn.innerText = readingHighlightModeOn
-            ? "🖍️ Belgilash: ON"
-            : "🖍️ Belgilash: OFF";
-          btn.classList.toggle("active", readingHighlightModeOn);
+      // UX: matn tanlanganda ekranda kichik "🖍️ Belgilash" tugmasi paydo bo'ladi,
+      // bosilganda o'sha bo'lak sariq rangda belgilanadi. Bu yondashuv brauzerlar
+      // orasidagi "mouseup paytida selection hali to'liq shakllanmagan bo'ladi"
+      // degan keng tarqalgan muammoni chetlab o'tadi (setTimeout bilan kechiktiriladi).
+      let readingHighlightPopupEl = null;
+
+      function removeReadingHighlightPopup() {
+        if (readingHighlightPopupEl) {
+          readingHighlightPopupEl.remove();
+          readingHighlightPopupEl = null;
         }
-        document
-          .querySelectorAll("#reading-passages-workspace .reading-passage-col")
-          .forEach((el) => {
-            el.classList.toggle("highlight-mode-active", readingHighlightModeOn);
-          });
       }
 
       function clearReadingHighlights() {
@@ -8971,21 +8980,23 @@ pen — ruchka 🖊"
             parent.removeChild(mark);
             parent.normalize();
           });
+        removeReadingHighlightPopup();
       }
 
       function getReadingSelectedTextNodes(range) {
         const nodes = [];
-        const walker = document.createTreeWalker(
-          range.commonAncestorContainer,
-          NodeFilter.SHOW_TEXT,
-          {
-            acceptNode(node) {
-              return range.intersectsNode(node) && node.nodeValue.trim() !== ""
-                ? NodeFilter.FILTER_ACCEPT
-                : NodeFilter.FILTER_REJECT;
-            },
-          }
-        );
+        const root =
+          range.commonAncestorContainer.nodeType === 1
+            ? range.commonAncestorContainer
+            : range.commonAncestorContainer.parentNode;
+        if (!root) return nodes;
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+          acceptNode(node) {
+            return range.intersectsNode(node) && node.nodeValue.trim() !== ""
+              ? NodeFilter.FILTER_ACCEPT
+              : NodeFilter.FILTER_REJECT;
+          },
+        });
         let n;
         while ((n = walker.nextNode())) nodes.push(n);
         return nodes;
@@ -8995,12 +9006,6 @@ pen — ruchka 🖊"
         const sel = window.getSelection();
         if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
         const range = sel.getRangeAt(0);
-        const startEl =
-          range.startContainer.nodeType === 1
-            ? range.startContainer
-            : range.startContainer.parentElement;
-        const passageEl = startEl ? startEl.closest(".reading-passage-col") : null;
-        if (!passageEl) return;
 
         const textNodes = getReadingSelectedTextNodes(range);
         textNodes.forEach((node) => {
@@ -9016,23 +9021,73 @@ pen — ruchka 🖊"
           try {
             nodeRange.surroundContents(mark);
           } catch (e) {
-            /* murakkab (bir necha node'ga bo'lingan) tanlovlar o'tkazib yuboriladi */
+            /* murakkab (bir necha node oralig'idagi) tanlovlar o'tkazib yuboriladi */
           }
         });
         sel.removeAllRanges();
+        removeReadingHighlightPopup();
+      }
+
+      function showReadingHighlightPopup(range) {
+        removeReadingHighlightPopup();
+        const rect = range.getBoundingClientRect();
+        if (!rect || (rect.width === 0 && rect.height === 0)) return;
+
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "reading-highlight-popup";
+        btn.innerHTML = "🖍️ Belgilash";
+        btn.style.left = `${rect.left + rect.width / 2}px`;
+        btn.style.top = `${Math.max(36, rect.top - 8)}px`;
+        // mousedown'da preventDefault — aks holda tugma bosilganda selection yo'qolib ketadi
+        btn.addEventListener("mousedown", (e) => e.preventDefault());
+        btn.addEventListener("touchstart", (e) => e.preventDefault(), { passive: false });
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          highlightCurrentReadingSelection();
+        });
+        document.body.appendChild(btn);
+        readingHighlightPopupEl = btn;
+      }
+
+      function checkReadingSelectionForPopup() {
+        const sel = window.getSelection();
+        if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
+          removeReadingHighlightPopup();
+          return;
+        }
+        const range = sel.getRangeAt(0);
+        const startEl =
+          range.startContainer.nodeType === 1
+            ? range.startContainer
+            : range.startContainer.parentElement;
+        const passageEl = startEl ? startEl.closest(".reading-passage-col") : null;
+        if (!passageEl) {
+          removeReadingHighlightPopup();
+          return;
+        }
+        showReadingHighlightPopup(range);
       }
 
       function handleReadingHighlightPointerUp(e) {
-        if (!readingHighlightModeOn) return;
+        if (e.target && e.target.closest && e.target.closest(".reading-highlight-popup"))
+          return;
         const passageEl = e.target.closest
           ? e.target.closest(".reading-passage-col")
           : null;
-        if (!passageEl) return;
-        highlightCurrentReadingSelection();
+        if (!passageEl) {
+          removeReadingHighlightPopup();
+          return;
+        }
+        // Selection ba'zi brauzerlarda mouseup/touchend paytida hali to'liq
+        // shakllanmagan bo'lishi mumkin — shu sabab keyingi "tick"da tekshiramiz.
+        setTimeout(checkReadingSelectionForPopup, 0);
       }
 
       document.addEventListener("mouseup", handleReadingHighlightPointerUp);
       document.addEventListener("touchend", handleReadingHighlightPointerUp);
+      document.addEventListener("scroll", removeReadingHighlightPopup, true);
 
       document.addEventListener("click", (e) => {
         if (e.target && e.target.classList && e.target.classList.contains("user-highlight")) {
@@ -9117,11 +9172,7 @@ pen — ruchka 🖊"
         }
 
         readingHighlightModeOn = false;
-        const highlightBtn = document.getElementById("reading-highlight-toggle-btn");
-        if (highlightBtn) {
-          highlightBtn.innerText = "🖍️ Belgilash: OFF";
-          highlightBtn.classList.remove("active");
-        }
+        removeReadingHighlightPopup();
         applyReadingFontScale();
       }
 
@@ -9157,6 +9208,7 @@ pen — ruchka 🖊"
         clearInterval(readingTimerInterval);
         activeReadingTask = null;
         activeReadingSubmission = null;
+        removeReadingHighlightPopup();
         document.getElementById("reading-workspace-card").classList.add("hidden");
         document
           .getElementById("reading-task-list-card")
@@ -9192,6 +9244,40 @@ pen — ruchka 🖊"
         const isComplete = totalQuestions > 0 && correctCount === totalQuestions;
         const wasAlreadyComplete =
           activeReadingSubmission && activeReadingSubmission.isComplete;
+        const percentScore =
+          totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
+
+        // ===== Reading natijasini Analitika & Progress bo'limiga ulash =====
+        // Har bir urinishdan so'ng o'quvchining "Reading Growth" band bahosi
+        // haqiqiy natija asosida yangilanadi (Analitika grafigida ko'rinadi).
+        const estimatedReadingBand = Math.max(
+          4,
+          Math.min(9, Math.round((4 + (percentScore / 100) * 5) * 2) / 2)
+        );
+        if (!currentUser.readingGrowth || currentUser.readingGrowth.length === 0) {
+          currentUser.readingGrowth = [0, 0, 0, 0, 0];
+        }
+        currentUser.readingGrowth[currentUser.readingGrowth.length - 1] =
+          estimatedReadingBand;
+
+        if (!currentUser.readingStats) {
+          currentUser.readingStats = { attempts: 0, totalPercent: 0, bestPercent: 0 };
+        }
+        currentUser.readingStats.attempts =
+          (currentUser.readingStats.attempts || 0) + 1;
+        currentUser.readingStats.totalPercent =
+          (currentUser.readingStats.totalPercent || 0) + percentScore;
+        currentUser.readingStats.bestPercent = Math.max(
+          currentUser.readingStats.bestPercent || 0,
+          percentScore
+        );
+
+        if (!isComplete) {
+          if (!currentUser.weakPoints) currentUser.weakPoints = {};
+          const wrongCount = totalQuestions - correctCount;
+          currentUser.weakPoints[`📖 ${task.title}`] =
+            (currentUser.weakPoints[`📖 ${task.title}`] || 0) + wrongCount * 5;
+        }
 
         let sub = activeReadingSubmission;
         if (sub) {
@@ -9241,8 +9327,12 @@ pen — ruchka 🖊"
             xp: 15,
             coins: 5,
           });
-          await dbSaveUser(currentUser);
           loadDashboard(currentUser);
+        }
+
+        await dbSaveUser(currentUser);
+        if (typeof renderAnalyticsTab === "function") {
+          renderAnalyticsTab();
         }
 
         activeReadingTask = null;
