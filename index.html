@@ -8141,26 +8141,34 @@ pen — ruchka 🖊"
 
       function handleReadingHtmlUpload(inputEl, pIdx) {
         const file = inputEl.files && inputEl.files[0];
+        const statusEl = document.getElementById(`rt-passage-filestatus-${pIdx}`);
+        const hiddenEl = document.getElementById(`rt-passage-htmlfile-${pIdx}`);
         if (!file) return;
 
         const reader = new FileReader();
         reader.onload = (e) => {
-          let content = String(e.target.result || "");
-
-          // Agar to'liq HTML hujjat yuklangan bo'lsa (<!DOCTYPE>, <html>, <head> bilan),
-          // faqat <body> ichidagi qismini olamiz — shunda sarlavha/uslub kod aralashmaydi.
-          const bodyMatch = content.match(/<body[^>]*>([\s\S]*)<\/body>/i);
-          if (bodyMatch) content = bodyMatch[1];
-
-          const textarea = document.getElementById(`rt-passage-text-${pIdx}`);
-          if (textarea) {
-            textarea.value = content.trim();
+          if (hiddenEl) hiddenEl.value = String(e.target.result || "");
+          if (statusEl) {
+            statusEl.innerHTML = `
+              <span style="color: var(--emerald-light);">\u2705 "${file.name}" yuklandi</span>
+              — bu passage aynan shu fayl ko'rinishida ko'rsatiladi (yuqoridagi matn maydoni e'tiborga olinmaydi).
+              <button type="button" class="btn-danger" style="padding:4px 10px; font-size:0.75rem; margin-left:8px;" onclick="clearReadingHtmlUpload(${pIdx})">\u2715 Olib tashlash</button>
+            `;
           }
         };
         reader.onerror = () => {
           alert("\u274c Faylni o'qishda xatolik yuz berdi. Boshqa faylni sinab ko'ring.");
         };
         reader.readAsText(file, "UTF-8");
+      }
+
+      function clearReadingHtmlUpload(pIdx) {
+        const hiddenEl = document.getElementById(`rt-passage-htmlfile-${pIdx}`);
+        const statusEl = document.getElementById(`rt-passage-filestatus-${pIdx}`);
+        const fileInput = document.getElementById(`rt-passage-filepick-${pIdx}`);
+        if (hiddenEl) hiddenEl.value = "";
+        if (statusEl) statusEl.innerHTML = "";
+        if (fileInput) fileInput.value = "";
       }
 
       function renderReadingPassageInputs() {
@@ -8190,18 +8198,17 @@ pen — ruchka 🖊"
             <div class="feedback-box" style="margin: 14px 0; padding: 14px;">
               <strong style="color: var(--emerald-light);">\ud83d\udcd6 ${labels[i]}</strong>
               <div class="input-group" style="margin-top: 10px;">
-                <label>Matn (Passage matni)</label>
-                <textarea id="rt-passage-text-${i}" rows="8" placeholder="Reading passage matnini shu yerga joylashtiring... (yoki pastdan tayyor HTML fayl yuklang)" required></textarea>
+                <label>Matn (Passage matni) — qo'lda yozing</label>
+                <textarea id="rt-passage-text-${i}" rows="8" placeholder="Reading passage matnini shu yerga joylashtiring..."></textarea>
               </div>
               <div class="input-group">
-                <label>Yoki tayyor HTML fayl yuklang (ixtiyoriy)</label>
-                <input type="file" accept=".html,.htm,text/html" onchange="handleReadingHtmlUpload(this, ${i})" />
-                <p style="font-size:0.75rem; color: var(--text-muted); margin-top:6px;">
-                  Fayl tanlansangiz, uning matni yuqoridagi katakchaga avtomatik joylanadi — kerak bo'lsa tahrirlashingiz mumkin.
-                </p>
+                <label>Yoki tayyor HTML faylni yuklang (tanlansa, shu fayl aynan o'zi ko'rsatiladi)</label>
+                <input type="file" id="rt-passage-filepick-${i}" accept=".html,.htm,text/html" onchange="handleReadingHtmlUpload(this, ${i})" />
+                <textarea id="rt-passage-htmlfile-${i}" style="display:none;"></textarea>
+                <div id="rt-passage-filestatus-${i}" style="font-size:0.8rem; margin-top:8px;"></div>
               </div>
               <div class="input-group">
-                <label>Savollar</label>
+                <label>Savollar (javob kaliti — natija va XP shu orqali hisoblanadi)</label>
                 <div id="rt-questions-${i}"></div>
                 <button type="button" class="q-add-btn" onclick="addReadingQuestionBlock(${i})">+ Savol qo'shish</button>
               </div>
@@ -8308,7 +8315,11 @@ pen — ruchka 🖊"
 
         for (let i = 0; i < count; i++) {
           const textEl = document.getElementById(`rt-passage-text-${i}`);
+          const htmlFileEl = document.getElementById(`rt-passage-htmlfile-${i}`);
           const text = textEl.value.trim();
+          const htmlFileContent = htmlFileEl ? htmlFileEl.value : "";
+          const hasHtmlFile = htmlFileContent.trim().length > 0;
+
           const holder = document.getElementById(`rt-questions-${i}`);
           const blocks = holder ? [...holder.children] : [];
 
@@ -8330,9 +8341,9 @@ pen — ruchka 🖊"
             questions.push({ type, text: qText, answer, options });
           }
 
-          if (!text || questions.length === 0) {
+          if ((!hasHtmlFile && !text) || questions.length === 0) {
             alert(
-              "Iltimos, har bir passage uchun matn va kamida bitta savol (to'g'ri javobi bilan) kiriting!"
+              "Iltimos, har bir passage uchun matn (yoki HTML fayl) va kamida bitta savol (to'g'ri javobi bilan) kiriting!"
             );
             return;
           }
@@ -8342,7 +8353,13 @@ pen — ruchka 🖊"
               ? `Passage ${i + 1}`
               : READING_MODE_LABELS[mode].replace(/^\S+\s/, "");
 
-          passages.push({ label: defaultLabel, text, questions });
+          passages.push({
+            label: defaultLabel,
+            contentType: hasHtmlFile ? "html_file" : "text",
+            text: hasHtmlFile ? "" : text,
+            html: hasHtmlFile ? htmlFileContent : "",
+            questions,
+          });
         }
 
         const totalQuestions = passages.reduce(
@@ -8645,19 +8662,30 @@ pen — ruchka 🖊"
                 </div>
               `;
             });
+            const passageContentHtml =
+              p.contentType === "html_file"
+                ? `<iframe id="reading-passage-iframe-${pIdx}" style="width:100%; min-height:420px; height:420px; border:1px solid var(--card-border); border-radius:8px; background:#fff; margin:10px 0;" sandbox="allow-same-origin allow-scripts"></iframe>`
+                : `<div class="reading-passage-body ${
+                    looksLikeHtml(p.text) ? "is-html" : ""
+                  }" style="max-height: 260px; overflow-y: auto; margin: 10px 0; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px; font-size: 0.9rem;">${p.text}</div>`;
             return `
               <div class="feedback-box" style="margin: 14px 0; padding: 14px;">
                 <strong style="color: var(--emerald-light);">\ud83d\udcd6 ${p.label}</strong>
-                <div class="reading-passage-body ${
-                  looksLikeHtml(p.text) ? "is-html" : ""
-                }" style="max-height: 260px; overflow-y: auto; margin: 10px 0; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px; font-size: 0.9rem;">${
-              p.text
-            }</div>
+                ${passageContentHtml}
                 ${qHtml}
               </div>
             `;
           })
           .join("");
+
+        // HTML fayl orqali yuklangan passagelar uchun srcdoc'ni JS orqali beramiz
+        // (shunda ichidagi qo'shtirnoq/teglar bilan bog'liq muammolar bo'lmaydi)
+        task.passages.forEach((p, pIdx) => {
+          if (p.contentType === "html_file") {
+            const frame = document.getElementById(`reading-passage-iframe-${pIdx}`);
+            if (frame) frame.srcdoc = p.html;
+          }
+        });
 
         if (task.timeMode === "unlimited") {
           clearInterval(readingTimerInterval);
