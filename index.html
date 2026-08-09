@@ -8075,6 +8075,56 @@ pen — ruchka 🖊"
       let activeReadingTask = null;
       let activeReadingSubmission = null; // mavjud progress yozuvi (bo'lsa)
 
+      // HTML fayl ichida o'z-o'zini tekshiradigan passage'lardan kelgan natijalar
+      // Kalit: passage indexi (pIdx), Qiymat: { correct, total, details }
+      let emeraldReadingSelfResults = {};
+
+      /* HTML fayl ichidagi test (masalan, o'z JS'i bilan tekshiradigan interaktiv
+         savollar) yakunlanganda quyidagi formatda xabar yuborishi kerak:
+
+         window.parent.postMessage({
+           emeraldReading: true,
+           correct: 7,      // to'g'ri javoblar soni
+           total: 10,       // jami savollar soni
+           details: [       // ixtiyoriy: har bir savol tafsiloti
+             { question: "1-savol matni", studentAnswer: "A", correctAnswer: "A", isCorrect: true }
+           ]
+         }, "*");
+
+         Shu xabar kelganda platforma uni ushlab, o'quvchiga ham, ustozga ham
+         natijani ko'rsatadi (Reading natijalari jadvalida). */
+      window.addEventListener("message", handleEmeraldReadingMessage);
+
+      function handleEmeraldReadingMessage(event) {
+        const data = event.data;
+        if (!data || data.emeraldReading !== true) return;
+        if (!activeReadingTask) return;
+
+        // Xabar qaysi passage(iframe)dan kelganini contentWindow orqali aniqlaymiz
+        let matchedPIdx = null;
+        activeReadingTask.passages.forEach((p, pIdx) => {
+          if (p.contentType !== "html_file") return;
+          const frame = document.getElementById(`reading-passage-iframe-${pIdx}`);
+          if (frame && frame.contentWindow === event.source) {
+            matchedPIdx = pIdx;
+          }
+        });
+        if (matchedPIdx === null) return;
+
+        const correct = Math.max(0, parseInt(data.correct, 10) || 0);
+        const total = Math.max(0, parseInt(data.total, 10) || 0);
+        const details = Array.isArray(data.details) ? data.details : null;
+
+        emeraldReadingSelfResults[matchedPIdx] = { correct, total, details };
+
+        const statusEl = document.getElementById(
+          `reading-selfgraded-status-${matchedPIdx}`
+        );
+        if (statusEl) {
+          statusEl.innerHTML = `<span style="color: var(--emerald-light);">\u2705 Ushbu qism yakunlandi: ${correct}/${total} to'g'ri javob.</span> Endi pastdagi "Javoblarni Tekshirish" tugmasini bosing.`;
+        }
+      }
+
       function renderReadingTab() {
         if (!currentUser) return;
         if (currentUser.role === "teacher") {
@@ -8206,11 +8256,20 @@ pen — ruchka 🖊"
                 <input type="file" id="rt-passage-filepick-${i}" accept=".html,.htm,text/html" onchange="handleReadingHtmlUpload(this, ${i})" />
                 <textarea id="rt-passage-htmlfile-${i}" style="display:none;"></textarea>
                 <div id="rt-passage-filestatus-${i}" style="font-size:0.8rem; margin-top:8px;"></div>
+                <div style="font-size:0.78rem; color: var(--text-muted); margin-top:6px; line-height:1.5;">
+                  \ud83d\udca1 Agar HTML faylning o'zida savollar va to'g'ri javoblar bo'lsa
+                  (o'quvchi to'g'ridan-to'g'ri o'sha fayl ichida ishlaydi), pastdagi
+                  "Savollar" bo'limini bo'sh qoldiring — tizim faylni o'z-o'zini
+                  tekshiradigan test deb qabul qiladi. Bunday holda HTML fayl
+                  yakunda quyidagi kodni ishga tushirishi kerak:
+                  <code style="display:block; background:rgba(0,0,0,0.35); padding:6px 8px; border-radius:6px; margin-top:4px; white-space:pre-wrap; font-size:0.72rem;">window.parent.postMessage({emeraldReading:true, correct:7, total:10}, "*");</code>
+                </div>
               </div>
               <div class="input-group">
-                <label>Savollar (javob kaliti — natija va XP shu orqali hisoblanadi)</label>
+                <label>Savollar (ixtiyoriy — HTML fayl o'zi tekshiradigan bo'lsa bo'sh qoldiring)</label>
                 <div id="rt-questions-${i}"></div>
                 <button type="button" class="q-add-btn" onclick="addReadingQuestionBlock(${i})">+ Savol qo'shish</button>
+                <button type="button" class="btn-danger" style="margin-left:8px; padding:8px 12px; font-size:0.78rem;" onclick="clearReadingQuestionBlocks(${i})">Savollarni tozalash</button>
               </div>
             </div>
           `;
@@ -8247,6 +8306,11 @@ pen — ruchka 🖊"
         `;
         holder.appendChild(block);
         updateReadingQuestionFields(block.querySelector(".q-type"));
+      }
+
+      function clearReadingQuestionBlocks(pIdx) {
+        const holder = document.getElementById(`rt-questions-${pIdx}`);
+        if (holder) holder.innerHTML = "";
       }
 
       function removeReadingQuestionBlock(btn, pIdx) {
@@ -8341,7 +8405,12 @@ pen — ruchka 🖊"
             questions.push({ type, text: qText, answer, options });
           }
 
-          if ((!hasHtmlFile && !text) || questions.length === 0) {
+          // HTML fayl yuklangan bo'lsa va o'sha fayl o'zi savol-javoblarni
+          // o'z ichiga olgan (o'z-o'zini tekshiradigan) bo'lsa, qo'lda savol
+          // kiritish shart emas — bunday holda "selfGraded" deb belgilaymiz.
+          const isSelfGraded = hasHtmlFile && questions.length === 0;
+
+          if ((!hasHtmlFile && !text) || (!hasHtmlFile && questions.length === 0)) {
             alert(
               "Iltimos, har bir passage uchun matn (yoki HTML fayl) va kamida bitta savol (to'g'ri javobi bilan) kiriting!"
             );
@@ -8359,6 +8428,7 @@ pen — ruchka 🖊"
             text: hasHtmlFile ? "" : text,
             html: hasHtmlFile ? htmlFileContent : "",
             questions,
+            selfGraded: isSelfGraded,
           });
         }
 
@@ -8638,6 +8708,7 @@ pen — ruchka 🖊"
 
         activeReadingTask = task;
         activeReadingSubmission = existing || null;
+        emeraldReadingSelfResults = {};
 
         document.getElementById("reading-task-list-card").classList.add("hidden");
         document.getElementById("reading-result-card").classList.add("hidden");
@@ -8651,17 +8722,30 @@ pen — ruchka 🖊"
         wrap.innerHTML = task.passages
           .map((p, pIdx) => {
             let qHtml = "";
-            const qs = normalizeReadingQuestions(p);
-            qs.forEach((q, i) => {
-              qCounter++;
-              const qText = q.text ? q.text : `Savol ${qCounter}`;
-              qHtml += `
-                <div class="input-group" style="margin-bottom: 8px;">
-                  <label>${qCounter}. ${qText}</label>
-                  ${renderReadingAnswerInput(pIdx, i, q)}
+            if (p.selfGraded) {
+              const prior = emeraldReadingSelfResults[pIdx];
+              qHtml = `
+                <div id="reading-selfgraded-status-${pIdx}" class="feedback-box" style="margin-top: 10px; font-size: 0.85rem; color: var(--text-muted);">
+                  ${
+                    prior
+                      ? `<span style="color: var(--emerald-light);">\u2705 Ushbu qism yakunlandi: ${prior.correct}/${prior.total} to'g'ri javob.</span>`
+                      : "\u23f3 Yuqoridagi test oynasida savollarni bajaring — yakunlagach natija shu yerda ko'rinadi."
+                  }
                 </div>
               `;
-            });
+            } else {
+              const qs = normalizeReadingQuestions(p);
+              qs.forEach((q, i) => {
+                qCounter++;
+                const qText = q.text ? q.text : `Savol ${qCounter}`;
+                qHtml += `
+                  <div class="input-group" style="margin-bottom: 8px;">
+                    <label>${qCounter}. ${qText}</label>
+                    ${renderReadingAnswerInput(pIdx, i, q)}
+                  </div>
+                `;
+              });
+            }
             const passageContentHtml =
               p.contentType === "html_file"
                 ? `<iframe id="reading-passage-iframe-${pIdx}" style="width:100%; min-height:420px; height:420px; border:1px solid var(--card-border); border-radius:8px; background:#fff; margin:10px 0;" sandbox="allow-same-origin allow-scripts"></iframe>`
@@ -8739,11 +8823,35 @@ pen — ruchka 🖊"
         if (!activeReadingTask) return;
         const task = activeReadingTask;
 
+        // HTML fayl ichida o'z-o'zini tekshiradigan passage'lar hali natija
+        // yubormagan bo'lsa, vaqt tugab avtomatik yuborilayotgan bo'lmasa,
+        // o'quvchidan avval o'sha qismni yakunlashni so'raymiz.
+        if (!isAutoSubmit) {
+          const notReady = task.passages.find(
+            (p) => p.selfGraded && !emeraldReadingSelfResults[task.passages.indexOf(p)]
+          );
+          if (notReady) {
+            alert(
+              "\u26a0\ufe0f Iltimos, avval yuqoridagi HTML test oynasidagi barcha savollarni bajarib, uni yakunlang."
+            );
+            return;
+          }
+        }
+
         const answers = {};
         let correctCount = 0;
         let totalQuestions = 0;
 
         task.passages.forEach((p, pIdx) => {
+          if (p.selfGraded) {
+            const res = emeraldReadingSelfResults[pIdx] || { correct: 0, total: 0, details: null };
+            totalQuestions += res.total;
+            correctCount += res.correct;
+            answers[`${pIdx}-self`] = res.details
+              ? res.details
+              : `${res.correct}/${res.total}`;
+            return;
+          }
           const qs = normalizeReadingQuestions(p);
           qs.forEach((q, i) => {
             totalQuestions++;
@@ -8840,6 +8948,39 @@ pen — ruchka 🖊"
         let detailsHtml = "";
         task.passages.forEach((p, pIdx) => {
           detailsHtml += `<div style="margin-top: 14px;"><strong style="color: var(--emerald-light);">\ud83d\udcd6 ${p.label}</strong></div>`;
+
+          if (p.selfGraded) {
+            const raw = (sub.answers && sub.answers[`${pIdx}-self`]) || null;
+            const selfDetails = Array.isArray(raw) ? raw : null;
+            const passageTotal = selfDetails
+              ? selfDetails.length
+              : null;
+            if (selfDetails) {
+              selfDetails.forEach((d) => {
+                qCounter++;
+                const isRight = !!d.isCorrect;
+                detailsHtml += `
+                  <div style="display:flex; justify-content:space-between; gap:10px; padding:8px 0; border-bottom:1px solid var(--card-border); font-size:0.85rem;">
+                    <span>${isRight ? "\u2705" : "\u274c"} ${qCounter}. ${d.question || `Savol ${qCounter}`}</span>
+                    <span style="text-align:right; color: var(--text-muted);">
+                      Sizniki: <strong style="color:${
+                        isRight ? "var(--emerald-light)" : "var(--danger)"
+                      }">${d.studentAnswer || "\u2014"}</strong>
+                      ${
+                        isRight
+                          ? ""
+                          : ` | To'g'ri: <strong style="color:var(--gold)">${d.correctAnswer || ""}</strong>`
+                      }
+                    </span>
+                  </div>
+                `;
+              });
+            } else {
+              detailsHtml += `<div style="padding:8px 0; font-size:0.85rem; color: var(--text-muted);">HTML test ichida bajarildi — natija: <strong style="color:var(--emerald-light);">${raw || "—"}</strong></div>`;
+            }
+            return;
+          }
+
           const qs = normalizeReadingQuestions(p);
           qs.forEach((q, i) => {
             qCounter++;
