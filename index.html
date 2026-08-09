@@ -1890,6 +1890,9 @@
         <button class="nav-tab-btn" onclick="switchMainTab('writing', event)">
           ✍️ Writing Vazifalari
         </button>
+        <button class="nav-tab-btn" onclick="switchMainTab('reading', event)">
+          📖 Reading Vazifalari
+        </button>
         <button class="nav-tab-btn" onclick="switchMainTab('analytics', event)">
           📊 Analitika & Progress
         </button>
@@ -2901,6 +2904,100 @@ pen — ruchka 🖊"
               </table>
             </div>
           </div>
+
+          <!-- IELTS READING TESTI BERISH -->
+          <div class="card">
+            <div class="card-title">
+              <span>📖</span>
+              <span>IELTS Reading Testi Berish</span>
+            </div>
+            <form onsubmit="addReadingTask(event)">
+              <div class="grid-2">
+                <div class="input-group">
+                  <label>Test Sarlavhasi</label>
+                  <input
+                    type="text"
+                    id="rt-title"
+                    placeholder="Masalan: Academic Reading - Test 3"
+                    required
+                  />
+                </div>
+                <div class="input-group">
+                  <label>Format</label>
+                  <select id="rt-mode" onchange="renderReadingPassageInputs()">
+                    <option value="p1">Faqat Passage 1</option>
+                    <option value="p2">Faqat Passage 2</option>
+                    <option value="p3">Faqat Passage 3</option>
+                    <option value="full">Full Test (Passage 1 + 2 + 3)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid-2">
+                <div class="input-group">
+                  <label>Vaqt Rejimi</label>
+                  <select id="rt-timemode" onchange="toggleReadingTimeLimit()">
+                    <option value="limited">Vaqt chegaralangan</option>
+                    <option value="unlimited">Cheksiz vaqt</option>
+                  </select>
+                </div>
+                <div class="input-group" id="rt-timelimit-group">
+                  <label>Vaqt chegarasi (daqiqa)</label>
+                  <input type="number" id="rt-timelimit" min="1" value="20" />
+                </div>
+              </div>
+
+              <div id="rt-passages-container"></div>
+
+              <button type="submit" class="submit-btn" style="margin-top: 10px">
+                Testni Saqlash va O'quvchilarga Berish
+              </button>
+            </form>
+          </div>
+
+          <!-- READING TESTLARI RO'YXATI -->
+          <div class="card">
+            <div class="card-title">
+              <span>🗂️</span>
+              <span>Berilgan Reading Testlari</span>
+            </div>
+            <div style="overflow-x: auto">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Sarlavha</th>
+                    <th>Format</th>
+                    <th>Vaqt</th>
+                    <th>Sana</th>
+                    <th style="text-align: right">Amal</th>
+                  </tr>
+                </thead>
+                <tbody id="reading-tasks-admin-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- O'QUVCHILAR READING NATIJALARI -->
+          <div class="card">
+            <div class="card-title">
+              <span>📈</span>
+              <span>O'quvchilar Reading Natijalari</span>
+            </div>
+            <div style="overflow-x: auto">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>O'quvchi</th>
+                    <th>Test</th>
+                    <th>Natija</th>
+                    <th>Urinishlar</th>
+                    <th>Holati</th>
+                  </tr>
+                </thead>
+                <tbody id="reading-submissions-admin-body"></tbody>
+              </table>
+            </div>
+          </div>
         </section>
 
         <!-- O'QUVCHI PANELI -->
@@ -3642,6 +3739,119 @@ pen — ruchka 🖊"
         </div>
       </div>
 
+      <!-- READING VAZIFALARI TAB -->
+      <div id="tab-reading" class="main-tab-content hidden">
+        <!-- O'QUVCHI KO'RINISHI -->
+        <div id="reading-student-view" class="hidden">
+          <div class="card" id="reading-task-list-card">
+            <div class="card-title">
+              <span>📖</span>
+              <span>IELTS Reading Testlari</span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem">
+              Ustozingiz bergan Reading testlaridan birini tanlang. Javoblaringiz
+              avtomatik tekshiriladi — hammasini to'g'ri topmaguningizcha qayta
+              urinishingiz mumkin, 100% natijadan keyin test qulflanadi.
+            </p>
+            <div
+              id="reading-tasks-container"
+              class="lesson-grid"
+              style="margin-top: 15px"
+            ></div>
+          </div>
+
+          <!-- TEST MAYDONI (Workspace) -->
+          <div class="card hidden" id="reading-workspace-card">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-bottom: 10px;
+              "
+            >
+              <div class="card-title" style="margin-bottom: 0">
+                <span>⏱️</span>
+                <span id="reading-workspace-title">Reading</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px">
+                <span
+                  id="reading-timer"
+                  style="
+                    font-size: 1.6rem;
+                    font-weight: 800;
+                    color: var(--gold);
+                  "
+                  >--:--</span
+                >
+                <button
+                  class="btn-danger"
+                  style="padding: 8px 14px; font-size: 0.8rem"
+                  onclick="cancelReadingWorkspace()"
+                >
+                  ✕ Bekor qilish
+                </button>
+              </div>
+            </div>
+
+            <div id="reading-passages-workspace"></div>
+
+            <button
+              class="btn-primary"
+              style="margin-top: 12px"
+              onclick="submitReadingTask()"
+            >
+              ✅ Javoblarni Tekshirish
+            </button>
+          </div>
+
+          <!-- NATIJA KO'RISH -->
+          <div class="card hidden" id="reading-result-card">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-bottom: 10px;
+              "
+            >
+              <div class="card-title" style="margin-bottom: 0">
+                <span>📊</span>
+                <span id="reading-result-title">Natija</span>
+              </div>
+              <button
+                class="btn-danger"
+                style="padding: 8px 14px; font-size: 0.8rem"
+                onclick="closeReadingResult()"
+              >
+                ✕ Yopish
+              </button>
+            </div>
+            <div id="reading-result-body"></div>
+          </div>
+        </div>
+
+        <!-- USTOZ KO'RINISHI (yo'naltiruvchi eslatma) -->
+        <div id="reading-teacher-view" class="hidden">
+          <div class="card">
+            <div class="card-title">
+              <span>📖</span>
+              <span>Reading Boshqaruvi</span>
+            </div>
+            <p style="color: var(--text-muted)">
+              Reading testi berish va o'quvchilar natijalarini kuzatish uchun
+              <strong>📚 Darslar & Dashboard</strong> bo'limiga o'ting — u
+              yerda "IELTS Reading Testi Berish" va "O'quvchilar Reading
+              Natijalari" kartalari mavjud.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <!-- 3. ANALITIKA VA PROGRESS PANEL TAB [YANGI FEATURE 2] -->
       <div id="tab-analytics" class="main-tab-content hidden">
         <!-- Umumiy sinf statistikasi (faqat Ustoz uchun) -->
@@ -4270,6 +4480,7 @@ pen — ruchka 🖊"
 
       window.onload = async function () {
         changeLang(currentLang);
+        renderReadingPassageInputs();
 
         try {
           await dbLoadAll();
@@ -4325,6 +4536,9 @@ pen — ruchka 🖊"
         } else if (tab === "writing") {
           document.getElementById("tab-writing").classList.remove("hidden");
           renderWritingTab();
+        } else if (tab === "reading") {
+          document.getElementById("tab-reading").classList.remove("hidden");
+          renderReadingTab();
         } else if (tab === "analytics") {
           document.getElementById("tab-analytics").classList.remove("hidden");
           renderAnalyticsTab();
@@ -4556,6 +4770,8 @@ pen — ruchka 🖊"
           renderTeacherCertificates();
           renderWritingTasksAdminList();
           renderWritingSubmissionsAdmin();
+          renderReadingTasksAdminList();
+          renderReadingSubmissionsAdmin();
         } else {
           document
             .getElementById("student-dashboard")
@@ -7717,6 +7933,580 @@ pen — ruchka 🖊"
             }
           })
           .join("");
+      }
+
+      /* ============================================================
+         IELTS READING TESTLARI TIZIMI
+         - "lessons" jadvalidan foydalanamiz, lekin type:"reading"
+           bilan belgilanadi.
+         - "submissions" jadvalidan foydalanamiz, submission.type
+           === "reading" bilan ajratiladi. Har bir (o'quvchi, test)
+           juftligi uchun BITTA yozuv bo'ladi va u har urinishda
+           yangilanadi (upsert) — 100% natija olinguncha qulflanmaydi.
+      ============================================================ */
+
+      const READING_TIME_DEFAULTS = { p1: 20, p2: 20, p3: 20, full: 60 };
+      const READING_MODE_LABELS = {
+        p1: "\ud83d\udcd8 Passage 1",
+        p2: "\ud83d\udcd7 Passage 2",
+        p3: "\ud83d\udcd9 Passage 3",
+        full: "\ud83d\udcda Full Test (1+2+3)",
+      };
+
+      let readingTimerInterval = null;
+      let readingTimerSecondsLeft = 0;
+      let activeReadingTask = null;
+      let activeReadingSubmission = null; // mavjud progress yozuvi (bo'lsa)
+
+      function renderReadingTab() {
+        if (!currentUser) return;
+        if (currentUser.role === "teacher") {
+          document
+            .getElementById("reading-teacher-view")
+            .classList.remove("hidden");
+          document.getElementById("reading-student-view").classList.add("hidden");
+        } else {
+          document
+            .getElementById("reading-student-view")
+            .classList.remove("hidden");
+          document.getElementById("reading-teacher-view").classList.add("hidden");
+          document.getElementById("reading-workspace-card").classList.add("hidden");
+          document.getElementById("reading-result-card").classList.add("hidden");
+          document
+            .getElementById("reading-task-list-card")
+            .classList.remove("hidden");
+          renderStudentReadingTasks();
+        }
+      }
+
+      /* ---------- USTOZ: test yaratish formasi ---------- */
+
+      function toggleReadingTimeLimit() {
+        const mode = document.getElementById("rt-timemode").value;
+        const group = document.getElementById("rt-timelimit-group");
+        if (!group) return;
+        group.style.display = mode === "unlimited" ? "none" : "block";
+      }
+
+      function renderReadingPassageInputs() {
+        const modeEl = document.getElementById("rt-mode");
+        const container = document.getElementById("rt-passages-container");
+        if (!modeEl || !container) return;
+        const mode = modeEl.value;
+
+        const timeLimitEl = document.getElementById("rt-timelimit");
+        if (timeLimitEl) timeLimitEl.value = READING_TIME_DEFAULTS[mode];
+
+        const count = mode === "full" ? 3 : 1;
+        const labels =
+          mode === "full"
+            ? ["Passage 1", "Passage 2", "Passage 3"]
+            : [
+                mode === "p1"
+                  ? "Passage 1"
+                  : mode === "p2"
+                  ? "Passage 2"
+                  : "Passage 3",
+              ];
+
+        let html = "";
+        for (let i = 0; i < count; i++) {
+          html += `
+            <div class="feedback-box" style="margin: 14px 0; padding: 14px;">
+              <strong style="color: var(--emerald-light);">\ud83d\udcd6 ${labels[i]}</strong>
+              <div class="input-group" style="margin-top: 10px;">
+                <label>Matn (Passage matni)</label>
+                <textarea id="rt-passage-text-${i}" rows="8" placeholder="Reading passage matnini shu yerga joylashtiring..." required></textarea>
+              </div>
+              <div class="input-group">
+                <label>Savollar (har bir savol alohida qatorda, ixtiyoriy)</label>
+                <textarea id="rt-passage-questions-${i}" rows="4" placeholder="1. What is the main idea of paragraph A?&#10;2. The author believes that...&#10;(har bir savolni yangi qatordan yozing)"></textarea>
+              </div>
+              <div class="input-group">
+                <label>To'g'ri Javoblar (har bir javob alohida qatorda, savollar tartibida)</label>
+                <textarea id="rt-passage-answers-${i}" rows="4" placeholder="TRUE&#10;NOT GIVEN&#10;migration&#10;(har bir javobni yangi qatordan yozing — savollar soni shu yerdagi qatorlar soniga teng bo'ladi)" required></textarea>
+              </div>
+            </div>
+          `;
+        }
+        container.innerHTML = html;
+      }
+
+      /* ---------- USTOZ: Reading test qo'shish / ro'yxat ---------- */
+
+      async function addReadingTask(e) {
+        e.preventDefault();
+
+        const mode = document.getElementById("rt-mode").value;
+        const timeMode = document.getElementById("rt-timemode").value;
+        const timeLimitInput =
+          parseInt(document.getElementById("rt-timelimit").value) ||
+          READING_TIME_DEFAULTS[mode];
+
+        const count = mode === "full" ? 3 : 1;
+        const passages = [];
+
+        for (let i = 0; i < count; i++) {
+          const textEl = document.getElementById(`rt-passage-text-${i}`);
+          const questionsEl = document.getElementById(`rt-passage-questions-${i}`);
+          const answersEl = document.getElementById(`rt-passage-answers-${i}`);
+          const text = textEl.value.trim();
+          const questions = questionsEl.value
+            .split("\n")
+            .map((q) => q.trim())
+            .filter((q) => q);
+          const answers = answersEl.value
+            .split("\n")
+            .map((a) => a.trim())
+            .filter((a) => a);
+
+          if (!text || answers.length === 0) {
+            alert(
+              "Iltimos, har bir passage uchun matn va kamida bitta to'g'ri javob kiriting!"
+            );
+            return;
+          }
+
+          const defaultLabel =
+            mode === "full"
+              ? `Passage ${i + 1}`
+              : READING_MODE_LABELS[mode].replace(/^\S+\s/, "");
+
+          passages.push({ label: defaultLabel, text, questions, answers });
+        }
+
+        const totalQuestions = passages.reduce(
+          (sum, p) => sum + p.answers.length,
+          0
+        );
+
+        const newTask = {
+          id: Date.now(),
+          type: "reading",
+          title: document.getElementById("rt-title").value,
+          mode,
+          target_level: "ielts",
+          timeMode,
+          timeLimit: timeMode === "unlimited" ? null : timeLimitInput,
+          passages,
+          totalQuestions,
+          created_at: new Date().toLocaleDateString(),
+        };
+
+        lessons.push(newTask);
+        await dbInsertLesson(newTask);
+
+        alert(
+          "\u2705 Reading testi muvaffaqiyatli saqlandi va o'quvchilarga ko'rinadigan bo'ldi!"
+        );
+        e.target.reset();
+        renderReadingPassageInputs();
+        renderReadingTasksAdminList();
+      }
+
+      function renderReadingTasksAdminList() {
+        const tbody = document.getElementById("reading-tasks-admin-body");
+        if (!tbody) return;
+        tbody.innerHTML = "";
+
+        const tasks = lessons.filter((l) => l.type === "reading");
+
+        if (tasks.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">Hozircha Reading testi berilmagan.</td></tr>`;
+          return;
+        }
+
+        tasks.forEach((t) => {
+          tbody.innerHTML += `
+          <tr>
+            <td><strong>${t.title}</strong></td>
+            <td><span class="badge">${
+              READING_MODE_LABELS[t.mode] || t.mode
+            }</span></td>
+            <td>${
+              t.timeMode === "unlimited" ? "Cheksiz" : `\u23f1\ufe0f ${t.timeLimit} daq`
+            }</td>
+            <td>${t.created_at}</td>
+            <td style="text-align: right;">
+              <button class="btn-danger" onclick="deleteLesson(${t.id}); renderReadingTasksAdminList();">O'chirish</button>
+            </td>
+          </tr>
+        `;
+        });
+      }
+
+      /* ---------- USTOZ: Reading natijalarini kuzatish ---------- */
+
+      function renderReadingSubmissionsAdmin() {
+        const tbody = document.getElementById("reading-submissions-admin-body");
+        if (!tbody) return;
+        tbody.innerHTML = "";
+
+        const readingSubs = submissions.filter((s) => s.type === "reading");
+
+        if (readingSubs.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">Hozircha Reading natijasi yo'q.</td></tr>`;
+          return;
+        }
+
+        readingSubs.forEach((s) => {
+          const student = users.find((u) => u.email === s.studentEmail);
+          const avatar = student ? student.avatar || DEFAULT_AVATAR : DEFAULT_AVATAR;
+
+          tbody.innerHTML += `
+          <tr>
+            <td>
+              <div class="clickable-user" onclick="openPublicProfile('${s.studentEmail}')">
+                <img src="${avatar}" style="width:28px; height:28px; border-radius:50%; object-fit:cover;" />
+                ${s.studentName}
+              </div>
+            </td>
+            <td>${s.lessonTitle}</td>
+            <td><strong>${s.correctCount}/${s.totalQuestions}</strong></td>
+            <td>${s.attempts || 1}</td>
+            <td><span class="badge ${s.isComplete ? "badge-gold" : ""}">${
+            s.isComplete ? "\u2705 Yakunlangan" : "\ud83d\udd04 Davom etmoqda"
+          }</span></td>
+          </tr>
+        `;
+        });
+      }
+
+      /* ---------- O'QUVCHI: Reading testlarini bajarish ---------- */
+
+      function getMyReadingSubmission(taskId) {
+        return submissions.find(
+          (s) =>
+            s.type === "reading" &&
+            s.studentEmail === currentUser.email &&
+            s.taskId === taskId
+        );
+      }
+
+      function renderStudentReadingTasks() {
+        const container = document.getElementById("reading-tasks-container");
+        if (!container) return;
+
+        const tasks = lessons.filter(
+          (l) => l.type === "reading" && l.target_level === currentUser.level
+        );
+
+        if (tasks.length === 0) {
+          container.innerHTML = `<div class="card"><p style="color: var(--text-muted);">Hozircha sizga Reading testi berilmagan.</p></div>`;
+          return;
+        }
+
+        container.innerHTML = tasks
+          .map((t) => {
+            const mySub = getMyReadingSubmission(t.id);
+            const isComplete = mySub && mySub.isComplete;
+            const attempted = !!mySub;
+
+            let statusBadge = "";
+            let btnLabel = "Boshlash \u2192";
+            let btnAction = `onclick="startReadingWorkspace(${t.id})"`;
+
+            if (isComplete) {
+              statusBadge = `<span class="badge" style="background:rgba(16,185,129,0.25); color:var(--emerald-light);">\u2705 ${mySub.correctCount}/${mySub.totalQuestions}</span>`;
+              btnLabel = "\ud83d\udd12 Yakunlangan — Natijani ko'rish";
+              btnAction = `onclick="viewReadingResult(${t.id})" style="background:rgba(160,160,160,0.25); cursor:pointer;"`;
+            } else if (attempted) {
+              statusBadge = `<span class="badge">\ud83d\udd04 ${mySub.correctCount}/${mySub.totalQuestions}</span>`;
+              btnLabel = "Qayta urinish \u2192";
+            }
+
+            const firstPassageText = (t.passages[0] && t.passages[0].text) || "";
+
+            return `
+            <div class="lesson-card ${isComplete ? "is-done" : ""}">
+              <div style="display:flex; align-items:center; justify-content:space-between;">
+                <div class="lesson-card-icon">\ud83d\udcd6</div>
+                ${statusBadge}
+              </div>
+              <div class="lesson-card-title">${t.title}</div>
+              <div class="lesson-card-excerpt">${firstPassageText.slice(0, 90)}${
+              firstPassageText.length > 90 ? "…" : ""
+            }</div>
+              <div class="lesson-card-footer">
+                <span>${READING_MODE_LABELS[t.mode] || t.mode}</span>
+                <span class="badge">${
+                  t.timeMode === "unlimited" ? "\u267e\ufe0f Cheksiz" : `\u23f1\ufe0f ${t.timeLimit} daq`
+                }</span>
+              </div>
+              <div class="lesson-card-open-btn" ${btnAction}>${btnLabel}</div>
+            </div>
+          `;
+          })
+          .join("");
+      }
+
+      function viewReadingResult(taskId) {
+        const task = lessons.find((l) => l.id === taskId && l.type === "reading");
+        const sub = getMyReadingSubmission(taskId);
+        if (!task || !sub) return;
+        renderReadingResultView(task, sub);
+      }
+
+      function startReadingWorkspace(taskId) {
+        const task = lessons.find((l) => l.id === taskId && l.type === "reading");
+        if (!task) return;
+
+        const existing = getMyReadingSubmission(taskId);
+        if (existing && existing.isComplete) {
+          viewReadingResult(taskId);
+          return;
+        }
+
+        const confirmMsg = existing
+          ? `"${task.title}" testini qayta urinasizmi? Oldingi natijangiz: ${existing.correctCount}/${existing.totalQuestions}. Hammasini to'g'ri topguningizcha qayta urinishingiz mumkin.`
+          : `"${task.title}" testini boshlaysizmi? ${
+              task.timeMode === "unlimited"
+                ? "Vaqt cheklanmagan."
+                : `Taymer darhol ishga tushadi (${task.timeLimit} daqiqa) va vaqt tugagach javoblaringiz avtomatik tekshiriladi.`
+            }`;
+        if (!confirm(confirmMsg)) return;
+
+        activeReadingTask = task;
+        activeReadingSubmission = existing || null;
+
+        document.getElementById("reading-task-list-card").classList.add("hidden");
+        document.getElementById("reading-result-card").classList.add("hidden");
+        document
+          .getElementById("reading-workspace-card")
+          .classList.remove("hidden");
+        document.getElementById("reading-workspace-title").innerText = task.title;
+
+        const wrap = document.getElementById("reading-passages-workspace");
+        let qCounter = 0;
+        wrap.innerHTML = task.passages
+          .map((p, pIdx) => {
+            let qHtml = "";
+            const qCount = p.answers.length;
+            for (let i = 0; i < qCount; i++) {
+              qCounter++;
+              const qText = p.questions[i] ? p.questions[i] : `Savol ${qCounter}`;
+              qHtml += `
+                <div class="input-group" style="margin-bottom: 8px;">
+                  <label>${qCounter}. ${qText}</label>
+                  <input type="text" id="reading-ans-${pIdx}-${i}" placeholder="Javobingiz..." />
+                </div>
+              `;
+            }
+            return `
+              <div class="feedback-box" style="margin: 14px 0; padding: 14px;">
+                <strong style="color: var(--emerald-light);">\ud83d\udcd6 ${p.label}</strong>
+                <div style="max-height: 260px; overflow-y: auto; white-space: pre-line; margin: 10px 0; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px; font-size: 0.9rem;">${p.text}</div>
+                ${qHtml}
+              </div>
+            `;
+          })
+          .join("");
+
+        if (task.timeMode === "unlimited") {
+          clearInterval(readingTimerInterval);
+          const timerEl = document.getElementById("reading-timer");
+          timerEl.innerText = "\u267e\ufe0f";
+          timerEl.style.color = "var(--text-muted)";
+        } else {
+          startReadingTimer(task.timeLimit);
+        }
+      }
+
+      function startReadingTimer(minutes) {
+        clearInterval(readingTimerInterval);
+        readingTimerSecondsLeft = minutes * 60;
+        updateReadingTimerDisplay();
+
+        readingTimerInterval = setInterval(() => {
+          readingTimerSecondsLeft--;
+          updateReadingTimerDisplay();
+
+          if (readingTimerSecondsLeft <= 0) {
+            clearInterval(readingTimerInterval);
+            alert("\u23f0 Vaqt tugadi! Javoblaringiz avtomatik tekshirilmoqda.");
+            submitReadingTask(true);
+          }
+        }, 1000);
+      }
+
+      function updateReadingTimerDisplay() {
+        const el = document.getElementById("reading-timer");
+        if (!el) return;
+        const m = Math.max(0, Math.floor(readingTimerSecondsLeft / 60));
+        const s = Math.max(0, readingTimerSecondsLeft % 60);
+        el.innerText = `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+        el.style.color =
+          readingTimerSecondsLeft <= 60 ? "var(--danger)" : "var(--gold)";
+      }
+
+      function cancelReadingWorkspace() {
+        if (!confirm("Rostdan ham bekor qilasizmi? Javoblaringiz saqlanmaydi.")) return;
+        clearInterval(readingTimerInterval);
+        activeReadingTask = null;
+        activeReadingSubmission = null;
+        document.getElementById("reading-workspace-card").classList.add("hidden");
+        document
+          .getElementById("reading-task-list-card")
+          .classList.remove("hidden");
+      }
+
+      async function submitReadingTask(isAutoSubmit) {
+        if (!activeReadingTask) return;
+        const task = activeReadingTask;
+
+        const answers = {};
+        let correctCount = 0;
+        let totalQuestions = 0;
+
+        task.passages.forEach((p, pIdx) => {
+          p.answers.forEach((correctAns, i) => {
+            totalQuestions++;
+            const el = document.getElementById(`reading-ans-${pIdx}-${i}`);
+            const studentAns = el ? el.value.trim() : "";
+            answers[`${pIdx}-${i}`] = studentAns;
+            if (
+              studentAns &&
+              studentAns.toLowerCase() === correctAns.trim().toLowerCase()
+            ) {
+              correctCount++;
+            }
+          });
+        });
+
+        clearInterval(readingTimerInterval);
+
+        const isComplete = totalQuestions > 0 && correctCount === totalQuestions;
+        const wasAlreadyComplete =
+          activeReadingSubmission && activeReadingSubmission.isComplete;
+
+        let sub = activeReadingSubmission;
+        if (sub) {
+          sub.answers = answers;
+          sub.correctCount = correctCount;
+          sub.totalQuestions = totalQuestions;
+          sub.attempts = (sub.attempts || 1) + 1;
+          sub.isComplete = isComplete;
+          sub.lastAttemptAt = new Date().toLocaleString("uz-UZ", {
+            dateStyle: "short",
+            timeStyle: "short",
+          });
+          await dbUpdateSubmission(sub);
+        } else {
+          sub = {
+            id: Date.now(),
+            type: "reading",
+            taskId: task.id,
+            mode: task.mode,
+            studentName: currentUser.full_name,
+            studentEmail: currentUser.email,
+            lessonTitle: task.title,
+            answers,
+            correctCount,
+            totalQuestions,
+            attempts: 1,
+            isComplete,
+            lastAttemptAt: new Date().toLocaleString("uz-UZ", {
+              dateStyle: "short",
+              timeStyle: "short",
+            }),
+          };
+          submissions.push(sub);
+          await dbInsertSubmission(sub);
+        }
+
+        if (isComplete && !wasAlreadyComplete) {
+          currentUser.xp = (currentUser.xp || 0) + 15;
+          currentUser.coins = (currentUser.coins || 0) + 5;
+          if (!currentUser.lessonHistory) currentUser.lessonHistory = [];
+          currentUser.lessonHistory.push({
+            lessonTitle: `\ud83d\udcd6 Reading yakunlandi: ${task.title} (${correctCount}/${totalQuestions})`,
+            date: new Date().toLocaleString("uz-UZ", {
+              dateStyle: "short",
+              timeStyle: "short",
+            }),
+            xp: 15,
+            coins: 5,
+          });
+          await dbSaveUser(currentUser);
+          loadDashboard(currentUser);
+        }
+
+        activeReadingTask = null;
+        activeReadingSubmission = null;
+
+        document.getElementById("reading-workspace-card").classList.add("hidden");
+        renderReadingResultView(task, sub);
+        renderStudentReadingTasks();
+        renderReadingSubmissionsAdmin();
+      }
+
+      function renderReadingResultView(task, sub) {
+        document.getElementById("reading-task-list-card").classList.add("hidden");
+        document.getElementById("reading-workspace-card").classList.add("hidden");
+        document.getElementById("reading-result-card").classList.remove("hidden");
+        document.getElementById("reading-result-title").innerText = task.title;
+
+        const percent = sub.totalQuestions
+          ? Math.round((sub.correctCount / sub.totalQuestions) * 100)
+          : 0;
+
+        let qCounter = 0;
+        let detailsHtml = "";
+        task.passages.forEach((p, pIdx) => {
+          detailsHtml += `<div style="margin-top: 14px;"><strong style="color: var(--emerald-light);">\ud83d\udcd6 ${p.label}</strong></div>`;
+          p.answers.forEach((correctAns, i) => {
+            qCounter++;
+            const studentAns = (sub.answers && sub.answers[`${pIdx}-${i}`]) || "";
+            const isRight =
+              studentAns.trim().toLowerCase() === correctAns.trim().toLowerCase();
+            const qText = p.questions[i] ? p.questions[i] : `Savol ${qCounter}`;
+            detailsHtml += `
+              <div style="display:flex; justify-content:space-between; gap:10px; padding:8px 0; border-bottom:1px solid var(--card-border); font-size:0.85rem;">
+                <span>${isRight ? "\u2705" : "\u274c"} ${qCounter}. ${qText}</span>
+                <span style="text-align:right; color: var(--text-muted);">
+                  Sizniki: <strong style="color:${
+                    isRight ? "var(--emerald-light)" : "var(--danger)"
+                  }">${studentAns || "—"}</strong>
+                  ${
+                    isRight
+                      ? ""
+                      : ` | To'g'ri: <strong style="color:var(--gold)">${correctAns}</strong>`
+                  }
+                </span>
+              </div>
+            `;
+          });
+        });
+
+        document.getElementById("reading-result-body").innerHTML = `
+          <div class="feedback-box" style="text-align:center; margin-bottom:15px;">
+            <span class="score-badge-large" style="font-size:1.6rem;">${
+              sub.correctCount
+            }/${sub.totalQuestions} (${percent}%)</span>
+            <p style="margin-top:8px; color: var(--text-muted); font-size:0.85rem;">
+              ${
+                sub.isComplete
+                  ? "\ud83c\udf89 Barcha javoblar to'g'ri! Test qulflandi."
+                  : "Hammasi to'g'ri emas — qayta urinib ko'rishingiz mumkin."
+              }
+              Urinishlar soni: ${sub.attempts || 1}
+            </p>
+          </div>
+          ${detailsHtml}
+          ${
+            sub.isComplete
+              ? ""
+              : `<button class="btn-primary" style="margin-top:15px;" onclick="closeReadingResult(); startReadingWorkspace(${task.id});">\ud83d\udd04 Qayta urinish</button>`
+          }
+        `;
+      }
+
+      function closeReadingResult() {
+        document.getElementById("reading-result-card").classList.add("hidden");
+        document
+          .getElementById("reading-task-list-card")
+          .classList.remove("hidden");
+        renderStudentReadingTasks();
       }
 
     </script>
