@@ -521,6 +521,126 @@
         line-height: 1.5;
       }
 
+      /* ===== IELTS READING: matn hajmi (zoom) va highlight (belgilash) ===== */
+      #reading-passages-workspace {
+        --reading-scale: 1;
+      }
+
+      #reading-passages-workspace .reading-passage-body {
+        font-size: calc(0.92rem * var(--reading-scale, 1));
+      }
+
+      #reading-passages-workspace .reading-instruction-box {
+        font-size: calc(0.85rem * var(--reading-scale, 1));
+      }
+
+      #reading-passages-workspace .input-group label {
+        font-size: calc(0.8rem * var(--reading-scale, 1));
+      }
+
+      #reading-passages-workspace .reading-gapfill-item {
+        font-size: calc(0.92rem * var(--reading-scale, 1));
+      }
+
+      #reading-passages-workspace .reading-gapfill-input {
+        font-size: calc(0.92rem * var(--reading-scale, 1));
+      }
+
+      #reading-passages-workspace .reading-choice-btn {
+        font-size: calc(0.8rem * var(--reading-scale, 1));
+      }
+
+      .reading-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+        padding: 8px 10px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        border: 1px solid var(--card-border);
+      }
+
+      .reading-toolbar-label {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .reading-zoom-btn {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--card-border);
+        color: var(--text-main);
+        width: 30px;
+        height: 30px;
+        font-size: 0.85rem;
+        font-weight: 800;
+        cursor: pointer;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+      }
+
+      .reading-zoom-btn:hover {
+        border-color: var(--card-border-hover);
+        background: rgba(16, 185, 129, 0.2);
+      }
+
+      #reading-font-scale-label {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        font-weight: 700;
+        min-width: 38px;
+        text-align: center;
+      }
+
+      .reading-toolbar-divider {
+        width: 1px;
+        height: 20px;
+        background: var(--card-border);
+        margin: 0 2px;
+      }
+
+      .reading-toolbar-btn {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--card-border);
+        color: var(--text-muted);
+        padding: 6px 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        cursor: pointer;
+        border-radius: 10px;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+      }
+
+      .reading-toolbar-btn:hover {
+        border-color: var(--card-border-hover);
+      }
+
+      .reading-toolbar-btn.active {
+        background: var(--emerald-primary);
+        color: #022c22;
+        border-color: var(--emerald-primary);
+        box-shadow: 0 0 12px var(--emerald-glow-strong);
+      }
+
+      .reading-passage-col.highlight-mode-active {
+        cursor: text;
+        outline: 2px dashed var(--emerald-primary);
+        outline-offset: 2px;
+      }
+
+      #reading-passages-workspace mark.user-highlight {
+        background: rgba(245, 158, 11, 0.55);
+        color: inherit;
+        border-radius: 3px;
+        padding: 0 1px;
+        cursor: pointer;
+      }
+
       @media (max-width: 760px) {
         .reading-split-layout {
           grid-template-columns: 1fr;
@@ -4016,6 +4136,49 @@ pen — ruchka 🖊"
                   ✕ Bekor qilish
                 </button>
               </div>
+            </div>
+
+            <div class="reading-toolbar">
+              <span class="reading-toolbar-label">🔠 Matn hajmi</span>
+              <button
+                class="reading-zoom-btn"
+                onclick="changeReadingFontSize(-1)"
+                title="Kichiklashtirish"
+              >
+                A−
+              </button>
+              <span id="reading-font-scale-label">100%</span>
+              <button
+                class="reading-zoom-btn"
+                onclick="changeReadingFontSize(1)"
+                title="Kattalashtirish"
+              >
+                A+
+              </button>
+              <button
+                class="reading-zoom-btn"
+                style="font-size: 0.7rem"
+                onclick="resetReadingFontSize()"
+                title="Standart hajm"
+              >
+                ↺
+              </button>
+              <span class="reading-toolbar-divider"></span>
+              <button
+                id="reading-highlight-toggle-btn"
+                class="reading-toolbar-btn"
+                onclick="toggleReadingHighlightMode()"
+                title="Passage matnini belgilash rejimini yoqish/o'chirish"
+              >
+                🖍️ Belgilash: OFF
+              </button>
+              <button
+                class="reading-toolbar-btn"
+                onclick="clearReadingHighlights()"
+                title="Barcha belgilarni o'chirish"
+              >
+                🧹 Belgilarni tozalash
+              </button>
             </div>
 
             <div id="reading-passages-workspace"></div>
@@ -8755,6 +8918,133 @@ pen — ruchka 🖊"
         `;
       }
 
+      // ===== IELTS READING: matn hajmi (zoom) boshqaruvi =====
+      let readingFontScale = parseFloat(localStorage.getItem("reading_font_scale")) || 1;
+      let readingHighlightModeOn = false;
+
+      function applyReadingFontScale() {
+        const wrap = document.getElementById("reading-passages-workspace");
+        if (wrap) wrap.style.setProperty("--reading-scale", readingFontScale);
+        const label = document.getElementById("reading-font-scale-label");
+        if (label) label.innerText = Math.round(readingFontScale * 100) + "%";
+      }
+
+      function changeReadingFontSize(step) {
+        readingFontScale = Math.min(
+          1.6,
+          Math.max(0.7, +(readingFontScale + step * 0.1).toFixed(2))
+        );
+        localStorage.setItem("reading_font_scale", readingFontScale);
+        applyReadingFontScale();
+      }
+
+      function resetReadingFontSize() {
+        readingFontScale = 1;
+        localStorage.setItem("reading_font_scale", "1");
+        applyReadingFontScale();
+      }
+
+      // ===== IELTS READING: passage matnini highlight (belgilash) qilish =====
+      function toggleReadingHighlightMode() {
+        readingHighlightModeOn = !readingHighlightModeOn;
+        const btn = document.getElementById("reading-highlight-toggle-btn");
+        if (btn) {
+          btn.innerText = readingHighlightModeOn
+            ? "🖍️ Belgilash: ON"
+            : "🖍️ Belgilash: OFF";
+          btn.classList.toggle("active", readingHighlightModeOn);
+        }
+        document
+          .querySelectorAll("#reading-passages-workspace .reading-passage-col")
+          .forEach((el) => {
+            el.classList.toggle("highlight-mode-active", readingHighlightModeOn);
+          });
+      }
+
+      function clearReadingHighlights() {
+        document
+          .querySelectorAll("#reading-passages-workspace mark.user-highlight")
+          .forEach((mark) => {
+            const parent = mark.parentNode;
+            if (!parent) return;
+            while (mark.firstChild) parent.insertBefore(mark.firstChild, mark);
+            parent.removeChild(mark);
+            parent.normalize();
+          });
+      }
+
+      function getReadingSelectedTextNodes(range) {
+        const nodes = [];
+        const walker = document.createTreeWalker(
+          range.commonAncestorContainer,
+          NodeFilter.SHOW_TEXT,
+          {
+            acceptNode(node) {
+              return range.intersectsNode(node) && node.nodeValue.trim() !== ""
+                ? NodeFilter.FILTER_ACCEPT
+                : NodeFilter.FILTER_REJECT;
+            },
+          }
+        );
+        let n;
+        while ((n = walker.nextNode())) nodes.push(n);
+        return nodes;
+      }
+
+      function highlightCurrentReadingSelection() {
+        const sel = window.getSelection();
+        if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+        const range = sel.getRangeAt(0);
+        const startEl =
+          range.startContainer.nodeType === 1
+            ? range.startContainer
+            : range.startContainer.parentElement;
+        const passageEl = startEl ? startEl.closest(".reading-passage-col") : null;
+        if (!passageEl) return;
+
+        const textNodes = getReadingSelectedTextNodes(range);
+        textNodes.forEach((node) => {
+          if (node.parentElement && node.parentElement.closest("mark.user-highlight"))
+            return;
+          const nodeRange = document.createRange();
+          nodeRange.selectNodeContents(node);
+          if (node === range.startContainer) nodeRange.setStart(node, range.startOffset);
+          if (node === range.endContainer) nodeRange.setEnd(node, range.endOffset);
+          if (nodeRange.collapsed) return;
+          const mark = document.createElement("mark");
+          mark.className = "user-highlight";
+          try {
+            nodeRange.surroundContents(mark);
+          } catch (e) {
+            /* murakkab (bir necha node'ga bo'lingan) tanlovlar o'tkazib yuboriladi */
+          }
+        });
+        sel.removeAllRanges();
+      }
+
+      function handleReadingHighlightPointerUp(e) {
+        if (!readingHighlightModeOn) return;
+        const passageEl = e.target.closest
+          ? e.target.closest(".reading-passage-col")
+          : null;
+        if (!passageEl) return;
+        highlightCurrentReadingSelection();
+      }
+
+      document.addEventListener("mouseup", handleReadingHighlightPointerUp);
+      document.addEventListener("touchend", handleReadingHighlightPointerUp);
+
+      document.addEventListener("click", (e) => {
+        if (e.target && e.target.classList && e.target.classList.contains("user-highlight")) {
+          const mark = e.target;
+          const parent = mark.parentNode;
+          if (!parent) return;
+          while (mark.firstChild) parent.insertBefore(mark.firstChild, mark);
+          parent.removeChild(mark);
+          parent.normalize();
+        }
+      });
+
       function startReadingWorkspace(taskId) {
         const task = lessons.find((l) => l.id === taskId && l.type === "reading");
         if (!task) return;
@@ -8825,6 +9115,14 @@ pen — ruchka 🖊"
         } else {
           startReadingTimer(task.timeLimit);
         }
+
+        readingHighlightModeOn = false;
+        const highlightBtn = document.getElementById("reading-highlight-toggle-btn");
+        if (highlightBtn) {
+          highlightBtn.innerText = "🖍️ Belgilash: OFF";
+          highlightBtn.classList.remove("active");
+        }
+        applyReadingFontScale();
       }
 
       function startReadingTimer(minutes) {
