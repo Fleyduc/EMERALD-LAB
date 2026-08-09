@@ -5074,6 +5074,7 @@ pen — ruchka 🖊"
       function playWordAudio(word, event) {
         if (event) event.stopPropagation();
         if ("speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
           const utterance = new SpeechSynthesisUtterance(word);
           utterance.lang = "en-US";
           window.speechSynthesis.speak(utterance);
@@ -5513,6 +5514,7 @@ pen — ruchka 🖊"
         if (!vocabQuizState) return;
         const q = vocabQuizState.questions[vocabQuizState.index];
         if ("speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
           const utterance = new SpeechSynthesisUtterance(q.word);
           utterance.lang = "en-US";
           window.speechSynthesis.speak(utterance);
