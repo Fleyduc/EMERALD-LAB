@@ -536,6 +536,56 @@
         }
       }
 
+      /* Gap-fill (matn ichida bo'sh joy) savol turi */
+      .reading-gapfill-item {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--card-border);
+        font-size: 0.92rem;
+        line-height: 1.9;
+      }
+
+      .reading-gapfill-badge {
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: rgba(52, 211, 153, 0.2);
+        color: var(--emerald-light);
+        font-size: 0.75rem;
+        font-weight: 800;
+      }
+
+      .reading-gapfill-text {
+        flex: 1;
+      }
+
+      .reading-gapfill-input {
+        display: inline-block;
+        width: 160px;
+        max-width: 60%;
+        border: none;
+        border-bottom: 2px solid var(--emerald-primary);
+        background: transparent;
+        color: var(--text-main);
+        font-size: 0.92rem;
+        font-weight: 600;
+        text-align: center;
+        padding: 2px 4px;
+        margin: 0 4px;
+      }
+
+      .reading-gapfill-input:focus {
+        outline: none;
+        border-bottom-color: var(--emerald-light);
+        box-shadow: 0 2px 6px -2px var(--emerald-glow-strong);
+      }
+
       .reading-choice-group {
         display: flex;
         flex-wrap: wrap;
@@ -8181,6 +8231,11 @@ pen — ruchka 🖊"
           label: "\ud83d\udd17 Matching (ro'yxatdan tanlash)",
           hasOptions: true,
         },
+        sentence_completion: {
+          label: "\ud83d\udcdd Gap Fill (gap matn ichida, masalan: \"... called ___ as a witness\")",
+          hasOptions: false,
+          isGapFill: true,
+        },
       };
 
       function readingQuestionTypeOptionsHtml(selected) {
@@ -8262,7 +8317,7 @@ pen — ruchka 🖊"
             </select>
           </div>
           <div class="input-group" style="margin-bottom:8px;">
-            <label>Savol matni</label>
+            <label class="q-text-label">Savol matni</label>
             <input type="text" class="q-text" placeholder="Masalan: The whale case was heard in New York." />
           </div>
           <div class="q-type-fields"></div>
@@ -8291,10 +8346,34 @@ pen — ruchka 🖊"
       function updateReadingQuestionFields(selectEl) {
         const block = selectEl.closest(".reading-question-block");
         const fieldsEl = block.querySelector(".q-type-fields");
+        const textLabelEl = block.querySelector(".q-text-label");
+        const textInputEl = block.querySelector(".q-text");
         const type = selectEl.value;
         const cfg = READING_QUESTION_TYPES[type];
 
-        if (cfg.fixedChoices) {
+        if (cfg.isGapFill) {
+          if (textLabelEl) textLabelEl.textContent = "Gap bilan gap (bo'sh joy o'rniga ___ yozing)";
+          if (textInputEl)
+            textInputEl.placeholder =
+              'Masalan: William Sampson called ___ as a witness to appeal to the common sense of the jury.';
+        } else {
+          if (textLabelEl) textLabelEl.textContent = "Savol matni";
+          if (textInputEl)
+            textInputEl.placeholder = "Masalan: The whale case was heard in New York.";
+        }
+
+        if (cfg.isGapFill) {
+          fieldsEl.innerHTML = `
+            <div class="input-group" style="font-size:0.78rem; color: var(--text-muted); line-height:1.5;">
+              \ud83d\udca1 Gap o'rnida uch pastki chiziqcha <code>___</code> yozing — o'quvchiga aynan shu joyda
+              raqamlangan bo'sh maydon chiqadi.
+            </div>
+            <div class="input-group">
+              <label>To'g'ri javob (bo'sh joy uchun)</label>
+              <input type="text" class="q-answer" placeholder="Masalan: Robert Wood" />
+            </div>
+          `;
+        } else if (cfg.fixedChoices) {
           fieldsEl.innerHTML = `
             <div class="input-group">
               <label>To'g'ri javob</label>
@@ -8644,6 +8723,38 @@ pen — ruchka 🖊"
         return `<input type="text" id="${inputId}" placeholder="Javobingiz..." />`;
       }
 
+      // "sentence_completion" (gap-fill) savolini rasmdagidek — raqamli belgi
+      // + gap ichiga inline input joylashtirilgan gap sifatida chizadi.
+      // Savol matnida "___" bo'lgan joyga raqam + input qo'yiladi.
+      function renderReadingQuestionItem(pIdx, i, q, qCounter) {
+        const inputId = `reading-ans-${pIdx}-${i}`;
+
+        if (q.type === "sentence_completion") {
+          const raw = q.text || "";
+          const gapIdx = raw.indexOf("___");
+          const before = gapIdx >= 0 ? raw.slice(0, gapIdx) : raw;
+          const after = gapIdx >= 0 ? raw.slice(gapIdx + 3) : "";
+          return `
+            <div class="reading-gapfill-item">
+              <span class="reading-gapfill-badge">${qCounter}</span>
+              <span class="reading-gapfill-text">
+                ${before}
+                <input type="text" id="${inputId}" class="reading-gapfill-input" placeholder="javob..." />
+                ${after}
+              </span>
+            </div>
+          `;
+        }
+
+        const qText = q.text ? q.text : `Savol ${qCounter}`;
+        return `
+          <div class="input-group" style="margin-bottom: 8px;">
+            <label>${qCounter}. ${qText}</label>
+            ${renderReadingAnswerInput(pIdx, i, q)}
+          </div>
+        `;
+      }
+
       function startReadingWorkspace(taskId) {
         const task = lessons.find((l) => l.id === taskId && l.type === "reading");
         if (!task) return;
@@ -8681,13 +8792,7 @@ pen — ruchka 🖊"
             const qs = normalizeReadingQuestions(p);
             qs.forEach((q, i) => {
               qCounter++;
-              const qText = q.text ? q.text : `Savol ${qCounter}`;
-              qHtml += `
-                <div class="input-group" style="margin-bottom: 8px;">
-                  <label>${qCounter}. ${qText}</label>
-                  ${renderReadingAnswerInput(pIdx, i, q)}
-                </div>
-              `;
+              qHtml += renderReadingQuestionItem(pIdx, i, q, qCounter);
             });
             const instructionHtml = p.instruction
               ? `<div class="reading-instruction-box">${p.instruction}</div>`
@@ -8873,7 +8978,10 @@ pen — ruchka 🖊"
             const studentAns = (sub.answers && sub.answers[`${pIdx}-${i}`]) || "";
             const isRight =
               studentAns.trim().toLowerCase() === correctAns.trim().toLowerCase();
-            const qText = q.text ? q.text : `Savol ${qCounter}`;
+            const qText = (q.text ? q.text : `Savol ${qCounter}`).replace(
+              /___/g,
+              "\u2007\u2007\u2007\u2007\u2007"
+            );
             detailsHtml += `
               <div style="display:flex; justify-content:space-between; gap:10px; padding:8px 0; border-bottom:1px solid var(--card-border); font-size:0.85rem;">
                 <span>${isRight ? "\u2705" : "\u274c"} ${qCounter}. ${qText}</span>
