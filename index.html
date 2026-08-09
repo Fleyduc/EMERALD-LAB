@@ -457,6 +457,100 @@
         background: rgba(2, 20, 15, 0.9);
       }
 
+      /* ===== IELTS READING: savol turlari uchun uslublar ===== */
+      .reading-choice-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 6px;
+      }
+
+      .reading-choice-btn {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--card-border);
+        color: var(--text-main);
+        padding: 8px 14px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        border-radius: 10px;
+        transition: all 0.2s ease;
+      }
+
+      .reading-choice-btn:hover {
+        border-color: var(--card-border-hover);
+      }
+
+      .reading-choice-btn.active {
+        background: var(--emerald-primary);
+        color: #022c22;
+        border-color: var(--emerald-primary);
+        box-shadow: 0 0 12px var(--emerald-glow-strong);
+      }
+
+      .reading-choice-btn-mc {
+        text-align: left;
+        max-width: 100%;
+        white-space: normal;
+      }
+
+      .reading-choice-group-mc {
+        flex-direction: column;
+      }
+
+      .reading-question-block {
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        padding: 12px;
+        margin-bottom: 10px;
+        background: rgba(0, 0, 0, 0.2);
+        position: relative;
+      }
+
+      .reading-question-block .q-remove-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid var(--danger);
+        color: var(--danger);
+        width: 26px;
+        height: 26px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 700;
+        line-height: 1;
+      }
+
+      .reading-question-block .q-number-badge {
+        display: inline-block;
+        background: var(--emerald-primary);
+        color: #022c22;
+        font-size: 0.7rem;
+        font-weight: 800;
+        padding: 3px 9px;
+        border-radius: 20px;
+        margin-bottom: 8px;
+      }
+
+      .q-add-btn {
+        background: rgba(16, 185, 129, 0.15);
+        border: 1px dashed var(--emerald-primary);
+        color: var(--emerald-light);
+        padding: 10px 14px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 0.85rem;
+        width: 100%;
+        margin-top: 4px;
+        transition: all 0.2s ease;
+      }
+
+      .q-add-btn:hover {
+        background: rgba(16, 185, 129, 0.28);
+      }
+
       .avatar-preview-box {
         display: flex;
         align-items: center;
@@ -7988,6 +8082,40 @@ pen — ruchka 🖊"
         group.style.display = mode === "unlimited" ? "none" : "block";
       }
 
+      /* ---------- Savol turlari (o'quvchi va ustoz uchun umumiy konfiguratsiya) ---------- */
+      const READING_QUESTION_TYPES = {
+        short_answer: { label: "\u270f\ufe0f Qisqa javob (matn)", hasOptions: false },
+        true_false_not_given: {
+          label: "\u2705 True / False / Not Given",
+          hasOptions: false,
+          fixedChoices: ["TRUE", "FALSE", "NOT GIVEN"],
+        },
+        yes_no_not_given: {
+          label: "\ud83d\udc4d Yes / No / Not Given",
+          hasOptions: false,
+          fixedChoices: ["YES", "NO", "NOT GIVEN"],
+        },
+        multiple_choice: {
+          label: "\ud83d\udd18 Multiple Choice (A/B/C/D)",
+          hasOptions: true,
+        },
+        matching: {
+          label: "\ud83d\udd17 Matching (ro'yxatdan tanlash)",
+          hasOptions: true,
+        },
+      };
+
+      function readingQuestionTypeOptionsHtml(selected) {
+        return Object.entries(READING_QUESTION_TYPES)
+          .map(
+            ([val, cfg]) =>
+              `<option value="${val}" ${
+                val === selected ? "selected" : ""
+              }>${cfg.label}</option>`
+          )
+          .join("");
+      }
+
       function renderReadingPassageInputs() {
         const modeEl = document.getElementById("rt-mode");
         const container = document.getElementById("rt-passages-container");
@@ -8019,17 +8147,95 @@ pen — ruchka 🖊"
                 <textarea id="rt-passage-text-${i}" rows="8" placeholder="Reading passage matnini shu yerga joylashtiring..." required></textarea>
               </div>
               <div class="input-group">
-                <label>Savollar (har bir savol alohida qatorda, ixtiyoriy)</label>
-                <textarea id="rt-passage-questions-${i}" rows="4" placeholder="1. What is the main idea of paragraph A?&#10;2. The author believes that...&#10;(har bir savolni yangi qatordan yozing)"></textarea>
-              </div>
-              <div class="input-group">
-                <label>To'g'ri Javoblar (har bir javob alohida qatorda, savollar tartibida)</label>
-                <textarea id="rt-passage-answers-${i}" rows="4" placeholder="TRUE&#10;NOT GIVEN&#10;migration&#10;(har bir javobni yangi qatordan yozing — savollar soni shu yerdagi qatorlar soniga teng bo'ladi)" required></textarea>
+                <label>Savollar</label>
+                <div id="rt-questions-${i}"></div>
+                <button type="button" class="q-add-btn" onclick="addReadingQuestionBlock(${i})">+ Savol qo'shish</button>
               </div>
             </div>
           `;
         }
         container.innerHTML = html;
+
+        // Har bir passage uchun kamida 1 ta savol bloki bilan boshlaymiz
+        for (let i = 0; i < count; i++) {
+          addReadingQuestionBlock(i);
+        }
+      }
+
+      function addReadingQuestionBlock(pIdx) {
+        const holder = document.getElementById(`rt-questions-${pIdx}`);
+        if (!holder) return;
+        const qIdx = holder.children.length;
+        const block = document.createElement("div");
+        block.className = "reading-question-block";
+        block.dataset.pidx = pIdx;
+        block.innerHTML = `
+          <button type="button" class="q-remove-btn" onclick="removeReadingQuestionBlock(this, ${pIdx})">\u2715</button>
+          <span class="q-number-badge">Savol #${qIdx + 1}</span>
+          <div class="input-group" style="margin-bottom:8px;">
+            <label>Savol turi</label>
+            <select class="q-type" onchange="updateReadingQuestionFields(this)">
+              ${readingQuestionTypeOptionsHtml("short_answer")}
+            </select>
+          </div>
+          <div class="input-group" style="margin-bottom:8px;">
+            <label>Savol matni</label>
+            <input type="text" class="q-text" placeholder="Masalan: The whale case was heard in New York." />
+          </div>
+          <div class="q-type-fields"></div>
+        `;
+        holder.appendChild(block);
+        updateReadingQuestionFields(block.querySelector(".q-type"));
+      }
+
+      function removeReadingQuestionBlock(btn, pIdx) {
+        const holder = document.getElementById(`rt-questions-${pIdx}`);
+        btn.closest(".reading-question-block").remove();
+        // Savol raqamlarini yangilaymiz
+        if (holder) {
+          [...holder.children].forEach((block, idx) => {
+            const badge = block.querySelector(".q-number-badge");
+            if (badge) badge.innerText = `Savol #${idx + 1}`;
+          });
+        }
+      }
+
+      function updateReadingQuestionFields(selectEl) {
+        const block = selectEl.closest(".reading-question-block");
+        const fieldsEl = block.querySelector(".q-type-fields");
+        const type = selectEl.value;
+        const cfg = READING_QUESTION_TYPES[type];
+
+        if (cfg.fixedChoices) {
+          fieldsEl.innerHTML = `
+            <div class="input-group">
+              <label>To'g'ri javob</label>
+              <select class="q-answer">
+                ${cfg.fixedChoices
+                  .map((c) => `<option value="${c}">${c}</option>`)
+                  .join("")}
+              </select>
+            </div>
+          `;
+        } else if (cfg.hasOptions) {
+          fieldsEl.innerHTML = `
+            <div class="input-group">
+              <label>Variantlar (har biri yangi qatordan, masalan "A) matn")</label>
+              <textarea class="q-options" rows="4" placeholder="A) migration&#10;B) reproduction&#10;C) communication&#10;D) navigation"></textarea>
+            </div>
+            <div class="input-group">
+              <label>To'g'ri javob (variant harfi, masalan A)</label>
+              <input type="text" class="q-answer" placeholder="A" />
+            </div>
+          `;
+        } else {
+          fieldsEl.innerHTML = `
+            <div class="input-group">
+              <label>To'g'ri javob</label>
+              <input type="text" class="q-answer" placeholder="Masalan: migration" />
+            </div>
+          `;
+        }
       }
 
       /* ---------- USTOZ: Reading test qo'shish / ro'yxat ---------- */
@@ -8048,21 +8254,31 @@ pen — ruchka 🖊"
 
         for (let i = 0; i < count; i++) {
           const textEl = document.getElementById(`rt-passage-text-${i}`);
-          const questionsEl = document.getElementById(`rt-passage-questions-${i}`);
-          const answersEl = document.getElementById(`rt-passage-answers-${i}`);
           const text = textEl.value.trim();
-          const questions = questionsEl.value
-            .split("\n")
-            .map((q) => q.trim())
-            .filter((q) => q);
-          const answers = answersEl.value
-            .split("\n")
-            .map((a) => a.trim())
-            .filter((a) => a);
+          const holder = document.getElementById(`rt-questions-${i}`);
+          const blocks = holder ? [...holder.children] : [];
 
-          if (!text || answers.length === 0) {
+          const questions = [];
+          for (const block of blocks) {
+            const type = block.querySelector(".q-type").value;
+            const qText = block.querySelector(".q-text").value.trim();
+            const answerEl = block.querySelector(".q-answer");
+            const answer = answerEl ? answerEl.value.trim() : "";
+            const optionsEl = block.querySelector(".q-options");
+            const options = optionsEl
+              ? optionsEl.value
+                  .split("\n")
+                  .map((o) => o.trim())
+                  .filter((o) => o)
+              : [];
+
+            if (!answer) continue; // to'liq bo'sh qoldirilgan savol e'tiborga olinmaydi
+            questions.push({ type, text: qText, answer, options });
+          }
+
+          if (!text || questions.length === 0) {
             alert(
-              "Iltimos, har bir passage uchun matn va kamida bitta to'g'ri javob kiriting!"
+              "Iltimos, har bir passage uchun matn va kamida bitta savol (to'g'ri javobi bilan) kiriting!"
             );
             return;
           }
@@ -8072,11 +8288,11 @@ pen — ruchka 🖊"
               ? `Passage ${i + 1}`
               : READING_MODE_LABELS[mode].replace(/^\S+\s/, "");
 
-          passages.push({ label: defaultLabel, text, questions, answers });
+          passages.push({ label: defaultLabel, text, questions });
         }
 
         const totalQuestions = passages.reduce(
-          (sum, p) => sum + p.answers.length,
+          (sum, p) => sum + p.questions.length,
           0
         );
 
@@ -8247,6 +8463,83 @@ pen — ruchka 🖊"
         renderReadingResultView(task, sub);
       }
 
+      /* Eski (matn asosidagi) va yangi (turlarga ega) formatdagi passagelarni
+         bitta umumiy ko'rinishga keltiradi: [{type, text, answer, options}, ...] */
+      function normalizeReadingQuestions(p) {
+        if (
+          p.questions &&
+          p.questions.length &&
+          typeof p.questions[0] === "object" &&
+          p.questions[0] !== null
+        ) {
+          return p.questions;
+        }
+        const answers = p.answers || [];
+        return answers.map((ans, i) => ({
+          type: "short_answer",
+          text: p.questions && p.questions[i] ? p.questions[i] : "",
+          answer: ans,
+          options: [],
+        }));
+      }
+
+      function extractOptionValue(optionLine) {
+        const m = optionLine.match(/^([A-Za-z])[).]\s*(.*)$/);
+        return m ? m[1].toUpperCase() : optionLine;
+      }
+
+      function selectReadingChoice(btn) {
+        const hidden = document.getElementById(btn.dataset.target);
+        if (hidden) hidden.value = btn.dataset.value;
+        const group = btn.parentElement;
+        group
+          .querySelectorAll(".reading-choice-btn")
+          .forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+      }
+
+      function renderReadingAnswerInput(pIdx, i, q) {
+        const inputId = `reading-ans-${pIdx}-${i}`;
+
+        if (q.type === "true_false_not_given" || q.type === "yes_no_not_given") {
+          const choices =
+            q.type === "true_false_not_given"
+              ? ["TRUE", "FALSE", "NOT GIVEN"]
+              : ["YES", "NO", "NOT GIVEN"];
+          const btns = choices
+            .map(
+              (c) =>
+                `<button type="button" class="reading-choice-btn" data-target="${inputId}" data-value="${c}" onclick="selectReadingChoice(this)">${c}</button>`
+            )
+            .join("");
+          return `<input type="hidden" id="${inputId}" />
+            <div class="reading-choice-group">${btns}</div>`;
+        }
+
+        if (q.type === "multiple_choice") {
+          const btns = (q.options || [])
+            .map((opt) => {
+              const val = extractOptionValue(opt);
+              return `<button type="button" class="reading-choice-btn reading-choice-btn-mc" data-target="${inputId}" data-value="${val}" onclick="selectReadingChoice(this)">${opt}</button>`;
+            })
+            .join("");
+          return `<input type="hidden" id="${inputId}" />
+            <div class="reading-choice-group reading-choice-group-mc">${btns}</div>`;
+        }
+
+        if (q.type === "matching") {
+          const opts = (q.options || [])
+            .map((opt) => {
+              const val = extractOptionValue(opt);
+              return `<option value="${val}">${opt}</option>`;
+            })
+            .join("");
+          return `<select id="${inputId}"><option value="">\u2014 Tanlang \u2014</option>${opts}</select>`;
+        }
+
+        return `<input type="text" id="${inputId}" placeholder="Javobingiz..." />`;
+      }
+
       function startReadingWorkspace(taskId) {
         const task = lessons.find((l) => l.id === taskId && l.type === "reading");
         if (!task) return;
@@ -8281,17 +8574,17 @@ pen — ruchka 🖊"
         wrap.innerHTML = task.passages
           .map((p, pIdx) => {
             let qHtml = "";
-            const qCount = p.answers.length;
-            for (let i = 0; i < qCount; i++) {
+            const qs = normalizeReadingQuestions(p);
+            qs.forEach((q, i) => {
               qCounter++;
-              const qText = p.questions[i] ? p.questions[i] : `Savol ${qCounter}`;
+              const qText = q.text ? q.text : `Savol ${qCounter}`;
               qHtml += `
                 <div class="input-group" style="margin-bottom: 8px;">
                   <label>${qCounter}. ${qText}</label>
-                  <input type="text" id="reading-ans-${pIdx}-${i}" placeholder="Javobingiz..." />
+                  ${renderReadingAnswerInput(pIdx, i, q)}
                 </div>
               `;
-            }
+            });
             return `
               <div class="feedback-box" style="margin: 14px 0; padding: 14px;">
                 <strong style="color: var(--emerald-light);">\ud83d\udcd6 ${p.label}</strong>
@@ -8359,14 +8652,15 @@ pen — ruchka 🖊"
         let totalQuestions = 0;
 
         task.passages.forEach((p, pIdx) => {
-          p.answers.forEach((correctAns, i) => {
+          const qs = normalizeReadingQuestions(p);
+          qs.forEach((q, i) => {
             totalQuestions++;
             const el = document.getElementById(`reading-ans-${pIdx}-${i}`);
             const studentAns = el ? el.value.trim() : "";
             answers[`${pIdx}-${i}`] = studentAns;
             if (
               studentAns &&
-              studentAns.toLowerCase() === correctAns.trim().toLowerCase()
+              studentAns.toLowerCase() === q.answer.trim().toLowerCase()
             ) {
               correctCount++;
             }
@@ -8454,12 +8748,14 @@ pen — ruchka 🖊"
         let detailsHtml = "";
         task.passages.forEach((p, pIdx) => {
           detailsHtml += `<div style="margin-top: 14px;"><strong style="color: var(--emerald-light);">\ud83d\udcd6 ${p.label}</strong></div>`;
-          p.answers.forEach((correctAns, i) => {
+          const qs = normalizeReadingQuestions(p);
+          qs.forEach((q, i) => {
             qCounter++;
+            const correctAns = q.answer;
             const studentAns = (sub.answers && sub.answers[`${pIdx}-${i}`]) || "";
             const isRight =
               studentAns.trim().toLowerCase() === correctAns.trim().toLowerCase();
-            const qText = p.questions[i] ? p.questions[i] : `Savol ${qCounter}`;
+            const qText = q.text ? q.text : `Savol ${qCounter}`;
             detailsHtml += `
               <div style="display:flex; justify-content:space-between; gap:10px; padding:8px 0; border-bottom:1px solid var(--card-border); font-size:0.85rem;">
                 <span>${isRight ? "\u2705" : "\u274c"} ${qCounter}. ${qText}</span>
