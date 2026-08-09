@@ -4092,7 +4092,10 @@ pen — ruchka 🖊"
         const [usersRes, lessonsRes, submissionsRes, chatRes] =
           await Promise.all([
             supabaseClient.from("users").select("data"),
-            supabaseClient.from("lessons").select("data"),
+            supabaseClient
+              .from("lessons")
+              .select("id, data")
+              .order("id", { ascending: true }),
             supabaseClient
               .from("submissions")
               .select("id, data")
@@ -5089,6 +5092,34 @@ pen — ruchka 🖊"
 
       const LESSON_ICONS = ["📘", "📗", "📙", "📕", "📓", "📔", "📒", "🗂️"];
 
+      // Bir darajadagi (target_level) darslar ketma-ket ochiladi: keyingi
+      // dars faqat undan oldingi dars TO'LIQ yakunlangandan keyin (Lug'at
+      // 100%, Grammatika va Uy vazifasi barchasi) ochiladi. Darajadagi
+      // birinchi dars har doim ochiq.
+      function isLessonUnlocked(lessonId) {
+        const l = lessons.find((x) => x.id === lessonId);
+        if (!l) return false;
+
+        const levelLessons = lessons.filter(
+          (x) => x.target_level === l.target_level && x.type !== "writing"
+        );
+        const idx = levelLessons.findIndex((x) => x.id === lessonId);
+        if (idx <= 0) return true;
+
+        const prevLesson = levelLessons[idx - 1];
+        const completed = currentUser.completedLessons || [];
+        return completed.includes(prevLesson.id);
+      }
+
+      function handleLessonCardClick(lessonId) {
+        if (!isLessonUnlocked(lessonId)) {
+          return alert(
+            "🔒 Bu dars hali qulflangan. Avval oldingi darsni to'liq yakunlang: Lug'at testi (100%), Grammatika testi va Uy vazifasi."
+          );
+        }
+        openLessonDetail(lessonId);
+      }
+
       function renderStudentLessons() {
         const container = document.getElementById("student-lessons-container");
         container.innerHTML = "";
@@ -5124,15 +5155,26 @@ pen — ruchka 🖊"
         const gridHtml = pageLessons
           .map((l, i) => {
             const isDone = completed.includes(l.id);
+            const unlocked = isDone || isLessonUnlocked(l.id);
             const icon = LESSON_ICONS[(startIdx + i) % LESSON_ICONS.length];
             const excerpt = (l.content_text || "").slice(0, 90);
             const vocabCount = l.vocabulary ? l.vocabulary.length : 0;
 
             return `
-            <div class="lesson-card ${isDone ? "is-done" : ""}" onclick="openLessonDetail(${l.id})">
+            <div class="lesson-card ${isDone ? "is-done" : ""} ${
+              !unlocked ? "is-locked" : ""
+            }" style="${
+              !unlocked ? "opacity: 0.55; cursor: not-allowed;" : ""
+            }" onclick="handleLessonCardClick(${l.id})">
               <div style="display:flex; align-items:center; justify-content:space-between;">
                 <div class="lesson-card-icon">${icon}</div>
-                ${isDone ? `<span class="badge" style="background:rgba(16,185,129,0.25); color:var(--emerald-light);">✅ Tugallangan</span>` : ""}
+                ${
+                  isDone
+                    ? `<span class="badge" style="background:rgba(16,185,129,0.25); color:var(--emerald-light);">✅ Tugallangan</span>`
+                    : !unlocked
+                    ? `<span class="badge" style="background:rgba(239,68,68,0.2); color:var(--danger);">🔒 Qulflangan</span>`
+                    : ""
+                }
               </div>
               <div class="lesson-card-title">${l.title}</div>
               <div class="lesson-card-excerpt">${excerpt}${
@@ -5142,7 +5184,11 @@ pen — ruchka 🖊"
                 <span>🔤 ${vocabCount} ta so'z</span>
                 <span class="badge">${l.target_level}</span>
               </div>
-              <div class="lesson-card-open-btn">Darsni ochish →</div>
+              <div class="lesson-card-open-btn">${
+                unlocked
+                  ? "Darsni ochish →"
+                  : "🔒 Oldingi darsni yakunlang"
+              }</div>
             </div>
           `;
           })
@@ -5183,6 +5229,15 @@ pen — ruchka 🖊"
       function openLessonDetail(lessonId) {
         const l = lessons.find((x) => x.id === lessonId);
         if (!l) return;
+
+        const alreadyDone = (currentUser.completedLessons || []).includes(
+          lessonId
+        );
+        if (!alreadyDone && !isLessonUnlocked(lessonId)) {
+          return alert(
+            "🔒 Bu dars hali qulflangan. Avval oldingi darsni to'liq yakunlang: Lug'at testi (100%), Grammatika testi va Uy vazifasi."
+          );
+        }
 
         const completed = currentUser.completedLessons || [];
         // "isDone" - butun dars UCHTA qismning barchasi (Lug'at testi 100%,
