@@ -2324,6 +2324,109 @@
         margin-bottom: 10px;
       }
 
+
+      /* ===== EMERALD ANALYTICS / PROGRESS REDESIGN ===== */
+      .progress-overview-card,.progress-trend-card{
+        position:relative;overflow:hidden;
+        margin-bottom:18px;padding:22px;
+        border-radius:24px;
+        border:1px solid rgba(16,185,129,.18);
+        background:
+          radial-gradient(circle at 92% 8%,rgba(16,185,129,.16),transparent 28%),
+          linear-gradient(145deg,rgba(5,40,29,.92),rgba(2,20,15,.96));
+        box-shadow:0 18px 50px rgba(0,0,0,.18);
+      }
+      .progress-overview-card::before,.progress-trend-card::before{
+        content:"";position:absolute;left:0;top:0;width:100%;height:2px;
+        background:linear-gradient(90deg,transparent,#10b981,#a7f3d0,transparent);
+        opacity:.8;
+      }
+      .progress-overview-head,.progress-trend-head{
+        display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px;
+      }
+      .progress-kicker{
+        color:#6ee7b7;font-size:.62rem;font-weight:900;letter-spacing:.16em;text-transform:uppercase;
+      }
+      .progress-overview-head h3,.progress-trend-head h3{
+        margin:5px 0 5px;color:#ecfdf5;font-size:1.25rem;
+      }
+      .progress-overview-head p,.progress-trend-head p{
+        margin:0;color:#94a3b8;font-size:.76rem;line-height:1.55;
+      }
+      .progress-period-pill{
+        padding:7px 11px;border-radius:999px;
+        color:#a7f3d0;background:rgba(16,185,129,.10);
+        border:1px solid rgba(16,185,129,.22);
+        font-size:.62rem;font-weight:900;white-space:nowrap;
+      }
+      .progress-overview-grid{
+        display:grid;grid-template-columns:minmax(230px,.75fr) minmax(0,1.7fr);gap:22px;align-items:stretch;
+      }
+      .overall-progress-panel{
+        min-height:285px;padding:20px;border-radius:20px;
+        display:flex;flex-direction:column;align-items:center;justify-content:center;
+        background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.06);
+      }
+      .overall-ring{
+        width:190px;height:190px;border-radius:50%;
+        display:grid;place-items:center;
+        background:conic-gradient(#10b981 0deg,#10b981 0deg,rgba(255,255,255,.07) 0deg);
+        position:relative;transition:background .6s ease;
+        box-shadow:0 0 45px rgba(16,185,129,.12);
+      }
+      .overall-ring::after{
+        content:"";position:absolute;inset:12px;border-radius:50%;
+        background:#06251b;border:1px solid rgba(16,185,129,.12);
+      }
+      .overall-ring-inner{position:relative;z-index:2;text-align:center}
+      .overall-ring-inner strong{display:block;color:#ecfdf5;font-size:2.45rem;line-height:1;font-weight:950}
+      .overall-ring-inner span{display:block;margin-top:7px;color:#6ee7b7;font-size:.72rem;font-weight:900;letter-spacing:.08em}
+      .overall-progress-meta{text-align:center;margin-top:15px}
+      .overall-progress-meta strong{display:block;color:#d1fae5;font-size:.9rem}
+      .overall-progress-meta span{display:block;margin-top:4px;color:#64748b;font-size:.68rem;max-width:240px;line-height:1.45}
+      .skill-progress-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+      .skill-progress-item{
+        padding:14px 15px;border-radius:16px;background:rgba(255,255,255,.025);
+        border:1px solid rgba(255,255,255,.06);transition:.2s ease;
+      }
+      .skill-progress-item:hover{transform:translateY(-2px);border-color:rgba(16,185,129,.22);background:rgba(16,185,129,.045)}
+      .skill-progress-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+      .skill-progress-name{display:flex;align-items:center;gap:8px;color:#d1fae5;font-size:.78rem;font-weight:850}
+      .skill-progress-score{color:#a7f3d0;font-size:.82rem;font-weight:950}
+      .skill-progress-track{height:8px;overflow:hidden;border-radius:999px;background:rgba(255,255,255,.07)}
+      .skill-progress-fill{height:100%;border-radius:inherit;background:linear-gradient(90deg,#059669,#34d399,#a7f3d0);box-shadow:0 0 12px rgba(16,185,129,.18);transition:width .65s ease}
+      .skill-progress-item.missing .skill-progress-fill{background:rgba(148,163,184,.3);box-shadow:none}
+      .skill-progress-foot{display:flex;justify-content:space-between;margin-top:7px;color:#64748b;font-size:.61rem}
+      .progress-summary-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+      .progress-summary-chip{
+        display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:15px;
+        background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.055);
+      }
+      .progress-summary-chip>span{font-size:1.05rem}
+      .progress-summary-chip small{display:block;color:#64748b;font-size:.58rem}
+      .progress-summary-chip strong{display:block;color:#d1fae5;font-size:.73rem;margin-top:2px}
+      .progress-period-switch{display:flex;padding:4px;border-radius:12px;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.06)}
+      .progress-period-switch button{
+        border:0;background:transparent;color:#64748b;padding:8px 12px;border-radius:9px;
+        font-size:.68rem;font-weight:900;cursor:pointer;transition:.2s;
+      }
+      .progress-period-switch button.active{background:rgba(16,185,129,.16);color:#a7f3d0;box-shadow:inset 0 0 0 1px rgba(16,185,129,.16)}
+      .progress-trend-chart-wrap{height:290px;position:relative}
+      @media(max-width:900px){
+        .progress-overview-grid{grid-template-columns:1fr}
+        .overall-progress-panel{min-height:245px}
+      }
+      @media(max-width:650px){
+        .progress-overview-card,.progress-trend-card{padding:16px;border-radius:20px}
+        .progress-overview-head,.progress-trend-head{flex-direction:column}
+        .skill-progress-list{grid-template-columns:1fr}
+        .progress-summary-row{grid-template-columns:1fr}
+        .progress-period-switch{width:100%}
+        .progress-period-switch button{flex:1}
+        .overall-ring{width:165px;height:165px}
+        .overall-ring-inner strong{font-size:2.1rem}
+      }
+
       /* ANALYTICS STYLES */
       .chart-container {
         position: relative;
@@ -4930,6 +5033,69 @@ pen — ruchka 🖊"
             </div>
           </div>
 
+
+          <!-- ===== EMERALD PROGRESS OVERVIEW ===== -->
+          <section class="progress-overview-card">
+            <div class="progress-overview-head">
+              <div>
+                <div class="progress-kicker">EMERALD LAB • PROGRESS CENTER</div>
+                <h3>📊 O‘quvchi Progressi</h3>
+                <p>Grammar, Vocabulary, Reading, Listening, Writing va Speaking bo‘yicha real natijalar asosida.</p>
+              </div>
+              <div class="progress-period-pill" id="progress-data-status">REAL DATA</div>
+            </div>
+
+            <div class="progress-overview-grid">
+              <div class="overall-progress-panel">
+                <div class="overall-ring" id="overall-progress-ring">
+                  <div class="overall-ring-inner">
+                    <strong id="overall-progress-value">0%</strong>
+                    <span>Overall</span>
+                  </div>
+                </div>
+                <div class="overall-progress-meta">
+                  <strong id="overall-progress-label">Progress boshlanishi</strong>
+                  <span id="overall-progress-subtitle">Natijalar yig‘ilgani sari avtomatik yangilanadi.</span>
+                </div>
+              </div>
+
+              <div class="skill-progress-list" id="skill-progress-list"></div>
+            </div>
+
+            <div class="progress-summary-row">
+              <div class="progress-summary-chip">
+                <span>🎯</span>
+                <div><small>Eng kuchli skill</small><strong id="progress-best-skill">—</strong></div>
+              </div>
+              <div class="progress-summary-chip">
+                <span>🚀</span>
+                <div><small>Eng katta o‘sish</small><strong id="progress-growth-skill">—</strong></div>
+              </div>
+              <div class="progress-summary-chip">
+                <span>⚠️</span>
+                <div><small>Rivojlantirish kerak</small><strong id="progress-focus-skill">—</strong></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===== WEEKLY / MONTHLY PROGRESS ===== -->
+          <section class="progress-trend-card">
+            <div class="progress-trend-head">
+              <div>
+                <div class="progress-kicker">PROGRESS TREND</div>
+                <h3>📈 Haftalik / Oylik o‘sish</h3>
+                <p id="progress-trend-description">Haftalik faoliyat va o‘sish dinamikasi.</p>
+              </div>
+              <div class="progress-period-switch">
+                <button id="progress-week-btn" class="active" type="button" onclick="setProgressTrendMode('weekly')">7 kun</button>
+                <button id="progress-month-btn" type="button" onclick="setProgressTrendMode('monthly')">5 hafta</button>
+              </div>
+            </div>
+            <div class="progress-trend-chart-wrap">
+              <canvas id="progressTrendChart"></canvas>
+            </div>
+          </section>
+
           <!-- CHART 1 & CHART 2 -->
           <div class="grid-2">
             <div
@@ -5606,6 +5772,9 @@ pen — ruchka 🖊"
       let chartVocabInstance = null;
       let chartGrowthInstance = null;
       let chartWeakInstance = null;
+      let chartProgressTrendInstance = null;
+      let progressTrendMode = "weekly";
+      let activeAnalyticsUser = null;
 
       // Speech Recognition Variables
       let isRecording = false;
@@ -8167,6 +8336,9 @@ pen — ruchka 🖊"
 
       /* 📊 CHART.JS ANALYTICS ENGINE [FEATURE 2] */
       function renderAnalyticsTab() {
+        progressTrendMode = "weekly";
+        document.getElementById("progress-week-btn")?.classList.add("active");
+        document.getElementById("progress-month-btn")?.classList.remove("active");
         const teacherSelector = document.getElementById(
           "teacher-student-selector"
         );
@@ -8467,156 +8639,374 @@ pen — ruchka 🖊"
         );
       }
 
+      function getStudentSkillProgress(targetUser) {
+        const grammarLessons = lessons.filter(
+          (l) =>
+            l.quiz &&
+            (l.quiz.question ||
+              (Array.isArray(l.quiz.questions) && l.quiz.questions.length > 0))
+        );
+        const vocabLessons = lessons.filter(
+          (l) => Array.isArray(l.vocabulary) && l.vocabulary.length > 0
+        );
+
+        const grammarDone = (targetUser.completedGrammarQuizzes || []).filter((id) =>
+          grammarLessons.some((l) => String(l.id) === String(id))
+        ).length;
+        const vocabDone = (targetUser.completedVocabQuizzes || []).filter((id) =>
+          vocabLessons.some((l) => String(l.id) === String(id))
+        ).length;
+
+        const listening = (targetUser.listeningGrowth || []).filter((v) => Number(v) > 0);
+        const reading = (targetUser.readingGrowth || []).filter((v) => Number(v) > 0);
+
+        const writingSubs = submissions.filter(
+          (s) =>
+            s.type === "writing" &&
+            s.studentEmail === targetUser.email &&
+            s.feedback &&
+            Number(s.feedback.overall) > 0
+        );
+        const speakingValues = [];
+        if (Array.isArray(targetUser.speakingGrowth)) {
+          targetUser.speakingGrowth.forEach((v) => {
+            if (Number(v) > 0) speakingValues.push(Number(v));
+          });
+        }
+
+        const skill = {
+          grammar: grammarLessons.length ? Math.round((grammarDone / grammarLessons.length) * 100) : null,
+          vocabulary: vocabLessons.length ? Math.min(100, Math.round((vocabDone / vocabLessons.length) * 100)) : null,
+          reading: reading.length ? Math.round((reading[reading.length - 1] / 9) * 100) : null,
+          listening: listening.length ? Math.round((listening[listening.length - 1] / 9) * 100) : null,
+          writing: writingSubs.length
+            ? Math.round(
+                (writingSubs.reduce((sum, s) => sum + Number(s.feedback.overall), 0) /
+                  writingSubs.length /
+                  9) *
+                  100
+              )
+            : null,
+          speaking: speakingValues.length
+            ? Math.round((speakingValues[speakingValues.length - 1] / 9) * 100)
+            : null,
+        };
+
+        return {
+          ...skill,
+          labels: {
+            grammar: "Grammar",
+            vocabulary: "Vocabulary",
+            reading: "Reading",
+            listening: "Listening",
+            writing: "Writing",
+            speaking: "Speaking",
+          },
+        };
+      }
+
+      function renderSkillProgress(targetUser) {
+        const skill = getStudentSkillProgress(targetUser);
+        const keys = ["grammar", "vocabulary", "reading", "listening", "writing", "speaking"];
+        const icons = {
+          grammar: "🧠",
+          vocabulary: "📚",
+          reading: "📖",
+          listening: "🎧",
+          writing: "✍️",
+          speaking: "🗣️",
+        };
+
+        const available = keys.filter((k) => skill[k] !== null);
+        const overall = available.length
+          ? Math.round(available.reduce((sum, k) => sum + skill[k], 0) / available.length)
+          : 0;
+
+        const ring = document.getElementById("overall-progress-ring");
+        const valueEl = document.getElementById("overall-progress-value");
+        const labelEl = document.getElementById("overall-progress-label");
+        const subtitleEl = document.getElementById("overall-progress-subtitle");
+        const list = document.getElementById("skill-progress-list");
+
+        if (!ring || !valueEl || !list) return;
+
+        valueEl.innerText = `${overall}%`;
+        ring.style.background = `conic-gradient(#10b981 0deg, #34d399 ${overall * 3.6}deg, rgba(255,255,255,.07) ${overall * 3.6}deg 360deg)`;
+
+        if (overall >= 80) {
+          labelEl.innerText = "Ajoyib progress! 🔥";
+          subtitleEl.innerText = "O‘quvchi barqaror yuqori natija ko‘rsatmoqda.";
+        } else if (overall >= 60) {
+          labelEl.innerText = "Yaxshi ketmoqda 🚀";
+          subtitleEl.innerText = "Natijalarni muntazam davom ettirish eng yaxshi strategiya.";
+        } else if (overall > 0) {
+          labelEl.innerText = "Rivojlanish boshlangan 🌱";
+          subtitleEl.innerText = "Ko‘proq mashq qilingani sari progress tezroq o‘sadi.";
+        } else {
+          labelEl.innerText = "Progress boshlanishi";
+          subtitleEl.innerText = "Natijalar yig‘ilgani sari avtomatik hisoblanadi.";
+        }
+
+        list.innerHTML = keys
+          .map((key) => {
+            const val = skill[key];
+            const missing = val === null;
+            const display = missing ? "—" : `${val}%`;
+            const foot = missing ? "Ma'lumot yetarli emas" : "Real natija";
+            return `
+              <div class="skill-progress-item ${missing ? "missing" : ""}">
+                <div class="skill-progress-top">
+                  <span class="skill-progress-name">${icons[key]} ${skill.labels[key]}</span>
+                  <span class="skill-progress-score">${display}</span>
+                </div>
+                <div class="skill-progress-track">
+                  <div class="skill-progress-fill" style="width:${missing ? 0 : val}%"></div>
+                </div>
+                <div class="skill-progress-foot">
+                  <span>${foot}</span>
+                  <span>${missing ? "—" : (val >= 80 ? "Strong" : val >= 60 ? "Good" : "Focus")}</span>
+                </div>
+              </div>
+            `;
+          })
+          .join("");
+
+        const ranked = available.slice().sort((a, b) => skill[b] - skill[a]);
+        const best = ranked[0];
+        const focus = ranked[ranked.length - 1];
+
+        document.getElementById("progress-best-skill").innerText =
+          best ? `${skill.labels[best]} • ${skill[best]}%` : "—";
+        document.getElementById("progress-focus-skill").innerText =
+          focus ? `${skill.labels[focus]} • ${skill[focus]}%` : "—";
+
+        const growthCandidates = [
+          ["Reading", (targetUser.readingGrowth || []).filter((v) => Number(v) > 0)],
+          ["Listening", (targetUser.listeningGrowth || []).filter((v) => Number(v) > 0)],
+        ];
+        const growth = growthCandidates
+          .map(([name, arr]) => ({
+            name,
+            delta: arr.length > 1 ? Number(arr[arr.length - 1]) - Number(arr[0]) : 0,
+          }))
+          .sort((a, b) => b.delta - a.delta)[0];
+
+        document.getElementById("progress-growth-skill").innerText =
+          growth && growth.delta > 0 ? `${growth.name} +${growth.delta.toFixed(1)} Band` : "Yangi ma'lumot kutilmoqda";
+        document.getElementById("progress-data-status").innerText =
+          available.length >= 4 ? "REAL DATA • LIVE" : `REAL DATA • ${available.length}/6 SKILL`;
+      }
+
+      function setProgressTrendMode(mode) {
+        progressTrendMode = mode === "monthly" ? "monthly" : "weekly";
+        document.getElementById("progress-week-btn")?.classList.toggle("active", progressTrendMode === "weekly");
+        document.getElementById("progress-month-btn")?.classList.toggle("active", progressTrendMode === "monthly");
+
+        const desc = document.getElementById("progress-trend-description");
+        if (desc) {
+          desc.innerText =
+            progressTrendMode === "weekly"
+              ? "So‘nggi 7 kunlik Vocabulary faoliyati."
+              : "So‘nggi 5 haftadagi Reading / Listening o‘sishi.";
+        }
+
+        if (activeAnalyticsUser) renderProgressTrendChart(activeAnalyticsUser);
+      }
+
+      function renderProgressTrendChart(targetUser) {
+        activeAnalyticsUser = targetUser;
+
+        const canvas = document.getElementById("progressTrendChart");
+        if (!canvas || typeof Chart === "undefined") return;
+
+        if (chartProgressTrendInstance) chartProgressTrendInstance.destroy();
+
+        const ctx = canvas.getContext("2d");
+        let labels;
+        let datasets;
+
+        if (progressTrendMode === "weekly") {
+          const vocab = targetUser.weeklyVocabStats || [0, 0, 0, 0, 0, 0, 0];
+          labels = ["Dush", "Sesh", "Chor", "Pay", "Jum", "Shan", "Yak"];
+          datasets = [
+            {
+              label: "Yodlangan so‘zlar",
+              data: vocab,
+              borderColor: "#34d399",
+              backgroundColor: "rgba(16,185,129,.16)",
+              fill: true,
+              tension: 0.38,
+              pointRadius: 4,
+              pointHoverRadius: 6,
+              borderWidth: 3,
+            },
+          ];
+        } else {
+          const reading = targetUser.readingGrowth || [0, 0, 0, 0, 0];
+          const listening = targetUser.listeningGrowth || [0, 0, 0, 0, 0];
+          labels = ["1-hafta", "2-hafta", "3-hafta", "4-hafta", "5-hafta"];
+          datasets = [
+            {
+              label: "Reading Band",
+              data: reading,
+              borderColor: "#34d399",
+              backgroundColor: "rgba(16,185,129,.10)",
+              fill: true,
+              tension: 0.38,
+              pointRadius: 4,
+              borderWidth: 3,
+            },
+            {
+              label: "Listening Band",
+              data: listening,
+              borderColor: "#67e8f9",
+              backgroundColor: "rgba(103,232,249,.06)",
+              fill: false,
+              tension: 0.38,
+              pointRadius: 4,
+              borderWidth: 3,
+            },
+          ];
+        }
+
+        chartProgressTrendInstance = new Chart(ctx, {
+          type: "line",
+          data: { labels, datasets },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: "index", intersect: false },
+            plugins: {
+              legend: {
+                labels: { color: "#d1fae5", usePointStyle: true, padding: 18 },
+              },
+              tooltip: {
+                backgroundColor: "rgba(2,20,15,.96)",
+                borderColor: "rgba(16,185,129,.25)",
+                borderWidth: 1,
+                titleColor: "#ecfdf5",
+                bodyColor: "#a7f3d0",
+                padding: 12,
+              },
+            },
+            scales: {
+              x: {
+                ticks: { color: "#64748b" },
+                grid: { color: "rgba(255,255,255,.035)" },
+              },
+              y: {
+                beginAtZero: true,
+                max: progressTrendMode === "monthly" ? 9 : undefined,
+                ticks: { color: "#64748b" },
+                grid: { color: "rgba(255,255,255,.035)" },
+              },
+            },
+          },
+        });
+      }
+
       function initCharts(targetUser) {
+        renderSkillProgress(targetUser);
+        renderProgressTrendChart(targetUser);
+
         const vocabData = targetUser.weeklyVocabStats || [0, 0, 0, 0, 0, 0, 0];
         const listeningData = targetUser.listeningGrowth || [0, 0, 0, 0, 0];
         const readingData = targetUser.readingGrowth || [0, 0, 0, 0, 0];
         const weakPointsObj = targetUser.weakPoints || {};
 
         const sumVocab = vocabData.reduce((a, b) => a + b, 0);
-        document.getElementById(
-          "stat-vocab-count"
-        ).innerText = `${sumVocab} ta`;
+        document.getElementById("stat-vocab-count").innerText = `${sumVocab} ta`;
 
         const lastL = listeningData[listeningData.length - 1] || 0;
         const lastR = readingData[readingData.length - 1] || 0;
-        const avg = (
-          (lastL + lastR) /
-          (lastL > 0 && lastR > 0 ? 2 : 1)
-        ).toFixed(1);
+        const avg = ((lastL + lastR) / (lastL > 0 && lastR > 0 ? 2 : 1)).toFixed(1);
         document.getElementById("stat-test-avg").innerText = `${avg} Band`;
 
         const keys = Object.keys(weakPointsObj);
-        if (keys.length > 0) {
-          const topWeakKey = keys.reduce(
-            (a, b) => (weakPointsObj[a] > weakPointsObj[b] ? a : b),
-            keys[0]
-          );
-          document.getElementById("stat-weak-spot").innerText = topWeakKey;
-        } else {
-          document.getElementById("stat-weak-spot").innerText = "Hozircha yo'q";
-        }
+        document.getElementById("stat-weak-spot").innerText =
+          keys.length > 0
+            ? keys.reduce((a, b) => (weakPointsObj[a] > weakPointsObj[b] ? a : b), keys[0])
+            : "Hozircha yo'q";
 
-        // Chart 1: Vocab Bar Chart
+        // Existing vocabulary chart
         const ctxVocab = document.getElementById("vocabChart").getContext("2d");
         if (chartVocabInstance) chartVocabInstance.destroy();
         chartVocabInstance = new Chart(ctxVocab, {
           type: "bar",
           data: {
             labels: ["Dush", "Sesh", "Chor", "Pay", "Jum", "Shan", "Yak"],
-            datasets: [
-              {
-                label: "Yodlangan So'zlar",
-                data: vocabData,
-                backgroundColor: "rgba(16, 185, 129, 0.6)",
-                borderColor: "#10b981",
-                borderWidth: 2,
-                borderRadius: 6,
-              },
-            ],
+            datasets: [{
+              label: "Yodlangan So'zlar",
+              data: vocabData,
+              backgroundColor: "rgba(16,185,129,.58)",
+              borderColor: "#10b981",
+              borderWidth: 1,
+              borderRadius: 8,
+            }],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { labels: { color: "#a7f3d0" } } },
+            plugins: { legend: { labels: { color: "#d1fae5" } } },
             scales: {
-              x: {
-                ticks: { color: "#a7f3d0" },
-                grid: { color: "rgba(255,255,255,0.05)" },
-              },
-              y: {
-                ticks: { color: "#a7f3d0" },
-                grid: { color: "rgba(255,255,255,0.05)" },
-              },
+              x: { ticks: { color: "#94a3b8" }, grid: { color: "rgba(255,255,255,.035)" } },
+              y: { beginAtZero: true, ticks: { color: "#94a3b8" }, grid: { color: "rgba(255,255,255,.035)" } },
             },
           },
         });
 
-        // Chart 2: Listening & Reading Growth Line Chart
-        const ctxGrowth = document
-          .getElementById("growthChart")
-          .getContext("2d");
+        // Existing Reading / Listening chart
+        const ctxGrowth = document.getElementById("growthChart").getContext("2d");
         if (chartGrowthInstance) chartGrowthInstance.destroy();
         chartGrowthInstance = new Chart(ctxGrowth, {
           type: "line",
           data: {
             labels: ["1-Hafta", "2-Hafta", "3-Hafta", "4-Hafta", "5-Hafta"],
             datasets: [
-              {
-                label: "Listening Band",
-                data: listeningData,
-                borderColor: "#38bdf8",
-                backgroundColor: "rgba(56, 189, 248, 0.2)",
-                fill: true,
-                tension: 0.3,
-              },
-              {
-                label: "Reading Band",
-                data: readingData,
-                borderColor: "#f59e0b",
-                backgroundColor: "rgba(245, 158, 11, 0.2)",
-                fill: true,
-                tension: 0.3,
-              },
+              { label: "Listening Band", data: listeningData, borderColor: "#67e8f9", backgroundColor: "rgba(103,232,249,.08)", fill: true, tension: .35, borderWidth: 3, pointRadius: 3 },
+              { label: "Reading Band", data: readingData, borderColor: "#34d399", backgroundColor: "rgba(52,211,153,.06)", fill: true, tension: .35, borderWidth: 3, pointRadius: 3 },
             ],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { labels: { color: "#a7f3d0" } } },
+            plugins: { legend: { labels: { color: "#d1fae5" } } },
             scales: {
-              x: {
-                ticks: { color: "#a7f3d0" },
-                grid: { color: "rgba(255,255,255,0.05)" },
-              },
-              y: {
-                ticks: { color: "#a7f3d0" },
-                grid: { color: "rgba(255,255,255,0.05)" },
-                min: 0,
-                max: 9,
-              },
+              x: { ticks: { color: "#94a3b8" }, grid: { color: "rgba(255,255,255,.035)" } },
+              y: { ticks: { color: "#94a3b8" }, grid: { color: "rgba(255,255,255,.035)" }, min: 0, max: 9 },
             },
           },
         });
 
-        // Chart 3: Weak Points Horizontal Bar Chart
-        const ctxWeak = document
-          .getElementById("weakPointsChart")
-          .getContext("2d");
+        // Existing weak-points chart
+        const ctxWeak = document.getElementById("weakPointsChart").getContext("2d");
         if (chartWeakInstance) chartWeakInstance.destroy();
         chartWeakInstance = new Chart(ctxWeak, {
           type: "bar",
           data: {
             labels: keys.length > 0 ? keys : ["Xatolar mavjud emas"],
-            datasets: [
-              {
-                label: "Xatolar Ulushi (%)",
-                data: keys.length > 0 ? Object.values(weakPointsObj) : [0],
-                backgroundColor: "rgba(239, 68, 68, 0.6)",
-                borderColor: "#ef4444",
-                borderWidth: 2,
-                borderRadius: 6,
-              },
-            ],
+            datasets: [{
+              label: "Xatolar Ulushi (%)",
+              data: keys.length > 0 ? Object.values(weakPointsObj) : [0],
+              backgroundColor: "rgba(239,68,68,.55)",
+              borderColor: "#ef4444",
+              borderWidth: 1,
+              borderRadius: 8,
+            }],
           },
           options: {
             indexAxis: "y",
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { labels: { color: "#a7f3d0" } } },
+            plugins: { legend: { labels: { color: "#d1fae5" } } },
             scales: {
-              x: {
-                ticks: { color: "#a7f3d0" },
-                grid: { color: "rgba(255,255,255,0.05)" },
-              },
-              y: {
-                ticks: { color: "#a7f3d0" },
-                grid: { color: "rgba(255,255,255,0.05)" },
-              },
+              x: { ticks: { color: "#94a3b8" }, grid: { color: "rgba(255,255,255,.035)" } },
+              y: { ticks: { color: "#94a3b8" }, grid: { color: "rgba(255,255,255,.035)" } },
             },
           },
         });
       }
+
 
       /* TELEGRAM CHAT FUNCTIONALITY */
       function handleChatFileSelect(e) {
