@@ -408,6 +408,151 @@
         overflow-y: auto;
       }
 
+      /* ===== COURSE PURCHASE GATE ===== */
+      .course-gate-modal {
+        z-index: 2500;
+        background: rgba(1, 15, 12, 0.94);
+      }
+
+      .course-gate-card {
+        max-width: 760px;
+        padding: 2rem;
+      }
+
+      .course-gate-head {
+        text-align: center;
+        margin-bottom: 1.4rem;
+      }
+
+      .course-gate-head .course-gate-icon {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 12px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(16, 185, 129, 0.14);
+        border: 1px solid var(--card-border-hover);
+        font-size: 2rem;
+        box-shadow: 0 0 25px var(--emerald-glow);
+      }
+
+      .course-gate-head h2 {
+        margin-bottom: 6px;
+      }
+
+      .course-gate-subtitle {
+        color: var(--text-muted);
+        font-size: 0.88rem;
+      }
+
+      .course-purchase-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        margin: 18px 0;
+      }
+
+      .course-purchase-card {
+        position: relative;
+        padding: 18px;
+        border-radius: 18px;
+        border: 1px solid var(--card-border);
+        background: rgba(0, 0, 0, 0.22);
+        cursor: pointer;
+        transition: all 0.25s ease;
+      }
+
+      .course-purchase-card:hover,
+      .course-purchase-card.selected {
+        border-color: var(--emerald-primary);
+        background: rgba(16, 185, 129, 0.12);
+        box-shadow: 0 0 22px var(--emerald-glow);
+        transform: translateY(-2px);
+      }
+
+      .course-purchase-card .course-price {
+        color: var(--emerald-light);
+        font-size: 1.35rem;
+        font-weight: 800;
+        margin: 10px 0 4px;
+      }
+
+      .course-purchase-card .course-description {
+        color: var(--text-muted);
+        font-size: 0.78rem;
+        line-height: 1.55;
+      }
+
+      .course-purchase-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        font-size: 0.65rem;
+        padding: 4px 8px;
+        border-radius: 999px;
+        background: rgba(16, 185, 129, 0.16);
+        color: var(--emerald-light);
+        border: 1px solid var(--card-border);
+        font-weight: 800;
+      }
+
+      .course-payment-panel {
+        margin-top: 14px;
+        padding: 16px;
+        border-radius: 16px;
+        border: 1px solid var(--card-border);
+        background: rgba(0, 0, 0, 0.22);
+      }
+
+      .course-payment-status {
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.25);
+        color: #fcd34d;
+        font-size: 0.82rem;
+        line-height: 1.5;
+        margin-bottom: 12px;
+      }
+
+      .course-payment-card-number {
+        font-size: 1.25rem;
+        letter-spacing: 1px;
+        font-weight: 800;
+        color: white;
+        word-break: break-word;
+        margin-bottom: 8px;
+      }
+
+      .course-gate-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .course-gate-actions > * {
+        flex: 1;
+      }
+
+      .course-gate-note {
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 0.72rem;
+        margin-top: 12px;
+      }
+
+      @media (max-width: 680px) {
+        .course-purchase-grid {
+          grid-template-columns: 1fr;
+        }
+        .course-gate-card {
+          padding: 1.2rem;
+          max-height: 94vh;
+        }
+      }
+
       .modal-card h2 {
         font-size: 1.8rem;
         font-weight: 800;
@@ -2788,10 +2933,16 @@
           </div>
 
           <div class="input-group" id="level-group">
-            <label data-i18n="levelLabel">O'quv Darajangiz</label>
-            <select id="student-level">
-              <option value="beginner">Beginner (Boshlang'ich)</option>
-              <option value="ielts">IELTS Preparation</option>
+            <label>Kurs tanlovi</label>
+            <div class="course-gate-note" style="text-align:left;margin:0;padding:12px;border:1px solid var(--card-border);border-radius:12px;background:rgba(16,185,129,.06)">
+              🎓 O'quvchi akkauntini ochgandan keyin kursni sotib olish majburiy.
+              <strong>Beginner — 300 000 UZS</strong> yoki
+              <strong>IELTS — 700 000 UZS</strong>.
+              To'lov tasdiqlangach, akkaunt avtomatik ravishda tanlangan kurs roliga yo'naltiriladi.
+            </div>
+            <select id="student-level" class="hidden" aria-hidden="true">
+              <option value="beginner">beginner</option>
+              <option value="ielts">ielts</option>
             </select>
           </div>
 
@@ -2804,6 +2955,43 @@
             Tizimga Kirish
           </button>
         </form>
+      </div>
+    </div>
+
+    <!-- COURSE PURCHASE GATE -->
+    <div id="course-purchase-modal" class="modal-overlay course-gate-modal hidden">
+      <div class="modal-card course-gate-card">
+        <div class="course-gate-head">
+          <div class="course-gate-icon">🎓</div>
+          <h2>Kursni sotib olish kerak</h2>
+          <p class="course-gate-subtitle">
+            Akkauntingiz yaratildi. Darslarga kirish uchun quyidagi kurslardan birini tanlang.
+          </p>
+        </div>
+
+        <div class="course-purchase-grid">
+          <button type="button" class="course-purchase-card" id="purchase-course-beginner" onclick="selectPurchaseCourse('beginner')">
+            <span class="course-purchase-badge">A1</span>
+            <div style="font-size:1.5rem">📘</div>
+            <h3>Beginner</h3>
+            <div class="course-price">300 000 UZS</div>
+            <div class="course-description">Ingliz tilini noldan boshlash. Grammar, Vocabulary, Speaking, Listening va asosiy Writing.</div>
+          </button>
+
+          <button type="button" class="course-purchase-card" id="purchase-course-ielts" onclick="selectPurchaseCourse('ielts')">
+            <span class="course-purchase-badge">IELTS</span>
+            <div style="font-size:1.5rem">🎯</div>
+            <h3>IELTS Preparation</h3>
+            <div class="course-price">700 000 UZS</div>
+            <div class="course-description">IELTS Reading, Listening, Writing va Speaking bo'yicha to'liq tayyorgarlik tizimi.</div>
+          </button>
+        </div>
+
+        <div id="course-purchase-content"></div>
+
+        <div class="course-gate-note">
+          🔒 To'lov admin tomonidan chek orqali tasdiqlanadi. Tasdiqlangandan keyin kurs avtomatik faollashadi.
+        </div>
       </div>
     </div>
 
@@ -6160,9 +6348,17 @@ pen — ruchka 🖊"
           updateLastSeen(currentUser);
           checkDailyStreak(currentUser);
           document.getElementById("auth-modal").classList.add("hidden");
-          loadDashboard(currentUser);
-          renderChatMessages();
-          initCharts(currentUser);
+
+          if (
+            currentUser.role === "student" &&
+            currentUser.course_status !== "active"
+          ) {
+            showCoursePurchaseGate();
+          } else {
+            loadDashboard(currentUser);
+            renderChatMessages();
+            initCharts(currentUser);
+          }
         }
 
         subscribeRealtimeChat();
@@ -6342,6 +6538,375 @@ pen — ruchka 🖊"
         await dbSaveUser(user);
       }
 
+      /* ============================================================
+         🎓 COURSE PURCHASE GATE
+         Student must purchase Beginner or IELTS before dashboard access.
+         Paid course automatically becomes the student's active level.
+      ============================================================ */
+      const EMERALD_COURSE_CATALOG = {
+        beginner: {
+          key: "beginner",
+          title: "Beginner",
+          role: "beginner",
+          price: 300000,
+          icon: "📘",
+          description: "Ingliz tilini noldan boshlash uchun to'liq Beginner kursi.",
+        },
+        ielts: {
+          key: "ielts",
+          title: "IELTS Preparation",
+          role: "ielts",
+          price: 700000,
+          icon: "🎯",
+          description: "IELTS Reading, Listening, Writing va Speaking tayyorgarligi.",
+        },
+      };
+
+      let selectedPurchaseCourse = null;
+      let studentCourseOrders = [];
+
+      function coursePurchaseMoney(value) {
+        return Number(value || 0).toLocaleString("uz-UZ") + " UZS";
+      }
+
+      function courseCatalog(key) {
+        return EMERALD_COURSE_CATALOG[key] || null;
+      }
+
+      function courseOrderForUser(key) {
+        return studentCourseOrders.find(
+          (o) =>
+            String(o.course_key || "") === String(key) &&
+            ["pending", "overdue"].includes(String(o.status || ""))
+        );
+      }
+
+      async function loadStudentCourseOrders() {
+        if (!currentUser?.email) return [];
+        const { data, error } = await supabaseClient
+          .from("payment_orders")
+          .select("*")
+          .eq("student_email", currentUser.email)
+          .order("created_at", { ascending: false });
+
+        if (error) {
+          console.warn("Student course orders load:", error.message);
+          studentCourseOrders = [];
+        } else {
+          studentCourseOrders = data || [];
+        }
+        return studentCourseOrders;
+      }
+
+      function hideCoursePurchaseGate() {
+        document.getElementById("course-purchase-modal")?.classList.add("hidden");
+      }
+
+      function showCoursePurchaseGate() {
+        if (!currentUser || currentUser.role !== "student") return;
+        document.getElementById("auth-modal")?.classList.add("hidden");
+        document.getElementById("course-purchase-modal")?.classList.remove("hidden");
+        selectedPurchaseCourse = currentUser.course_key || null;
+        renderCoursePurchaseGate();
+      }
+
+      async function renderCoursePurchaseGate() {
+        const box = document.getElementById("course-purchase-content");
+        if (!box || !currentUser || currentUser.role !== "student") return;
+
+        await loadStudentCourseOrders();
+        await loadManualPaymentData();
+
+        ["beginner", "ielts"].forEach((key) => {
+          document
+            .getElementById("purchase-course-" + key)
+            ?.classList.toggle("selected", selectedPurchaseCourse === key);
+        });
+
+        if (!selectedPurchaseCourse) {
+          box.innerHTML = `
+            <div class="course-payment-panel">
+              <div class="course-payment-status">
+                ℹ️ Avval kursni tanlang. Keyin to'lov uchun invoice yaratiladi.
+              </div>
+            </div>`;
+          return;
+        }
+
+        const course = courseCatalog(selectedPurchaseCourse);
+        const active =
+          currentUser.course_status === "active" &&
+          currentUser.course_key === course.key;
+
+        if (active) {
+          box.innerHTML = `
+            <div class="course-payment-panel">
+              <div class="course-payment-status" style="background:rgba(16,185,129,.10);border-color:rgba(16,185,129,.3);color:#86efac">
+                ✅ ${paymentSafe(course.title)} kursi faol. Sizning yo'nalishingiz: <strong>${paymentSafe(course.role.toUpperCase())}</strong>.
+              </div>
+              <button class="btn-primary" type="button" onclick="enterActiveCourse()">🚀 Kursga kirish</button>
+            </div>`;
+          return;
+        }
+
+        const order = courseOrderForUser(course.key);
+        if (!order) {
+          box.innerHTML = `
+            <div class="course-payment-panel">
+              <div class="course-payment-status">
+                ${course.icon} <strong>${paymentSafe(course.title)}</strong> tanlandi.
+                Narx: <strong>${coursePurchaseMoney(course.price)}</strong>.
+              </div>
+              <div class="course-gate-actions">
+                <button class="btn-primary" type="button" onclick="createStudentCourseOrder('${course.key}')">
+                  🧾 Invoice yaratish va to'lovni boshlash
+                </button>
+              </div>
+            </div>`;
+          return;
+        }
+
+        if (order.status === "paid") {
+          await activatePurchasedCourse(course.key, order);
+          return;
+        }
+
+        const proof = emeraldPaymentProofs.find(
+          (p) =>
+            Number(p.payment_order_id) === Number(order.id) &&
+            p.status === "pending"
+        );
+
+        box.innerHTML = `
+          <div class="course-payment-panel">
+            <div class="course-payment-status">
+              🧾 Invoice: <strong>${paymentSafe(order.invoice_no)}</strong><br>
+              💰 Summa: <strong>${paymentSafe(coursePurchaseMoney(order.amount))}</strong><br>
+              📌 Holat: <strong>${paymentSafe(order.status === "overdue" ? "Muddati o'tgan" : "To'lov kutilmoqda")}</strong>
+            </div>
+            <div class="manual-card-box" style="margin-bottom:12px">
+              ${document.getElementById("manual-card-display")?.innerHTML || '<div class="payment-empty">Karta maʼlumotlari hali sozlanmagan.</div>'}
+            </div>
+            ${
+              proof
+                ? `<div class="course-payment-status">⏳ Chek yuborildi. Admin tekshiruvini kuting.</div>`
+                : `<div class="course-gate-actions">
+                    <button class="btn-primary" type="button" onclick="openCoursePaymentProof(${Number(order.id)})">
+                      📤 To'lov chekini yuborish
+                    </button>
+                  </div>`
+            }
+          </div>`;
+      }
+
+      function selectPurchaseCourse(key) {
+        if (!courseCatalog(key) || !currentUser || currentUser.role !== "student") return;
+        selectedPurchaseCourse = key;
+        renderCoursePurchaseGate();
+      }
+
+      async function createStudentCourseOrder(key) {
+        if (!currentUser || currentUser.role !== "student") return;
+        const course = courseCatalog(key);
+        if (!course) return;
+
+        await loadStudentCourseOrders();
+
+        const existing = courseOrderForUser(key);
+        if (existing) {
+          selectedPurchaseCourse = key;
+          renderCoursePurchaseGate();
+          return;
+        }
+
+        const paid = studentCourseOrders.find(
+          (o) => o.course_key === key && o.status === "paid"
+        );
+        if (paid) {
+          await activatePurchasedCourse(key, paid);
+          return;
+        }
+
+        const due = new Date();
+        due.setDate(due.getDate() + 3);
+
+        const payload = {
+          invoice_no: paymentInvoice(),
+          student_email: currentUser.email,
+          course_key: course.key,
+          course_title: course.title,
+          amount: course.price,
+          currency: "UZS",
+          due_date: due.toISOString().slice(0, 10),
+          status: "pending",
+          payment_method: "manual_card",
+          notes: `Course purchase: ${course.title}`,
+          created_by: "student-course-purchase",
+        };
+
+        const { data, error } = await supabaseClient
+          .from("payment_orders")
+          .insert(payload)
+          .select()
+          .single();
+
+        if (error) {
+          alert("❌ Kurs uchun invoice yaratilmadi: " + error.message);
+          return;
+        }
+
+        studentCourseOrders.unshift(data);
+        emeraldPaymentOrders.unshift(data);
+        paymentOrdersLoaded = true;
+        selectedPurchaseCourse = key;
+
+        alert(
+          `✅ ${course.title} uchun invoice yaratildi: ${data.invoice_no}\n\nEndi karta orqali to'lov qiling va chekni yuboring.`
+        );
+        renderCoursePurchaseGate();
+      }
+
+      async function openCoursePaymentProof(orderId) {
+        if (!currentUser || currentUser.role !== "student") return;
+        const order = studentCourseOrders.find(
+          (o) => Number(o.id) === Number(orderId)
+        );
+        if (!order) return;
+
+        if (order.status === "paid") {
+          await activatePurchasedCourse(order.course_key, order);
+          return;
+        }
+
+        if (!emeraldManualCardSettings) await loadManualPaymentData();
+
+        const modal = document.createElement("div");
+        modal.className = "modal-overlay";
+        modal.id = "course-proof-modal";
+        modal.style.zIndex = "3000";
+        modal.innerHTML = `
+          <div class="modal-card" style="max-width:540px">
+            <h2>💳 Kurs to'lovi</h2>
+            <p class="subtitle">
+              ${paymentSafe(order.course_title)} • ${paymentSafe(coursePurchaseMoney(order.amount))}
+            </p>
+            <div class="manual-card-box" style="margin-bottom:14px">
+              ${document.getElementById("manual-card-display")?.innerHTML || '<div class="payment-empty">Admin karta maʼlumotlarini sozlamagan.</div>'}
+            </div>
+            <form id="course-proof-form">
+              <div class="input-group">
+                <label>To'lov cheki / screenshot</label>
+                <input id="course-proof-file" type="file" accept="image/*,.pdf" required />
+              </div>
+              <div class="input-group">
+                <label>Izoh</label>
+                <textarea id="course-proof-note" rows="3" placeholder="Masalan: 15:30 da to'lov qildim"></textarea>
+              </div>
+              <div class="course-gate-actions">
+                <button type="button" class="calendar-btn" onclick="document.getElementById('course-proof-modal')?.remove()">Bekor qilish</button>
+                <button class="btn-primary" type="submit">📤 Chekni yuborish</button>
+              </div>
+            </form>
+          </div>`;
+
+        document.body.appendChild(modal);
+
+        document.getElementById("course-proof-form").onsubmit = async (e) => {
+          e.preventDefault();
+          await submitCoursePaymentProof(order);
+        };
+      }
+
+      async function submitCoursePaymentProof(order) {
+        const file = document.getElementById("course-proof-file")?.files?.[0];
+        const note = document.getElementById("course-proof-note")?.value.trim() || "";
+
+        if (!file) {
+          alert("❌ Chek faylini tanlang.");
+          return;
+        }
+        if (file.size > 8 * 1024 * 1024) {
+          alert("❌ Fayl 8 MB dan kichik bo'lishi kerak.");
+          return;
+        }
+
+        try {
+          const safeEmail = String(currentUser.email).replace(/[^a-zA-Z0-9_.-]/g, "_");
+          const path = `${safeEmail}/course-${order.invoice_no}-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9_.-]/g, "_")}`;
+
+          const upload = await supabaseClient.storage
+            .from("payment-proofs")
+            .upload(path, file, { upsert: false });
+
+          if (upload.error) throw upload.error;
+
+          const pub = supabaseClient.storage.from("payment-proofs").getPublicUrl(path);
+          const payload = {
+            payment_order_id: order.id,
+            student_email: currentUser.email,
+            invoice_no: order.invoice_no,
+            amount: Number(order.amount || 0),
+            currency: order.currency || "UZS",
+            receipt_url: pub.data.publicUrl,
+            note,
+            status: "pending",
+          };
+
+          const { error } = await supabaseClient
+            .from("payment_proofs")
+            .insert(payload);
+
+          if (error) throw error;
+
+          await supabaseClient
+            .from("payment_orders")
+            .update({
+              payment_method: "manual_card",
+              payment_started_at: new Date().toISOString(),
+            })
+            .eq("id", order.id);
+
+          document.getElementById("course-proof-modal")?.remove();
+          await loadStudentCourseOrders();
+          await loadManualPaymentData();
+          renderCoursePurchaseGate();
+
+          alert("✅ Chek yuborildi! Admin tasdiqlaganidan keyin kurs avtomatik faollashadi.");
+        } catch (err) {
+          alert("❌ Chek yuborilmadi: " + (err?.message || err));
+        }
+      }
+
+      async function activatePurchasedCourse(courseKey, order) {
+        if (!currentUser || currentUser.role !== "student") return false;
+        const course = courseCatalog(courseKey);
+        if (!course) return false;
+
+        const updatedUser = {
+          ...currentUser,
+          level: course.role,
+          course_key: course.key,
+          course_title: course.title,
+          course_price: course.price,
+          course_status: "active",
+          course_purchased_at: order?.paid_at || new Date().toISOString(),
+          course_invoice_no: order?.invoice_no || currentUser.course_invoice_no || null,
+        };
+
+        await saveUserData(updatedUser);
+        hideCoursePurchaseGate();
+        loadDashboard(updatedUser);
+        renderChatMessages();
+        alert(`🎉 ${course.title} kursi faollashtirildi! Siz ${course.role.toUpperCase()} yo'nalishiga o'tdingiz.`);
+        return true;
+      }
+
+      function enterActiveCourse() {
+        if (!currentUser || currentUser.role !== "student") return;
+        hideCoursePurchaseGate();
+        loadDashboard(currentUser);
+      }
+
       async function handleAuth(event) {
         event.preventDefault();
 
@@ -6407,6 +6972,17 @@ pen — ruchka 🖊"
 
         checkDailyStreak(currentUser);
         document.getElementById("auth-modal").classList.add("hidden");
+
+        // O'quvchi uchun kurs sotib olish majburiy.
+        // Teacher/Admin odatdagi dashboardiga o'tadi.
+        if (
+          currentUser.role === "student" &&
+          currentUser.course_status !== "active"
+        ) {
+          showCoursePurchaseGate();
+          return;
+        }
+
         loadDashboard(currentUser);
         renderChatMessages();
       }
@@ -12724,10 +13300,47 @@ pen — ruchka 🖊"
         if(!confirm(`✅ ${p.invoice_no} to‘lovini tasdiqlaysizmi?`))return;
         const proofRes=await supabaseClient.from("payment_proofs").update({status:"approved",reviewed_by:currentUser.email,reviewed_at:new Date().toISOString()}).eq("id",id).select().single();
         if(proofRes.error){alert("❌ Chek tasdiqlanmadi: "+proofRes.error.message);return;}
-        const orderRes=await supabaseClient.from("payment_orders").update({status:"paid",payment_method:"manual_card",paid_at:new Date().toISOString()}).eq("id",p.payment_order_id).select().single();
+        const paidAt = new Date().toISOString();
+        const orderRes=await supabaseClient.from("payment_orders").update({status:"paid",payment_method:"manual_card",paid_at:paidAt}).eq("id",p.payment_order_id).select().single();
         if(orderRes.error){alert("❌ Order Paid qilinmadi: "+orderRes.error.message);return;}
+
+        // Kurs sotib olish invoice'i bo'lsa, to'lovni tasdiqlash bilan
+        // o'quvchining yo'nalishini avtomatik faollashtiramiz.
+        if(orderRes.data?.course_key){
+          const buyerEmail = orderRes.data.student_email;
+          const buyer = users.find(u => u.email === buyerEmail);
+          const course = courseCatalog(orderRes.data.course_key);
+
+          if(buyer && course){
+            const activatedUser = {
+              ...buyer,
+              level: course.role,
+              course_key: course.key,
+              course_title: course.title,
+              course_price: course.price,
+              course_status: "active",
+              course_purchased_at: paidAt,
+              course_invoice_no: orderRes.data.invoice_no
+            };
+            await dbSaveUser(activatedUser);
+
+            if(currentUser?.email === buyerEmail){
+              currentUser = activatedUser;
+              users[users.findIndex(u => u.email === buyerEmail)] = activatedUser;
+            }
+          }
+        }
+
         await loadPaymentOrders();await loadManualPaymentData();renderPaymentFinanceKpis();renderPaymentOrders();renderStudentPaymentOrders();
-        alert("✅ To‘lov tasdiqlandi va Paid qilindi.");
+
+        if(p.payment_order_id && currentUser?.email === orderRes.data?.student_email && orderRes.data?.course_key){
+          hideCoursePurchaseGate();
+          loadDashboard(currentUser);
+          renderChatMessages();
+          alert(`🎉 To'lov tasdiqlandi! ${courseCatalog(orderRes.data.course_key)?.title || "Kurs"} faollashtirildi.`);
+        }else{
+          alert("✅ To‘lov tasdiqlandi va Paid qilindi.");
+        }
       }
 
       async function rejectManualPayment(id){
