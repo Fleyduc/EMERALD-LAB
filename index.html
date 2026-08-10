@@ -2576,6 +2576,32 @@
       .grammar-quiz-action:hover{transform:translateY(-1px);filter:brightness(1.06)}
       @media(max-width:700px){.grammar-option-grid,.grammar-correct-selector{grid-template-columns:1fr}.grammar-builder-head{flex-direction:column}.grammar-student-image.wide img{height:190px}}
 
+
+
+      /* ============================================================
+         EMERALD LAB COMMAND CENTER + SMART CALENDAR
+      ============================================================ */
+      .command-center-shell{display:flex;flex-direction:column;gap:18px}
+      .cc-hero{padding:26px;border:1px solid rgba(52,211,153,.24);border-radius:24px;background:linear-gradient(135deg,rgba(16,185,129,.16),rgba(2,26,20,.78));box-shadow:0 18px 50px rgba(0,0,0,.18)}
+      .cc-hero-top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;flex-wrap:wrap}
+      .cc-eyebrow{font-size:.72rem;letter-spacing:.18em;color:#6ee7b7;font-weight:800;text-transform:uppercase}
+      .cc-title{font-size:clamp(1.7rem,3vw,2.6rem);font-weight:800;margin:4px 0}
+      .cc-subtitle{color:var(--text-muted);max-width:720px}
+      .cc-live{display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border-radius:999px;background:rgba(16,185,129,.12);border:1px solid rgba(52,211,153,.25);color:#a7f3d0;font-weight:800;font-size:.78rem}
+      .cc-live-dot{width:8px;height:8px;border-radius:50%;background:#34d399;box-shadow:0 0 12px #34d399}
+      .cc-kpi-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px}
+      .cc-kpi{padding:16px;border-radius:18px;background:rgba(2,20,15,.55);border:1px solid rgba(52,211,153,.13);min-width:0}
+      .cc-kpi-icon{font-size:1.25rem}.cc-kpi-label{font-size:.72rem;color:#86a89b;margin-top:8px}.cc-kpi-value{font-size:1.55rem;font-weight:800;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cc-kpi-foot{font-size:.68rem;color:#6ee7b7;margin-top:4px}
+      .cc-grid-2{display:grid;grid-template-columns:1.35fr .65fr;gap:18px}
+      .cc-card{background:rgba(6,44,34,.5);border:1px solid var(--card-border);border-radius:20px;padding:20px;min-width:0}
+      .cc-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap}.cc-card-title{font-size:1rem;font-weight:800}.cc-card-muted{font-size:.72rem;color:#86a89b}
+      .cc-chart-wrap{height:270px;position:relative}.cc-shortcuts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.cc-shortcut{border:1px solid rgba(52,211,153,.16);background:rgba(2,20,15,.48);border-radius:15px;padding:14px;text-align:left;color:#d1fae5;cursor:pointer;transition:.2s}.cc-shortcut:hover{transform:translateY(-2px);border-color:rgba(52,211,153,.45);background:rgba(16,185,129,.08)}.cc-shortcut strong{display:block}.cc-shortcut span{font-size:.72rem;color:#86a89b}
+      .cc-table{width:100%;border-collapse:collapse}.cc-table th,.cc-table td{padding:10px 8px;border-bottom:1px solid rgba(52,211,153,.09);text-align:left;font-size:.78rem}.cc-table th{color:#86a89b;font-size:.68rem;text-transform:uppercase;letter-spacing:.06em}.cc-table td{color:#d1fae5}.cc-scroll{max-height:330px;overflow:auto}
+      .cc-progress-row{display:grid;grid-template-columns:105px 1fr 48px;align-items:center;gap:10px;margin:11px 0}.cc-progress-track{height:8px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden}.cc-progress-fill{height:100%;background:linear-gradient(90deg,#10b981,#6ee7b7);border-radius:inherit}
+      .calendar-shell{display:flex;flex-direction:column;gap:16px}.calendar-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.calendar-title-wrap{display:flex;align-items:center;gap:12px}.calendar-title{font-size:1.35rem;font-weight:800}.calendar-controls{display:flex;gap:8px;flex-wrap:wrap}.calendar-btn{border:1px solid var(--card-border);background:rgba(2,20,15,.55);color:#d1fae5;border-radius:10px;padding:9px 12px;cursor:pointer;font-weight:700}.calendar-btn:hover,.calendar-btn.active{background:var(--emerald-primary);color:#022c22}.calendar-filter{min-width:220px}.calendar-legend{display:flex;gap:14px;flex-wrap:wrap;color:#a7f3d0;font-size:.74rem}.calendar-legend span{display:inline-flex;align-items:center;gap:6px}.calendar-dot{width:9px;height:9px;border-radius:50%;display:inline-block}.dot-lesson{background:#22c55e}.dot-homework{background:#3b82f6}.dot-test{background:#eab308}.dot-deadline{background:#ef4444}.dot-attendance{background:#a855f7}
+      .calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px}.calendar-weekday{padding:8px;text-align:center;color:#86a89b;font-size:.7rem;font-weight:800}.calendar-day{min-height:108px;padding:9px;border:1px solid rgba(52,211,153,.10);background:rgba(2,20,15,.42);border-radius:13px;cursor:pointer;transition:.18s;overflow:hidden}.calendar-day:hover{border-color:rgba(52,211,153,.38);background:rgba(16,185,129,.055)}.calendar-day.muted{opacity:.35}.calendar-day.today{box-shadow:inset 0 0 0 1px rgba(52,211,153,.65)}.calendar-day.selected{border-color:#34d399;background:rgba(16,185,129,.10)}.calendar-day-num{font-size:.75rem;font-weight:800;margin-bottom:6px}.calendar-event-chip{display:flex;align-items:center;gap:5px;font-size:.65rem;padding:4px 5px;margin:3px 0;border-radius:7px;background:rgba(255,255,255,.045);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.calendar-event-chip i{width:7px;height:7px;border-radius:50%;flex:0 0 auto}.calendar-side{display:grid;grid-template-columns:.85fr 1.15fr;gap:16px}.calendar-day-detail{min-height:240px}.calendar-event-detail{padding:11px 12px;border:1px solid rgba(52,211,153,.10);border-radius:12px;background:rgba(2,20,15,.38);margin-top:8px}.calendar-event-detail strong{display:block}.calendar-event-detail small{color:#86a89b}.calendar-empty{padding:25px;text-align:center;color:#86a89b;border:1px dashed rgba(52,211,153,.15);border-radius:14px}.calendar-form{display:grid;grid-template-columns:1fr 1fr;gap:10px}.calendar-form .full{grid-column:1/-1}.calendar-form input,.calendar-form select,.calendar-form textarea{width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:rgba(0,0,0,.22);color:#ecfdf5;outline:none}.calendar-form textarea{min-height:80px;resize:vertical}
+      @media(max-width:1150px){.cc-kpi-grid{grid-template-columns:repeat(4,1fr)}.cc-grid-2{grid-template-columns:1fr}.calendar-side{grid-template-columns:1fr}}
+      @media(max-width:720px){.cc-kpi-grid{grid-template-columns:repeat(2,1fr)}.cc-shortcuts{grid-template-columns:1fr}.calendar-day{min-height:78px;padding:6px}.calendar-event-chip{font-size:.58rem}.calendar-form{grid-template-columns:1fr}.calendar-form .full{grid-column:auto}.cc-progress-row{grid-template-columns:80px 1fr 42px}}
     </style>
   </head>
   <body>
@@ -2628,6 +2654,9 @@
         <button class="nav-tab-btn" onclick="switchMainTab('chat', event)">
           💬 Telegram Chat
         </button>
+        <button class="nav-tab-btn hidden" id="nav-command-center" onclick="switchMainTab('command-center', event)">🏫 Command Center</button>
+        <button class="nav-tab-btn" onclick="switchMainTab('calendar', event)">📅 Calendar</button>
+
       </div>
     </header>
 
@@ -4906,6 +4935,110 @@ pen — ruchka 🖊"
         </div>
       </div>
 
+
+
+      <!-- ============================================================
+           💎 EMERALD LAB COMMAND CENTER (ADMIN)
+      ============================================================ -->
+      <div id="tab-command-center" class="main-tab-content hidden">
+        <div class="command-center-shell">
+          <section class="cc-hero">
+            <div class="cc-hero-top">
+              <div>
+                <div class="cc-eyebrow">EMERALD LAB • ADMIN SYSTEM</div>
+                <div class="cc-title">🏫 Emerald Lab Command Center</div>
+                <p class="cc-subtitle">O‘quvchilar, ustozlar, faollik, uy vazifalari, progress, attendance va moliyaviy holatni bitta markazdan boshqaring.</p>
+              </div>
+              <div class="cc-live"><span class="cc-live-dot"></span> LIVE DATA</div>
+            </div>
+          </section>
+
+          <section class="cc-kpi-grid">
+            <div class="cc-kpi"><div class="cc-kpi-icon">👨‍🎓</div><div class="cc-kpi-label">Students</div><div class="cc-kpi-value" id="cc-students">0</div><div class="cc-kpi-foot">O‘quvchilar</div></div>
+            <div class="cc-kpi"><div class="cc-kpi-icon">👨‍🏫</div><div class="cc-kpi-label">Teachers</div><div class="cc-kpi-value" id="cc-teachers">0</div><div class="cc-kpi-foot">Ustozlar</div></div>
+            <div class="cc-kpi"><div class="cc-kpi-icon">🟢</div><div class="cc-kpi-label">Active Today</div><div class="cc-kpi-value" id="cc-active">0</div><div class="cc-kpi-foot">Bugungi faol</div></div>
+            <div class="cc-kpi"><div class="cc-kpi-icon">📚</div><div class="cc-kpi-label">Homework</div><div class="cc-kpi-value" id="cc-homework">0</div><div class="cc-kpi-foot">Topshiriqlar</div></div>
+            <div class="cc-kpi"><div class="cc-kpi-icon">⏳</div><div class="cc-kpi-label">Pending Reviews</div><div class="cc-kpi-value" id="cc-pending">0</div><div class="cc-kpi-foot">Tekshirilmagan</div></div>
+            <div class="cc-kpi"><div class="cc-kpi-icon">📈</div><div class="cc-kpi-label">Average Progress</div><div class="cc-kpi-value" id="cc-progress">0%</div><div class="cc-kpi-foot">Skill average</div></div>
+            <div class="cc-kpi"><div class="cc-kpi-icon">🟣</div><div class="cc-kpi-label">Attendance</div><div class="cc-kpi-value" id="cc-attendance">—</div><div class="cc-kpi-foot">Real activity</div></div>
+          </section>
+
+          <div class="cc-grid-2">
+            <section class="cc-card">
+              <div class="cc-card-head"><div><div class="cc-card-title">📈 Growth</div><div class="cc-card-muted">Oxirgi 14 kunlik platforma faolligi</div></div><span class="cc-live">LIVE</span></div>
+              <div class="cc-chart-wrap"><canvas id="cc-growth-chart"></canvas></div>
+            </section>
+            <section class="cc-card">
+              <div class="cc-card-head"><div><div class="cc-card-title">⚡ Quick Actions</div><div class="cc-card-muted">Admin bo‘limlariga tez o‘tish</div></div></div>
+              <div class="cc-shortcuts">
+                <button class="cc-shortcut" onclick="switchMainTab('dashboard', event)"><strong>👨‍🎓 Students</strong><span>O‘quvchilar boshqaruvi</span></button>
+                <button class="cc-shortcut" onclick="switchMainTab('analytics', event)"><strong>📊 Analytics</strong><span>Progress va statistika</span></button>
+                <button class="cc-shortcut" onclick="switchMainTab('calendar', event)"><strong>📅 Calendar</strong><span>Dars va faoliyatlar</span></button>
+                <button class="cc-shortcut" onclick="switchMainTab('writing', event)"><strong>✍️ Writing</strong><span>Topshiriqlar va review</span></button>
+                <button class="cc-shortcut" onclick="switchMainTab('reading', event)"><strong>📖 Reading</strong><span>Reading vazifalari</span></button>
+                <button class="cc-shortcut" onclick="switchMainTab('listening', event)"><strong>🎧 Listening</strong><span>Listening vazifalari</span></button>
+              </div>
+            </section>
+          </div>
+
+          <div class="cc-grid-2">
+            <section class="cc-card">
+              <div class="cc-card-head"><div><div class="cc-card-title">🎯 Skill Overview</div><div class="cc-card-muted">Barcha o‘quvchilarning o‘rtacha progressi</div></div></div>
+              <div id="cc-skill-overview"></div>
+            </section>
+            <section class="cc-card">
+              <div class="cc-card-head"><div><div class="cc-card-title">💰 Finance</div><div class="cc-card-muted">To‘lovlar jadvalidan real ma’lumot</div></div></div>
+              <div class="cc-kpi-value" id="cc-finance-total">—</div>
+              <div class="cc-card-muted" id="cc-finance-meta">Payments jadvali bo‘lsa avtomatik hisoblanadi.</div>
+            </section>
+          </div>
+
+          <section class="cc-card">
+            <div class="cc-card-head"><div><div class="cc-card-title">👥 Students Overview</div><div class="cc-card-muted">Progress va oxirgi faollik</div></div><button class="calendar-btn" onclick="switchMainTab('analytics', event)">📊 Batafsil Analytics</button></div>
+            <div class="cc-scroll"><table class="cc-table"><thead><tr><th>Student</th><th>Level</th><th>Progress</th><th>XP</th><th>Last seen</th></tr></thead><tbody id="cc-students-table"></tbody></table></div>
+          </section>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           📅 SMART CALENDAR
+      ============================================================ -->
+      <div id="tab-calendar" class="main-tab-content hidden">
+        <div class="calendar-shell">
+          <section class="cc-card">
+            <div class="calendar-toolbar">
+              <div class="calendar-title-wrap"><span style="font-size:1.7rem">📅</span><div><div class="calendar-title" id="calendar-month-title">Calendar</div><div class="cc-card-muted">Lesson • Homework • Test • Deadline • Attendance</div></div></div>
+              <div class="calendar-controls"><button class="calendar-btn" onclick="changeCalendarMonth(-1)">‹</button><button class="calendar-btn" onclick="goCalendarToday()">Bugun</button><button class="calendar-btn" onclick="changeCalendarMonth(1)">›</button></div>
+            </div>
+            <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+              <select id="calendar-student-filter" class="calendar-btn calendar-filter" onchange="loadCalendarEvents()"><option value="">Barcha o‘quvchilar</option></select>
+              <button class="calendar-btn" id="calendar-refresh-btn" onclick="loadCalendarEvents()">↻ Yangilash</button>
+            </div>
+            <div class="calendar-legend" style="margin-top:14px"><span><i class="calendar-dot dot-lesson"></i>Lesson</span><span><i class="calendar-dot dot-homework"></i>Homework</span><span><i class="calendar-dot dot-test"></i>Test</span><span><i class="calendar-dot dot-deadline"></i>Deadline</span><span><i class="calendar-dot dot-attendance"></i>Attendance</span></div>
+          </section>
+
+          <section class="cc-card">
+            <div class="calendar-grid" id="calendar-grid"></div>
+          </section>
+
+          <div class="calendar-side">
+            <section class="cc-card calendar-day-detail"><div class="cc-card-head"><div><div class="cc-card-title" id="calendar-selected-title">Bugungi faoliyat</div><div class="cc-card-muted">Tanlangan kundagi barcha voqealar</div></div></div><div id="calendar-day-events"></div></section>
+            <section class="cc-card" id="calendar-add-card"><div class="cc-card-head"><div><div class="cc-card-title">➕ Calendar Event</div><div class="cc-card-muted">Admin yangi event qo‘shishi mumkin</div></div></div>
+              <form class="calendar-form" onsubmit="addCalendarEvent(event)">
+                <div><label>Title</label><input id="cal-title" required placeholder="Masalan: Grammar Lesson" /></div>
+                <div><label>Type</label><select id="cal-type"><option value="lesson">🟢 Lesson</option><option value="homework">🔵 Homework</option><option value="test">🟡 Test</option><option value="deadline">🔴 Deadline</option><option value="attendance">🟣 Attendance</option></select></div>
+                <div><label>Date</label><input id="cal-date" type="date" required /></div>
+                <div><label>Time</label><input id="cal-time" type="time" /></div>
+                <div><label>Student</label><select id="cal-student-input"></select></div>
+                <div><label>Teacher</label><input id="cal-teacher" readonly /></div>
+                <div class="full"><label>Description</label><textarea id="cal-description" placeholder="Qo‘shimcha izoh..."></textarea></div>
+                <div class="full"><button class="btn-primary" type="submit">📌 Eventni saqlash</button></div>
+              </form>
+            </section>
+          </div>
+        </div>
+      </div>
+
       <!-- 3. ANALITIKA VA PROGRESS PANEL TAB [YANGI FEATURE 2] -->
       <div id="tab-analytics" class="main-tab-content hidden">
         <!-- Umumiy sinf statistikasi (faqat Ustoz uchun) -->
@@ -5856,6 +5989,14 @@ pen — ruchka 🖊"
         } else if (tab === "chat") {
           document.getElementById("tab-chat").classList.remove("hidden");
           renderChatMessages();
+        } else if (tab === "command-center") {
+          if (!currentUser || currentUser.role !== "admin") return;
+          document.getElementById("tab-command-center").classList.remove("hidden");
+          renderCommandCenter();
+        } else if (tab === "calendar") {
+          document.getElementById("tab-calendar").classList.remove("hidden");
+          populateCalendarStudentFilters();
+          loadCalendarEvents();
         }
       }
 
@@ -6068,7 +6209,20 @@ pen — ruchka 🖊"
       `;
         renderNotificationBell();
 
-        if (user.role === "teacher") {
+        const adminNav = document.getElementById("nav-command-center");
+        if (adminNav) adminNav.classList.toggle("hidden", user.role !== "admin");
+
+        const adminTab = document.getElementById("tab-command-center");
+        const teacherDash = document.getElementById("teacher-dashboard");
+        const studentDash = document.getElementById("student-dashboard");
+        if (user.role === "admin") {
+          teacherDash.classList.add("hidden");
+          studentDash.classList.add("hidden");
+          adminTab.classList.remove("hidden");
+          renderCommandCenter();
+          loadCalendarEvents();
+        } else if (user.role === "teacher") {
+          adminTab.classList.add("hidden");
           document
             .getElementById("teacher-dashboard")
             .classList.remove("hidden");
@@ -6123,6 +6277,8 @@ pen — ruchka 🖊"
           renderStudentLessons();
           renderLeaderboard();
         }
+        populateCalendarStudentFilters();
+        loadCalendarEvents();
       }
 
       /* USTOZ SERTIFIKATLARI */
@@ -11965,6 +12121,159 @@ pen — ruchka 🖊"
           .getElementById("listening-task-list-card")
           .classList.remove("hidden");
         renderStudentListeningTasks();
+      }
+
+
+
+      /* ============================================================
+         💎 COMMAND CENTER + 📅 SMART CALENDAR ENGINE
+      ============================================================ */
+      let commandCenterChart = null;
+      let calendarDate = new Date();
+      let calendarSelectedDate = new Date();
+      let calendarEvents = [];
+
+      function ccIsToday(value){
+        const d=new Date(value);
+        const t=new Date();
+        return d.getFullYear()===t.getFullYear() && d.getMonth()===t.getMonth() && d.getDate()===t.getDate();
+      }
+
+      function ccProgressForUser(u){
+        try{
+          const skill=getStudentSkillProgress(u);
+          const keys=["grammar","vocabulary","reading","listening","writing","speaking"].filter(k=>skill[k]!==null);
+          return keys.length?Math.round(keys.reduce((a,k)=>a+skill[k],0)/keys.length):0;
+        }catch(e){return 0;}
+      }
+
+      async function renderCommandCenter(){
+        if(!currentUser || currentUser.role!=="admin") return;
+        const students=users.filter(u=>u.role==="student");
+        const teachers=users.filter(u=>u.role==="teacher");
+        const active=students.filter(u=>ccIsToday(u.lastSeen)).length;
+        const pending=submissions.filter(s=>!s.grade && !(s.feedback&&s.feedback.overall)).length;
+        const progressValues=students.map(ccProgressForUser);
+        const avgProgress=progressValues.length?Math.round(progressValues.reduce((a,b)=>a+b,0)/progressValues.length):0;
+
+        document.getElementById("cc-students").textContent=students.length;
+        document.getElementById("cc-teachers").textContent=teachers.length;
+        document.getElementById("cc-active").textContent=active;
+        document.getElementById("cc-homework").textContent=submissions.length;
+        document.getElementById("cc-pending").textContent=pending;
+        document.getElementById("cc-progress").textContent=avgProgress+"%";
+
+        const activityRows=students.map(u=>Number(u.streak||0)).filter(Boolean);
+        const attendance=students.length?Math.min(100,Math.round((activityRows.length/students.length)*100)):null;
+        document.getElementById("cc-attendance").textContent=attendance===null?"—":attendance+"%";
+
+        const skillKeys=["grammar","vocabulary","reading","listening","writing","speaking"];
+        const skillLabels={grammar:"Grammar",vocabulary:"Vocabulary",reading:"Reading",listening:"Listening",writing:"Writing",speaking:"Speaking"};
+        const skillAvg={};
+        skillKeys.forEach(k=>{
+          const vals=students.map(u=>{try{return getStudentSkillProgress(u)[k]}catch(e){return null}}).filter(v=>v!==null);
+          skillAvg[k]=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):0;
+        });
+        document.getElementById("cc-skill-overview").innerHTML=skillKeys.map(k=>`<div class="cc-progress-row"><span>${skillLabels[k]}</span><div class="cc-progress-track"><div class="cc-progress-fill" style="width:${skillAvg[k]}%"></div></div><strong>${skillAvg[k]}%</strong></div>`).join("");
+
+        document.getElementById("cc-students-table").innerHTML=students.length?students.sort((a,b)=>ccProgressForUser(b)-ccProgressForUser(a)).map(u=>`<tr><td><strong>${escapeHtml(u.full_name||u.email)}</strong><div style="font-size:.65rem;color:#6b8d81">${escapeHtml(u.email)}</div></td><td>${escapeHtml((u.level||"-").toUpperCase())}</td><td><strong>${ccProgressForUser(u)}%</strong></td><td>${Number(u.xp||0)}</td><td>${escapeHtml(u.lastSeen||"—")}</td></tr>`).join(""): `<tr><td colspan="5" class="calendar-empty">Hozircha o‘quvchilar yo‘q.</td></tr>`;
+
+        try{
+          const {data,error}=await supabaseClient.from("student_payments").select("amount,currency,status");
+          if(!error && data){
+            const paid=data.filter(x=>x.status==="paid");
+            const total=paid.reduce((sum,x)=>sum+Number(x.amount||0),0);
+            document.getElementById("cc-finance-total").textContent=total.toLocaleString("uz-UZ")+" "+(paid[0]?.currency||"UZS");
+            document.getElementById("cc-finance-meta").textContent=`${paid.length} ta to‘lov • ${data.length-paid.length} ta kutilmoqda`;
+          }
+        }catch(e){console.warn("Finance load:",e)}
+        renderCommandCenterGrowth();
+      }
+
+      function renderCommandCenterGrowth(){
+        const canvas=document.getElementById("cc-growth-chart");
+        if(!canvas||typeof Chart==="undefined")return;
+        if(commandCenterChart)commandCenterChart.destroy();
+        const labels=[];const values=[];
+        for(let i=13;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);labels.push(d.toLocaleDateString("uz-UZ",{day:"2-digit",month:"short"}));const key=d.toLocaleDateString("uz-UZ",{dateStyle:"short"});let count=0;users.forEach(u=>{if((u.lastSeen||"").includes(key))count++;});if(i===0)count=Math.max(count,users.filter(u=>ccIsToday(u.lastSeen)).length);values.push(count)}
+        commandCenterChart=new Chart(canvas.getContext("2d"),{type:"line",data:{labels,datasets:[{label:"Active users",data:values,borderColor:"#34d399",backgroundColor:"rgba(16,185,129,.12)",fill:true,tension:.35,borderWidth:3,pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:"#d1fae5"}}},scales:{x:{ticks:{color:"#86a89b"},grid:{color:"rgba(255,255,255,.035)"}},y:{beginAtZero:true,ticks:{color:"#86a89b",precision:0},grid:{color:"rgba(255,255,255,.035)"}}}}});
+      }
+
+      function calendarTypeMeta(type){return {lesson:{label:"Lesson",dot:"dot-lesson",emoji:"🟢"},homework:{label:"Homework",dot:"dot-homework",emoji:"🔵"},test:{label:"Test",dot:"dot-test",emoji:"🟡"},deadline:{label:"Deadline",dot:"dot-deadline",emoji:"🔴"},attendance:{label:"Attendance",dot:"dot-attendance",emoji:"🟣"}}[type]||{label:type,dot:"dot-lesson",emoji:"📌"}}
+
+      function populateCalendarStudentFilters(){
+        const filter=document.getElementById("calendar-student-filter");const input=document.getElementById("cal-student-input");if(!filter||!input)return;
+        const students=users.filter(u=>u.role==="student");
+        const selected=filter.value;
+        filter.innerHTML='<option value="">Barcha o‘quvchilar</option>'+students.map(u=>`<option value="${escapeHtml(u.email)}">${escapeHtml(u.full_name||u.email)}</option>`).join("");
+        if(students.some(u=>u.email===selected))filter.value=selected;
+        input.innerHTML='<option value="">Umumiy event</option>'+students.map(u=>`<option value="${escapeHtml(u.email)}">${escapeHtml(u.full_name||u.email)}</option>`).join("");
+        const teacher=document.getElementById("cal-teacher");if(teacher)teacher.value=currentUser?.full_name||"";
+        const date=document.getElementById("cal-date");if(date&&!date.value)date.value=calendarDate.toISOString().slice(0,10);
+        document.getElementById("calendar-add-card")?.classList.toggle("hidden",currentUser?.role!=="admin");
+      }
+
+      function calendarDateKey(d){return new Date(d).toISOString().slice(0,10)}
+
+      async function loadCalendarEvents(){
+        if(!currentUser)return;
+        populateCalendarStudentFilters();
+        let rows=[];
+        try{
+          const {data,error}=await supabaseClient.from("calendar_events").select("id,student_email,teacher_email,title,description,event_type,event_date,start_time,end_time,status,related_id,created_at").order("event_date",{ascending:true});
+          if(!error)rows=(data||[]).map(x=>({id:"db-"+x.id,studentEmail:x.student_email,teacherEmail:x.teacher_email,title:x.title,description:x.description,type:x.event_type,date:x.event_date,time:x.start_time,status:x.status,createdAt:x.created_at}));
+          else console.warn("Calendar table:",error.message);
+        }catch(e){console.warn("Calendar load:",e)}
+        const studentFilter=document.getElementById("calendar-student-filter")?.value||"";
+        if(currentUser.role==="student") rows=rows.filter(e=>!e.studentEmail||e.studentEmail===currentUser.email);
+        else if(studentFilter) rows=rows.filter(e=>!e.studentEmail||e.studentEmail===studentFilter);
+        // Existing platform data is automatically reflected on the calendar too.
+        const synthetic=[];
+        lessons.forEach(l=>{
+          const d=l.date||l.createdAt||l.created_at||l.updatedAt;
+          if(d) synthetic.push({id:"lesson-"+l.id,studentEmail:studentFilter||null,title:l.title||l.name||"Lesson",description:l.description||l.topic||"",type:"lesson",date:calendarDateKey(d),time:l.time||null,status:"completed",source:"lesson"});
+        });
+        submissions.forEach(s=>{
+          if(studentFilter&&s.studentEmail!==studentFilter)return;
+          const d=s.submittedAt||s.date||s.createdAt||s.created_at;
+          if(d) synthetic.push({id:"sub-"+(s.id||Math.random()),studentEmail:s.studentEmail,title:s.lessonTitle||s.title||"Homework",description:s.grade?`Baholangan: ${s.grade}`:"Tekshirilmoqda",type:s.type==="test"?"test":"homework",date:calendarDateKey(d),time:null,status:s.grade?"completed":"pending",source:"submission"});
+        });
+        const merged=[...rows,...synthetic];
+        const seen=new Set();calendarEvents=merged.filter(e=>{const key=[e.id,e.date,e.title,e.studentEmail||""].join("|");if(seen.has(key))return false;seen.add(key);return true});
+        renderCalendar();
+      }
+
+      function renderCalendar(){
+        const grid=document.getElementById("calendar-grid");if(!grid)return;
+        const y=calendarDate.getFullYear(),m=calendarDate.getMonth();
+        document.getElementById("calendar-month-title").textContent=calendarDate.toLocaleDateString("uz-UZ",{month:"long",year:"numeric"});
+        const first=new Date(y,m,1);const start=(first.getDay()+6)%7;const days=new Date(y,m+1,0).getDate();const prevDays=new Date(y,m,0).getDate();
+        const names=["Dush","Sesh","Chor","Pay","Jum","Shan","Yak"];
+        let html=names.map(n=>`<div class="calendar-weekday">${n}</div>`).join("");
+        for(let i=0;i<42;i++){
+          const dayNum=i-start+1;const d=new Date(y,m,dayNum);const inMonth=dayNum>=1&&dayNum<=days;const key=calendarDateKey(d);const events=calendarEvents.filter(e=>e.date===key).slice(0,4);
+          html+=`<div class="calendar-day ${inMonth?"":"muted"} ${ccIsToday(d)?"today":""} ${key===calendarDateKey(calendarSelectedDate)?"selected":""}" onclick="selectCalendarDate('${key}')"><div class="calendar-day-num">${d.getDate()}</div>${events.map(e=>{const meta=calendarTypeMeta(e.type);return `<div class="calendar-event-chip" title="${escapeHtml(e.title)}"><i class="calendar-dot ${meta.dot}"></i>${escapeHtml(e.title)}</div>`}).join("")}${events.length<calendarEvents.filter(e=>e.date===key).length?`<div style="font-size:.6rem;color:#86a89b">+${calendarEvents.filter(e=>e.date===key).length-events.length} more</div>`:""}</div>`;
+        }
+        grid.innerHTML=html;renderCalendarDayDetails();
+      }
+
+      function selectCalendarDate(key){calendarSelectedDate=new Date(key+"T12:00:00");renderCalendar();}
+      function changeCalendarMonth(delta){calendarDate.setMonth(calendarDate.getMonth()+delta);renderCalendar();}
+      function goCalendarToday(){calendarDate=new Date();calendarSelectedDate=new Date();renderCalendar();}
+
+      function renderCalendarDayDetails(){
+        const key=calendarDateKey(calendarSelectedDate);const list=calendarEvents.filter(e=>e.date===key);const title=document.getElementById("calendar-selected-title");const body=document.getElementById("calendar-day-events");
+        title.textContent=calendarSelectedDate.toLocaleDateString("uz-UZ",{weekday:"long",day:"numeric",month:"long"});
+        if(!list.length){body.innerHTML='<div class="calendar-empty">Bu kunda faoliyat topilmadi.</div>';return}
+        body.innerHTML=list.map(e=>{const meta=calendarTypeMeta(e.type);const student=users.find(u=>u.email===e.studentEmail);return `<div class="calendar-event-detail"><strong>${meta.emoji} ${escapeHtml(e.title)}</strong><small>${meta.label}${e.time?` • ${escapeHtml(e.time)}`:""}${student?` • ${escapeHtml(student.full_name)}`:""}</small><div style="margin-top:5px;font-size:.78rem;color:#b7d8cb">${escapeHtml(e.description||"")}</div><div style="margin-top:5px;font-size:.68rem;color:#6ee7b7">Status: ${escapeHtml(e.status||"scheduled")}</div></div>`}).join("");
+      }
+
+      async function addCalendarEvent(event){
+        event.preventDefault();if(!currentUser||currentUser.role!=="admin")return;
+        const payload={student_email:document.getElementById("cal-student-input").value||null,teacher_email:currentUser.email,title:document.getElementById("cal-title").value.trim(),description:document.getElementById("cal-description").value.trim(),event_type:document.getElementById("cal-type").value,event_date:document.getElementById("cal-date").value,start_time:document.getElementById("cal-time").value||null,status:"scheduled"};
+        const {error}=await supabaseClient.from("calendar_events").insert(payload);
+        if(error){alert("❌ Calendar event saqlanmadi: "+error.message);return}
+        event.target.reset();document.getElementById("cal-teacher").value=currentUser.full_name||"";alert("✅ Calendar event saqlandi!");await loadCalendarEvents();
       }
 
     </script>
