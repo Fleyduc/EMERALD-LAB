@@ -2427,6 +2427,13 @@
       .grammar-quiz-step-progress{color:var(--text-muted);font-size:.7rem;font-weight:800}
 
       /* ===== TEACHER IELTS TAB ORGANIZATION ===== */
+
+      .teacher-homework-section{margin-top:18px;padding:16px;border:1px solid rgba(16,185,129,.16);border-radius:18px;background:rgba(15,23,42,.20)}
+      .teacher-section-title{display:flex;align-items:center;gap:10px;margin-bottom:12px;color:var(--text-main)}
+      .teacher-section-title>span{font-size:1.15rem}
+      .teacher-section-title strong{display:block;font-size:.9rem}
+      .teacher-section-title small{display:block;margin-top:3px;color:var(--text-muted);font-size:.7rem}
+
       .teacher-tab-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;margin-bottom:16px;border-radius:18px;background:linear-gradient(135deg,rgba(16,185,129,.13),rgba(6,78,59,.10));border:1px solid rgba(16,185,129,.22)}
       .teacher-tab-header h3{margin:3px 0 5px;font-size:1.15rem;color:var(--text-main)}
       .teacher-tab-header p{margin:0;color:var(--text-muted);font-size:.78rem;line-height:1.5;max-width:720px}
@@ -3467,25 +3474,7 @@ pen — ruchka 🖊"
           </div>
 
           <!-- UY VAZIFALARINI BAHOLASH -->
-          <div class="card">
-            <div class="card-title">
-              <span>📩</span> <span>O'quvchilardan Kelgan Uy Vazifalari</span>
-            </div>
-            <div style="overflow-x: auto">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>O'quvchi (Profilni ko'rish)</th>
-                    <th>Dars</th>
-                    <th>Insho / Matn</th>
-                    <th>Baho / Izoh</th>
-                    <th style="text-align: right">Amal</th>
-                  </tr>
-                </thead>
-                <tbody id="submissions-body"></tbody>
-              </table>
-            </div>
-          </div>
+          
 
           <!-- IELTS WRITING UY VAZIFASI BERISH -->
           <div id="teacher-writing-create-card" class="card">
@@ -3781,7 +3770,26 @@ pen — ruchka 🖊"
               </table>
             </div>
           </div>
-        </section>
+        <div id="teacher-homework-submissions-card" class="card">
+            <div class="card-title">
+              <span>📩</span> <span>O'quvchilardan Kelgan Uy Vazifalari</span>
+            </div>
+            <div style="overflow-x: auto">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>O'quvchi (Profilni ko'rish)</th>
+                    <th>Dars</th>
+                    <th>Insho / Matn</th>
+                    <th>Baho / Izoh</th>
+                    <th style="text-align: right">Amal</th>
+                  </tr>
+                </thead>
+                <tbody id="submissions-body"></tbody>
+              </table>
+            </div>
+          </div>
+</section>
 
         <!-- O'QUVCHI PANELI -->
         <section id="student-dashboard" class="hidden">
@@ -4516,6 +4524,16 @@ pen — ruchka 🖊"
             <div class="teacher-tab-badge">Writing</div>
           </div>
           <div id="writing-teacher-tasks-slot"></div>
+          <div class="teacher-homework-section">
+            <div class="teacher-section-title">
+              <span>📩</span>
+              <div>
+                <strong>Writingdan kelgan uy vazifalari</strong>
+                <small>O'quvchilardan yuborilgan ishlar shu yerda ko'rinadi.</small>
+              </div>
+            </div>
+            <div id="writing-teacher-tasks-slot-homework"></div>
+          </div>
         </div>
       </div>
 
@@ -4664,6 +4682,16 @@ pen — ruchka 🖊"
             <div class="teacher-tab-badge">Reading</div>
           </div>
           <div id="reading-teacher-tasks-slot"></div>
+          <div class="teacher-homework-section">
+            <div class="teacher-section-title">
+              <span>📩</span>
+              <div>
+                <strong>Readingdan kelgan uy vazifalari</strong>
+                <small>O'quvchilardan yuborilgan ishlar shu yerda ko'rinadi.</small>
+              </div>
+            </div>
+            <div id="reading-teacher-tasks-slot-homework"></div>
+          </div>
         </div>
       </div>
 
@@ -4776,6 +4804,16 @@ pen — ruchka 🖊"
             <div class="teacher-tab-badge">Listening</div>
           </div>
           <div id="listening-teacher-tasks-slot"></div>
+          <div class="teacher-homework-section">
+            <div class="teacher-section-title">
+              <span>📩</span>
+              <div>
+                <strong>Listeningdan kelgan uy vazifalari</strong>
+                <small>O'quvchilardan yuborilgan ishlar shu yerda ko'rinadi.</small>
+              </div>
+            </div>
+            <div id="listening-teacher-tasks-slot-homework"></div>
+          </div>
         </div>
       </div>
 
@@ -9035,6 +9073,26 @@ pen — ruchka 🖊"
       /* ---------- USTOZ: IELTS vazifalarini o'z tablariga tartiblash ---------- */
       let teacherTaskCardsOrganized = false;
 
+      function organizeTeacherHomeworkSubmissions() {
+        const card=document.getElementById("teacher-homework-submissions-card");
+        if(!card || !currentUser || currentUser.role!=="teacher") return;
+
+        const active=document.querySelector(
+          '#writing-teacher-view:not(.hidden), #reading-teacher-view:not(.hidden), #listening-teacher-view:not(.hidden)'
+        );
+        if(!active) return;
+
+        let slotId="";
+        if(active.id==="writing-teacher-view") slotId="writing-teacher-tasks-slot-homework";
+        else if(active.id==="reading-teacher-view") slotId="reading-teacher-tasks-slot-homework";
+        else if(active.id==="listening-teacher-view") slotId="listening-teacher-tasks-slot-homework";
+
+        const slot=document.getElementById(slotId);
+        if(slot && card.parentElement!==slot) slot.appendChild(card);
+      }
+
+
+
       function organizeTeacherTaskCards() {
         if (teacherTaskCardsOrganized) return;
 
@@ -9063,6 +9121,7 @@ pen — ruchka 🖊"
         if (!currentUser) return;
         if (currentUser.role === "teacher") {
           organizeTeacherTaskCards()
+          organizeTeacherHomeworkSubmissions()
           document
             .getElementById("writing-teacher-view")
             .classList.remove("hidden");
@@ -9595,6 +9654,7 @@ pen — ruchka 🖊"
         if (!currentUser) return;
         if (currentUser.role === "teacher") {
           organizeTeacherTaskCards()
+          organizeTeacherHomeworkSubmissions()
           document
             .getElementById("reading-teacher-view")
             .classList.remove("hidden");
@@ -10688,6 +10748,7 @@ pen — ruchka 🖊"
         if (!currentUser) return;
         if (currentUser.role === "teacher") {
           organizeTeacherTaskCards()
+          organizeTeacherHomeworkSubmissions()
           document
             .getElementById("listening-teacher-view")
             .classList.remove("hidden");
