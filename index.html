@@ -147,21 +147,46 @@
         color: var(--emerald-primary);
       }
 
+      /* Navigation opens as a compact dropdown from the profile area */
       .nav-tabs {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        flex: 1 1 auto;
-        min-width: 0;
-        overflow-x: auto;
-        scrollbar-width: none;
-        padding: 2px;
-        -webkit-overflow-scrolling: touch;
-        mask-image: linear-gradient(to right, transparent 0, #000 10px, #000 calc(100% - 10px), transparent 100%);
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 16px;
+        width: min(680px, calc(100vw - 32px));
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+        padding: 10px;
+        background: rgba(2, 26, 20, 0.97);
+        border: 1px solid rgba(52, 211, 153, 0.22);
+        border-radius: 16px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.48), 0 0 28px rgba(16, 185, 129, 0.10);
+        backdrop-filter: blur(22px);
+        -webkit-backdrop-filter: blur(22px);
+        z-index: 500;
+        overflow: visible;
       }
 
       .nav-tabs::-webkit-scrollbar {
         display: none;
+      }
+
+      .nav-tabs.hidden {
+        display: none !important;
+      }
+
+      @media (max-width: 760px) {
+        .nav-tabs {
+          right: 10px;
+          width: calc(100vw - 20px);
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 430px) {
+        .nav-tabs {
+          grid-template-columns: 1fr;
+        }
       }
 
       .nav-tab-btn {
@@ -2931,7 +2956,7 @@
       </div>
 
       <!-- TABS -->
-      <div class="nav-tabs" id="main-nav-tabs">
+      <div class="nav-tabs hidden" id="main-nav-tabs">
         <button
           class="nav-tab-btn active"
           onclick="switchMainTab('dashboard', event)"
@@ -6495,6 +6520,9 @@ pen — ruchka 🖊"
       }
 
       function switchMainTab(tab, event) {
+        // Close the navigation dropdown after choosing a section.
+        closeUserMenu();
+
         document
           .querySelectorAll(".nav-tab-btn")
           .forEach((btn) => btn.classList.remove("active"));
@@ -10407,27 +10435,45 @@ pen — ruchka 🖊"
 
       function toggleUserMenu(event) {
         if (event) event.stopPropagation();
+
         const dropdown = document.getElementById("user-menu-dropdown");
+        const nav = document.getElementById("main-nav-tabs");
         const trigger = document.getElementById("user-badge-trigger");
-        if (!dropdown) return;
-        const isHidden = dropdown.classList.contains("hidden");
+        if (!dropdown || !nav) return;
+
+        const isHidden = nav.classList.contains("hidden");
+
+        // Profile click controls both dropdown layers:
+        // profile menu + compact navigation.
         dropdown.classList.toggle("hidden", !isHidden);
+        nav.classList.toggle("hidden", !isHidden);
+
         if (trigger) trigger.classList.toggle("open", isHidden);
       }
 
       function closeUserMenu() {
         const dropdown = document.getElementById("user-menu-dropdown");
+        const nav = document.getElementById("main-nav-tabs");
         const trigger = document.getElementById("user-badge-trigger");
+
         if (dropdown) dropdown.classList.add("hidden");
+        if (nav) nav.classList.add("hidden");
         if (trigger) trigger.classList.remove("open");
       }
 
       document.addEventListener("click", (e) => {
         const dropdown = document.getElementById("user-menu-dropdown");
+        const nav = document.getElementById("main-nav-tabs");
         const wrapper = document.getElementById("user-badge-trigger");
-        if (!dropdown || dropdown.classList.contains("hidden")) return;
+
         if (
-          !dropdown.contains(e.target) &&
+          (!dropdown || dropdown.classList.contains("hidden")) &&
+          (!nav || nav.classList.contains("hidden"))
+        ) return;
+
+        if (
+          (!dropdown || !dropdown.contains(e.target)) &&
+          (!nav || !nav.contains(e.target)) &&
           wrapper &&
           !wrapper.contains(e.target)
         ) {
