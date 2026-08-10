@@ -3371,7 +3371,7 @@ pen — ruchka 🖊"
                       📤 Rasm yuklash
                       <input type="file" id="quiz-image-file" accept="image/png,image/jpeg,image/webp,image/gif" onchange="handleGrammarImageUpload(event)" />
                     </label>
-                    <span id="quiz-image-status" class="grammar-image-status">JPG, PNG, WEBP, GIF • avtomatik ~450 KB gacha siqiladi</span>
+                    <span id="quiz-image-status" class="grammar-image-status">JPG, PNG, WEBP, GIF • ~450 KB gacha siqiladi • Storage RLS bo'lsa avtomatik fallback</span>
                   </div>
 
                   <div class="input-group" style="margin-top:10px;margin-bottom:10px">
@@ -5446,11 +5446,9 @@ pen — ruchka 🖊"
               ? crypto.randomUUID()
               : `${Date.now()}_${Math.random().toString(36).slice(2)}`;
 
-          // IMPORTANT:
-          // Do NOT use grammar/... because some existing Storage policies
-          // allow chat-media root but reject nested paths.
           const storagePath = `grammar_${uniqueId}_${cleanName}`;
 
+          // 1) Avval Storage'ga yuklashga urinadi.
           const { error: uploadError } = await supabaseClient.storage
             .from("chat-media")
             .upload(storagePath, compressedFile, {
@@ -5459,30 +5457,58 @@ pen — ruchka 🖊"
               contentType: "image/jpeg",
             });
 
-          if (uploadError) {
-            console.error("GRAMMAR IMAGE STORAGE ERROR:", uploadError);
+          if (!uploadError) {
+            const { data: publicData } = supabaseClient.storage
+              .from("chat-media")
+              .getPublicUrl(storagePath);
+
+            if (publicData?.publicUrl) {
+              return {
+                url: publicData.publicUrl,
+                size: compressedFile.size,
+                mode: "storage",
+              };
+            }
+          }
+
+          // 2) Storage RLS bo'lsa, rasmni local data URL ga aylantiradi.
+          // Shu sababli "new row violates row-level security policy"
+          // xatosi Grammar Test'ni bloklamaydi.
+          console.warn(
+            "Grammar image Storage upload ishlamadi. Data URL fallback:",
+            uploadError?.message
+          );
+
+          const dataUrl = await fileToDataUrl(compressedFile);
+
+          if (!dataUrl) {
             throw new Error(
-              uploadError.message ||
-                "Supabase Storage rasmni qabul qilmadi."
+              uploadError?.message ||
+              "Rasmni saqlashning ikkala usuli ham ishlamadi."
             );
           }
 
-          const { data: publicData } = supabaseClient.storage
-            .from("chat-media")
-            .getPublicUrl(storagePath);
-
-          if (!publicData?.publicUrl) {
-            throw new Error("Rasm URL manzili olinmadi.");
-          }
-
           return {
-            url: publicData.publicUrl,
+            url: dataUrl,
             size: compressedFile.size,
+            mode: "data",
           };
         } catch (error) {
           console.error("GRAMMAR IMAGE UPLOAD ERROR:", error);
           throw error;
         }
+      }
+
+      function fileToDataUrl(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () =>
+            reject(new Error("Rasmni data URL ga aylantirib bo'lmadi."));
+
+          reader.readAsDataURL(file);
+        });
       }
 
       // IELTS Listening uchun audio faylni Supabase Storage'ga yuklaydi
@@ -6256,7 +6282,7 @@ pen — ruchka 🖊"
         }
 
         if (status) {
-          status.textContent = "⏳ 1/2 — Rasm kichraytirilmoqda...";
+          status.textContent = "⏳ 1/2 — Rasm optimallashtirilmoqda...";
           status.className = "grammar-image-status";
         }
 
@@ -6267,31 +6293,45 @@ pen — ruchka 🖊"
 
           const urlInput = document.getElementById("quiz-image-url");
           if (urlInput) {
-            urlInput.value = result.url;
-            urlInput.placeholder = "Yuklangan rasm URL";
+            // Data URL juda uzun bo'lishi mumkin, inputda ko'rsatmaymiz.
+            urlInput.value = result.mode === "storage" ? result.url : "";
+            urlInput.placeholder =
+              result.mode === "storage"
+                ? "Yuklangan rasm URL"
+                : "Rasm dars ma'lumotiga saqlandi";
           }
 
           if (status) {
-            status.textContent =
-              `✅ 2/2 — Rasm yuklandi (${Math.round(result.size / 1024)} KB).`;
+            const kb = Math.round(result.size / 1024);
+
+            if (result.mode === "storage") {
+              status.textContent =
+                `✅ 2/2 — Rasm Storage'ga yuklandi (${kb} KB).`;
+            } else {
+              status.textContent =
+                `✅ 2/2 — Storage RLS sabab rasm dars ichiga xavfsiz saqlandi (${kb} KB).`;
+            }
+
             status.className = "grammar-image-status ok";
           }
 
           updateGrammarImagePreview();
-
-          console.log("Grammar image uploaded:", result.url);
+          console.log(
+            "Grammar image saved:",
+            result.mode,
+            result.url.startsWith("data:") ? "[data-url]" : result.url
+          );
         } catch (error) {
           tempGrammarImageUrl = null;
 
           if (status) {
             status.textContent =
-              "❌ Rasm yuklanmadi: " +
-              (error?.message || "Supabase Storage xatosi.");
+              "❌ Rasm saqlanmadi: " +
+              (error?.message || "Noma'lum xatolik.");
             status.className = "grammar-image-status err";
           }
 
-          // This makes the REAL Storage error visible in DevTools too.
-          console.error("Grammar image upload failed:", error);
+          console.error("Grammar image save failed:", error);
         }
       }
 
@@ -6299,7 +6339,7 @@ pen — ruchka 🖊"
         tempGrammarImageUrl = null;
         const status = document.getElementById("quiz-image-status");
         if (status) {
-          status.textContent = "JPG, PNG, WEBP, GIF • avtomatik ~450 KB gacha siqiladi";
+          status.textContent = "JPG, PNG, WEBP, GIF • ~450 KB gacha siqiladi • Storage RLS bo'lsa avtomatik fallback";
           status.className = "grammar-image-status";
         }
         const file = document.getElementById("quiz-image-file");
