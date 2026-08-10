@@ -2426,6 +2426,15 @@
       .grammar-sequence-rule strong{color:var(--text-main)}
       .grammar-quiz-step-progress{color:var(--text-muted);font-size:.7rem;font-weight:800}
 
+      /* ===== TEACHER IELTS TAB ORGANIZATION ===== */
+      .teacher-tab-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;margin-bottom:16px;border-radius:18px;background:linear-gradient(135deg,rgba(16,185,129,.13),rgba(6,78,59,.10));border:1px solid rgba(16,185,129,.22)}
+      .teacher-tab-header h3{margin:3px 0 5px;font-size:1.15rem;color:var(--text-main)}
+      .teacher-tab-header p{margin:0;color:var(--text-muted);font-size:.78rem;line-height:1.5;max-width:720px}
+      .teacher-tab-kicker{font-size:.62rem;font-weight:900;letter-spacing:.14em;color:var(--emerald-light)}
+      .teacher-tab-badge{padding:8px 12px;border-radius:999px;background:rgba(16,185,129,.14);color:var(--emerald-light);font-size:.72rem;font-weight:900;white-space:nowrap}
+      .teacher-ordered-tasks{display:flex;flex-direction:column;gap:16px}
+      @media(max-width:700px){.teacher-tab-header{align-items:flex-start;flex-direction:column}.teacher-tab-badge{align-self:flex-start}}
+
       /* ===== STUDENT GRAMMAR QUIZ ===== */
       .grammar-quiz-shell{position:relative;overflow:hidden;padding:16px;margin-top:14px;border-radius:18px;background:linear-gradient(160deg,rgba(16,185,129,.10),rgba(2,20,15,.55));border:1px solid var(--card-border)}
       .grammar-quiz-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
@@ -3479,7 +3488,7 @@ pen — ruchka 🖊"
           </div>
 
           <!-- IELTS WRITING UY VAZIFASI BERISH -->
-          <div class="card">
+          <div id="teacher-writing-create-card" class="card">
             <div class="card-title">
               <span>✍️</span>
               <span>IELTS Writing Uy Vazifasi Berish</span>
@@ -3542,7 +3551,7 @@ pen — ruchka 🖊"
           </div>
 
           <!-- WRITING VAZIFALARI RO'YXATI -->
-          <div class="card">
+          <div id="teacher-writing-list-card" class="card">
             <div class="card-title">
               <span>🗂️</span>
               <span>Berilgan Writing Vazifalari</span>
@@ -3563,7 +3572,7 @@ pen — ruchka 🖊"
           </div>
 
           <!-- WRITING ISHLARINI TEKSHIRISH -->
-          <div class="card">
+          <div id="teacher-writing-submissions-card" class="card">
             <div class="card-title">
               <span>📩</span>
               <span>O'quvchilardan Kelgan Writing Ishlari</span>
@@ -3585,7 +3594,7 @@ pen — ruchka 🖊"
           </div>
 
           <!-- IELTS READING TESTI BERISH -->
-          <div class="card">
+          <div id="teacher-reading-create-card" class="card">
             <div class="card-title">
               <span>📖</span>
               <span>IELTS Reading Testi Berish</span>
@@ -3635,7 +3644,7 @@ pen — ruchka 🖊"
           </div>
 
           <!-- READING TESTLARI RO'YXATI -->
-          <div class="card">
+          <div id="teacher-reading-list-card" class="card">
             <div class="card-title">
               <span>🗂️</span>
               <span>Berilgan Reading Testlari</span>
@@ -3657,7 +3666,7 @@ pen — ruchka 🖊"
           </div>
 
           <!-- O'QUVCHILAR READING NATIJALARI -->
-          <div class="card">
+          <div id="teacher-reading-results-card" class="card">
             <div class="card-title">
               <span>📈</span>
               <span>O'quvchilar Reading Natijalari</span>
@@ -3679,7 +3688,7 @@ pen — ruchka 🖊"
           </div>
 
           <!-- IELTS LISTENING TESTI BERISH -->
-          <div class="card">
+          <div id="teacher-listening-create-card" class="card">
             <div class="card-title">
               <span>🎧</span>
               <span>IELTS Listening Testi Berish</span>
@@ -3730,7 +3739,7 @@ pen — ruchka 🖊"
           </div>
 
           <!-- LISTENING TESTLARI RO'YXATI -->
-          <div class="card">
+          <div id="teacher-listening-list-card" class="card">
             <div class="card-title">
               <span>🗂️</span>
               <span>Berilgan Listening Testlari</span>
@@ -3752,7 +3761,7 @@ pen — ruchka 🖊"
           </div>
 
           <!-- O'QUVCHILAR LISTENING NATIJALARI -->
-          <div class="card">
+          <div id="teacher-listening-results-card" class="card">
             <div class="card-title">
               <span>📈</span>
               <span>O'quvchilar Listening Natijalari</span>
@@ -4498,18 +4507,15 @@ pen — ruchka 🖊"
 
         <!-- USTOZ KO'RINISHI (yo'naltiruvchi eslatma) -->
         <div id="writing-teacher-view" class="hidden">
-          <div class="card">
-            <div class="card-title">
-              <span>✍️</span>
-              <span>Writing Boshqaruvi</span>
+          <div class="teacher-tab-header">
+            <div>
+              <div class="teacher-tab-kicker">USTOZ PANELI</div>
+              <h3>✍️ Writing Boshqaruvi</h3>
+              <p>Writing vazifasini shu bo'limdan bering, boshqaring va o'quvchilar ishlarini tekshiring.</p>
             </div>
-            <p style="color: var(--text-muted)">
-              Writing vazifa berish va o'quvchilar ishlarini tekshirish uchun
-              <strong>📚 Darslar & Dashboard</strong> bo'limiga o'ting — u
-              yerda "IELTS Writing Uy Vazifasi Berish" va "Writing Ishlarini
-              Tekshirish" kartalari mavjud.
-            </p>
+            <div class="teacher-tab-badge">Writing</div>
           </div>
+          <div id="writing-teacher-tasks-slot"></div>
         </div>
       </div>
 
@@ -4649,18 +4655,15 @@ pen — ruchka 🖊"
 
         <!-- USTOZ KO'RINISHI (yo'naltiruvchi eslatma) -->
         <div id="reading-teacher-view" class="hidden">
-          <div class="card">
-            <div class="card-title">
-              <span>📖</span>
-              <span>Reading Boshqaruvi</span>
+          <div class="teacher-tab-header">
+            <div>
+              <div class="teacher-tab-kicker">USTOZ PANELI</div>
+              <h3>📖 Reading Boshqaruvi</h3>
+              <p>Reading testlarini shu bo'limdan yarating, boshqaring va o'quvchilar natijalarini ko'ring.</p>
             </div>
-            <p style="color: var(--text-muted)">
-              Reading testi berish va o'quvchilar natijalarini kuzatish uchun
-              <strong>📚 Darslar & Dashboard</strong> bo'limiga o'ting — u
-              yerda "IELTS Reading Testi Berish" va "O'quvchilar Reading
-              Natijalari" kartalari mavjud.
-            </p>
+            <div class="teacher-tab-badge">Reading</div>
           </div>
+          <div id="reading-teacher-tasks-slot"></div>
         </div>
       </div>
 
@@ -4764,18 +4767,15 @@ pen — ruchka 🖊"
 
         <!-- USTOZ KO'RINISHI (yo'naltiruvchi eslatma) -->
         <div id="listening-teacher-view" class="hidden">
-          <div class="card">
-            <div class="card-title">
-              <span>🎧</span>
-              <span>Listening Boshqaruvi</span>
+          <div class="teacher-tab-header">
+            <div>
+              <div class="teacher-tab-kicker">USTOZ PANELI</div>
+              <h3>🎧 Listening Boshqaruvi</h3>
+              <p>Listening testini shu bo'limdan yarating, audio va savollarni boshqaring, natijalarni kuzating.</p>
             </div>
-            <p style="color: var(--text-muted)">
-              Listening testi berish va o'quvchilar natijalarini kuzatish
-              uchun <strong>📚 Darslar & Dashboard</strong> bo'limiga o'ting —
-              u yerda "IELTS Listening Testi Berish" va "O'quvchilar
-              Listening Natijalari" kartalari mavjud.
-            </p>
+            <div class="teacher-tab-badge">Listening</div>
           </div>
+          <div id="listening-teacher-tasks-slot"></div>
         </div>
       </div>
 
@@ -9032,9 +9032,37 @@ pen — ruchka 🖊"
       let activeWritingTask = null;
       let writingWorkspaceStartedAt = null;
 
+      /* ---------- USTOZ: IELTS vazifalarini o'z tablariga tartiblash ---------- */
+      let teacherTaskCardsOrganized = false;
+
+      function organizeTeacherTaskCards() {
+        if (teacherTaskCardsOrganized) return;
+
+        const groups = [
+          ["writing-teacher-tasks-slot", ["teacher-writing-create-card","teacher-writing-list-card","teacher-writing-submissions-card"]],
+          ["reading-teacher-tasks-slot", ["teacher-reading-create-card","teacher-reading-list-card","teacher-reading-results-card"]],
+          ["listening-teacher-tasks-slot", ["teacher-listening-create-card","teacher-listening-list-card","teacher-listening-results-card"]]
+        ];
+
+        let moved=0;
+        groups.forEach(([slotId,cardIds])=>{
+          const slot=document.getElementById(slotId);
+          if(!slot)return;
+          const wrapper=document.createElement("div");
+          wrapper.className="teacher-ordered-tasks";
+          cardIds.forEach(id=>{
+            const card=document.getElementById(id);
+            if(card){wrapper.appendChild(card);moved++;}
+          });
+          slot.appendChild(wrapper);
+        });
+        teacherTaskCardsOrganized = moved === 9;
+      }
+
       function renderWritingTab() {
         if (!currentUser) return;
         if (currentUser.role === "teacher") {
+          organizeTeacherTaskCards()
           document
             .getElementById("writing-teacher-view")
             .classList.remove("hidden");
@@ -9566,6 +9594,7 @@ pen — ruchka 🖊"
       function renderReadingTab() {
         if (!currentUser) return;
         if (currentUser.role === "teacher") {
+          organizeTeacherTaskCards()
           document
             .getElementById("reading-teacher-view")
             .classList.remove("hidden");
@@ -10658,6 +10687,7 @@ pen — ruchka 🖊"
       function renderListeningTab() {
         if (!currentUser) return;
         if (currentUser.role === "teacher") {
+          organizeTeacherTaskCards()
           document
             .getElementById("listening-teacher-view")
             .classList.remove("hidden");
