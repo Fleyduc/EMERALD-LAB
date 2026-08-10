@@ -147,53 +147,66 @@
         color: var(--emerald-primary);
       }
 
-      /* Navigation opens as a compact dropdown from the profile area */
-      /* NAVIGATION DROPDOWN — fixed on the LEFT, separate from profile */
+      /* DASHBOARD NAVIGATION DROPDOWN — profile stays independent */
       .nav-tabs {
         position: absolute;
-        top: calc(100% + 72px);
+        top: calc(100% + 8px);
         left: 16px;
         right: auto;
-        width: 440px;
-        max-width: calc(100vw - 285px);
+        width: 320px;
+        max-width: calc(100vw - 32px);
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 6px;
-        padding: 10px;
-        background: rgba(2, 26, 20, 0.97);
+        grid-template-columns: 1fr;
+        gap: 5px;
+        padding: 9px;
+        background: rgba(2, 26, 20, 0.98);
         border: 1px solid rgba(52, 211, 153, 0.22);
-        border-radius: 16px;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.48), 0 0 28px rgba(16, 185, 129, 0.10);
+        border-radius: 15px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.48);
         backdrop-filter: blur(22px);
         -webkit-backdrop-filter: blur(22px);
-        z-index: 1100;
-        overflow: visible;
+        z-index: 1200;
       }
 
-      .nav-tabs::-webkit-scrollbar {
-        display: none;
+      .nav-tabs.hidden { display: none !important; }
+
+      .nav-tabs .nav-tab-btn {
+        width: 100%;
+        justify-content: flex-start;
+        text-align: left;
       }
 
-      .nav-tabs.hidden {
-        display: none !important;
+      .dashboard-trigger {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        min-height: 38px;
+        padding: 8px 12px;
+        border: 1px solid rgba(52,211,153,.18);
+        border-radius: 10px;
+        background: rgba(16,185,129,.08);
+        color: #a7f3d0;
+        font-weight: 800;
+        font-size: .74rem;
+        cursor: pointer;
+        white-space: nowrap;
       }
 
-      @media (max-width: 760px) {
-        .nav-tabs {
-          left: 10px;
-          right: auto;
-          width: min(420px, calc(100vw - 285px));
-          max-width: calc(100vw - 285px);
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
+      .dashboard-trigger:hover, .dashboard-trigger.open {
+        background: rgba(16,185,129,.16);
+        border-color: rgba(52,211,153,.35);
       }
 
-      @media (max-width: 560px) {
+      .dashboard-trigger .dashboard-chevron {
+        transition: transform .18s ease;
+      }
+      .dashboard-trigger.open .dashboard-chevron { transform: rotate(180deg); }
+
+      @media (max-width: 600px) {
         .nav-tabs {
           left: 10px;
           width: calc(100vw - 20px);
           max-width: calc(100vw - 20px);
-          grid-template-columns: repeat(2, minmax(0, 1fr));
         }
       }
 
@@ -2964,6 +2977,10 @@
           <h2>EMERALD<span>LAB</span></h2>
         </div>
 
+        <button class="dashboard-trigger" id="dashboard-trigger" type="button" onclick="openDashboardFromTrigger(); toggleDashboardNav(event)">
+          📚 Dashboard <span class="dashboard-chevron">⌄</span>
+        </button>
+
         <div class="navbar-actions">
           <!-- LANG SWITCHER -->
           <div class="lang-switcher">
@@ -2978,12 +2995,6 @@
 
       <!-- TABS -->
       <div class="nav-tabs hidden" id="main-nav-tabs">
-        <button
-          class="nav-tab-btn active"
-          onclick="switchMainTab('dashboard', event)"
-        >
-          📚 Darslar & Dashboard
-        </button>
         <button class="nav-tab-btn" onclick="switchMainTab('speaking', event)">
           🎙️ AI Speaking Assistant
         </button>
@@ -6540,9 +6551,16 @@ pen — ruchka 🖊"
         saveUserData(user);
       }
 
+      function openDashboardFromTrigger() {
+        closeDashboardNav();
+        document.querySelectorAll(".main-tab-content").forEach((c) => c.classList.add("hidden"));
+        const dashboard = document.getElementById("tab-dashboard");
+        if (dashboard) dashboard.classList.remove("hidden");
+      }
+
       function switchMainTab(tab, event) {
-        // Close the navigation dropdown after choosing a section.
-        closeUserMenu();
+        // Close only the Dashboard navigation dropdown. Profile is independent.
+        closeDashboardNav();
 
         document
           .querySelectorAll(".nav-tab-btn")
@@ -10454,50 +10472,55 @@ pen — ruchka 🖊"
             : "");
       }
 
+      function toggleDashboardNav(event) {
+        if (event) event.stopPropagation();
+        const nav = document.getElementById("main-nav-tabs");
+        const trigger = document.getElementById("dashboard-trigger");
+        if (!nav) return;
+        const isHidden = nav.classList.contains("hidden");
+        nav.classList.toggle("hidden", !isHidden);
+        if (trigger) trigger.classList.toggle("open", isHidden);
+      }
+
+      function closeDashboardNav() {
+        const nav = document.getElementById("main-nav-tabs");
+        const trigger = document.getElementById("dashboard-trigger");
+        if (nav) nav.classList.add("hidden");
+        if (trigger) trigger.classList.remove("open");
+      }
+
       function toggleUserMenu(event) {
         if (event) event.stopPropagation();
-
         const dropdown = document.getElementById("user-menu-dropdown");
-        const nav = document.getElementById("main-nav-tabs");
         const trigger = document.getElementById("user-badge-trigger");
-        if (!dropdown || !nav) return;
-
+        if (!dropdown) return;
         const isHidden = dropdown.classList.contains("hidden");
-
-        // Profile click controls both dropdown layers:
-        // profile menu + compact navigation.
         dropdown.classList.toggle("hidden", !isHidden);
-        nav.classList.toggle("hidden", !isHidden);
-
         if (trigger) trigger.classList.toggle("open", isHidden);
       }
 
       function closeUserMenu() {
         const dropdown = document.getElementById("user-menu-dropdown");
-        const nav = document.getElementById("main-nav-tabs");
         const trigger = document.getElementById("user-badge-trigger");
-
         if (dropdown) dropdown.classList.add("hidden");
-        if (nav) nav.classList.add("hidden");
         if (trigger) trigger.classList.remove("open");
       }
 
       document.addEventListener("click", (e) => {
-        const dropdown = document.getElementById("user-menu-dropdown");
+        const profile = document.getElementById("user-menu-dropdown");
+        const profileTrigger = document.getElementById("user-badge-trigger");
         const nav = document.getElementById("main-nav-tabs");
-        const wrapper = document.getElementById("user-badge-trigger");
+        const dashboardTrigger = document.getElementById("dashboard-trigger");
 
-        if (
-          (!dropdown || dropdown.classList.contains("hidden")) &&
-          (!nav || nav.classList.contains("hidden"))
-        ) return;
+        if (nav && !nav.classList.contains("hidden") &&
+            !nav.contains(e.target) &&
+            dashboardTrigger && !dashboardTrigger.contains(e.target)) {
+          closeDashboardNav();
+        }
 
-        if (
-          (!dropdown || !dropdown.contains(e.target)) &&
-          (!nav || !nav.contains(e.target)) &&
-          wrapper &&
-          !wrapper.contains(e.target)
-        ) {
+        if (profile && !profile.classList.contains("hidden") &&
+            !profile.contains(e.target) &&
+            profileTrigger && !profileTrigger.contains(e.target)) {
           closeUserMenu();
         }
       });
