@@ -6710,6 +6710,7 @@ pen — ruchka 🖊"
       }
 
       function renderStudentLessons() {
+        ensureCompletionStateData(currentUser);
         const container = document.getElementById("student-lessons-container");
         container.innerHTML = "";
 
@@ -6815,7 +6816,90 @@ pen — ruchka 🖊"
           .scrollIntoView({ behavior: "smooth", block: "start" });
       }
 
+      function ensureCompletionStateData(user) {
+        if (!user) return user;
+        if (!Array.isArray(user.completedVocabQuizzes)) user.completedVocabQuizzes = [];
+        if (!Array.isArray(user.completedGrammarQuizzes)) user.completedGrammarQuizzes = [];
+        if (!user.completedGrammarQuizVersions || typeof user.completedGrammarQuizVersions !== "object") {
+          user.completedGrammarQuizVersions = {};
+        }
+        if (!Array.isArray(user.completedHomeworks)) user.completedHomeworks = [];
+        if (!Array.isArray(user.completedLessons)) user.completedLessons = [];
+        return user;
+      }
+
+      function getLessonCompletionState(lessonId) {
+        const l = lessons.find((x) => x.id === lessonId);
+        if (!l) {
+          return {
+            lesson: null,
+            vocabRequired: false,
+            grammarRequired: false,
+            homeworkRequired: false,
+            vocabDone: false,
+            grammarDone: false,
+            homeworkDone: false,
+            fullyDone: false,
+          };
+        }
+
+        const vocabRequired = !!(l.vocabulary && l.vocabulary.length > 0);
+        const grammarRequired = !!(
+          l.quiz &&
+          (
+            l.quiz.question ||
+            (Array.isArray(l.quiz.questions) && l.quiz.questions.length > 0)
+          )
+        );
+        const homeworkRequired = true;
+
+        const vocabDone = !vocabRequired ||
+          (currentUser.completedVocabQuizzes || []).includes(lessonId);
+
+        // Yangi ketma-ket Grammar Test (version: 2) uchun eski
+        // completedGrammarQuizzes flag'i avtomatik qabul qilinmaydi.
+        // Aks holda avvalgi bitta savolli test tugagan bo'lsa,
+        // yangi 10/20 ta savolli test ham "Yakunlangan" chiqib qoladi.
+        let grammarDone = false;
+        if (grammarRequired) {
+          if (l.quiz && l.quiz.version === 2) {
+            const versions = currentUser.completedGrammarQuizVersions || {};
+            grammarDone = versions[String(lessonId)] === 2;
+          } else {
+            grammarDone =
+              (currentUser.completedGrammarQuizzes || []).includes(lessonId);
+          }
+        }
+
+        const homeworkDone =
+          (currentUser.completedHomeworks || []).includes(lessonId);
+
+        return {
+          lesson: l,
+          vocabRequired,
+          grammarRequired,
+          homeworkRequired,
+          vocabDone,
+          grammarDone,
+          homeworkDone,
+          fullyDone: vocabDone && grammarDone && homeworkDone,
+        };
+      }
+
+      function repairStaleLessonCompletion(lessonId, state) {
+        if (!state || state.fullyDone) return;
+
+        const completed = currentUser.completedLessons || [];
+        if (!completed.includes(lessonId)) return;
+
+        // Eski versiyada noto'g'ri completedLessons yozilgan bo'lsa,
+        // uni olib tashlaymiz. Shunda o'quvchi darsni davom ettira oladi.
+        currentUser.completedLessons = completed.filter((id) => id !== lessonId);
+        saveUserData(currentUser);
+      }
+
       function openLessonDetail(lessonId) {
+        ensureCompletionStateData(currentUser);
         const l = lessons.find((x) => x.id === lessonId);
         if (!l) return;
 
@@ -6828,22 +6912,16 @@ pen — ruchka 🖊"
           );
         }
 
-        const completed = currentUser.completedLessons || [];
-        // "isDone" - butun dars UCHTA qismning barchasi (Lug'at testi 100%,
-        // Grammatika testi va Uy vazifasi) bajarilgandagina "yakunlangan"
-        // deb belgilanadi (qarang: checkLessonFullCompletion).
-        const isDone = completed.includes(l.id);
-        // Har bir qism o'z mustaqil bayrog'i bilan qulflanadi, shunda
-        // ular bir-biridan mustaqil ravishda bajarilishi mumkin.
-        const vocabDone = (currentUser.completedVocabQuizzes || []).includes(
-          l.id
-        );
-        const grammarDone = (currentUser.completedGrammarQuizzes || []).includes(
-          l.id
-        );
-        const homeworkDone = (currentUser.completedHomeworks || []).includes(
-          l.id
-        );
+        const completion = getLessonCompletionState(l.id);
+
+        // Faqat uchala qism haqiqatan bajarilgan bo'lsa "yakunlangan".
+        // Eski xato completedLessons yozuvi bo'lsa avtomatik tiklaymiz.
+        repairStaleLessonCompletion(l.id, completion);
+
+        const isDone = completion.fullyDone;
+        const vocabDone = completion.vocabDone;
+        const grammarDone = completion.grammarDone;
+        const homeworkDone = completion.homeworkDone;
 
         let vocabHtml = "";
         if (l.vocabulary && l.vocabulary.length > 0) {
@@ -7162,10 +7240,24 @@ pen — ruchka 🖊"
         state.result="completed";
 
         if(!currentUser.completedGrammarQuizzes)currentUser.completedGrammarQuizzes=[];
-        const already=currentUser.completedGrammarQuizzes.includes(state.lessonId);
+        if(!currentUser.completedGrammarQuizVersions)currentUser.completedGrammarQuizVersions={};
 
-        if(!already){
-          currentUser.completedGrammarQuizzes.push(state.lessonId);
+        const lessonForQuiz = lessons.find((item) => item.id === state.lessonId);
+        const isSequenceQuiz = !!(lessonForQuiz?.quiz?.version === 2);
+        const alreadyVersioned = isSequenceQuiz
+          ? currentUser.completedGrammarQuizVersions[String(state.lessonId)] === 2
+          : currentUser.completedGrammarQuizzes.includes(state.lessonId);
+
+        if(!alreadyVersioned){
+          if (isSequenceQuiz) {
+            currentUser.completedGrammarQuizVersions[String(state.lessonId)] = 2;
+          }
+
+          // Legacy listni ham saqlaymiz — eski UI/API bilan moslik uchun.
+          if(!currentUser.completedGrammarQuizzes.includes(state.lessonId)){
+            currentUser.completedGrammarQuizzes.push(state.lessonId);
+          }
+
           addRewards(20,15,state.lessonId,`Grammatika: ${state.lessonTitle} (${state.questions.length} savol)`);
           saveUserData(currentUser);
         }
@@ -7527,26 +7619,16 @@ pen — ruchka 🖊"
          o'sha qism talabidan ozod qilinadi (chunki bajarish imkoni yo'q).
       ============================================================ */
       function checkLessonFullCompletion(lessonId) {
-        const l = lessons.find((x) => x.id === lessonId);
-        if (!l) return false;
+        const state = getLessonCompletionState(lessonId);
+        if (!state.lesson) return false;
 
-        const vocabRequired = !!(l.vocabulary && l.vocabulary.length > 0);
-        const grammarRequired = !!(l.quiz && l.quiz.question);
+        if (!state.fullyDone) return false;
 
-        const vocabOk =
-          !vocabRequired ||
-          (currentUser.completedVocabQuizzes || []).includes(lessonId);
-        const grammarOk =
-          !grammarRequired ||
-          (currentUser.completedGrammarQuizzes || []).includes(lessonId);
-        const homeworkOk = (currentUser.completedHomeworks || []).includes(
-          lessonId
-        );
+        if (!currentUser.completedLessons)
+          currentUser.completedLessons = [];
 
-        if (!vocabOk || !grammarOk || !homeworkOk) return false;
-
-        if (!currentUser.completedLessons) currentUser.completedLessons = [];
-        if (currentUser.completedLessons.includes(lessonId)) return false;
+        if (currentUser.completedLessons.includes(lessonId))
+          return false;
 
         currentUser.completedLessons.push(lessonId);
         saveUserData(currentUser);
