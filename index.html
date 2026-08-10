@@ -2611,6 +2611,30 @@
       @media(max-width:650px){.payment-kpis,.payment-form,.student-payment-grid{grid-template-columns:1fr}.payment-full{grid-column:auto}.payment-filters{width:100%;flex-direction:column}.payment-table th,.payment-table td{font-size:.68rem}}
 
       /* ============================================================
+         💳 MANUAL CARD PAYMENT
+      ============================================================ */
+      .manual-card-shell{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+      .manual-card-box{padding:18px;border:1px solid rgba(52,211,153,.2);border-radius:18px;background:linear-gradient(135deg,rgba(16,185,129,.09),rgba(2,20,15,.55))}
+      .manual-card-number{font-size:1.45rem;font-weight:900;letter-spacing:2px;color:#d1fae5;margin:12px 0;word-break:break-word}
+      .manual-card-meta{color:#86a89b;font-size:.75rem;line-height:1.7}
+      .manual-card-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+      .manual-copy{border:1px solid rgba(52,211,153,.25);background:rgba(16,185,129,.1);color:#a7f3d0;border-radius:10px;padding:8px 11px;cursor:pointer;font-weight:800;font-size:.72rem}
+      .manual-copy:hover{background:rgba(16,185,129,.2)}
+      .proof-list{display:grid;gap:9px}
+      .proof-item{padding:13px;border:1px solid rgba(52,211,153,.12);border-radius:13px;background:rgba(2,20,15,.4)}
+      .proof-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
+      .proof-meta{font-size:.7rem;color:#86a89b;line-height:1.7;margin-top:7px}
+      .proof-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+      .proof-link{color:#6ee7b7;text-decoration:none;font-weight:800;font-size:.72rem}
+      .manual-card-form{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+      .manual-card-form label{display:flex;flex-direction:column;gap:6px;color:#a7f3d0;font-size:.75rem;font-weight:700}
+      .manual-card-form input{width:100%;padding:11px 12px;border:1px solid var(--card-border);border-radius:11px;background:rgba(0,0,0,.22);color:#ecfdf5;outline:none}
+      .manual-card-form input:focus{border-color:#34d399}
+      .manual-card-form .full{grid-column:1/-1}
+      @media(max-width:850px){.manual-card-shell{grid-template-columns:1fr}}
+      @media(max-width:650px){.manual-card-form{grid-template-columns:1fr}.manual-card-form .full{grid-column:auto}.manual-card-number{font-size:1.15rem}}
+
+      /* ============================================================
          📚 COURSE / GROUP + 📝 ASSIGNMENT CENTER + 🔔 OPERATIONS
       ============================================================ */
       .ops-shell{display:flex;flex-direction:column;gap:18px}.ops-hero{padding:26px;border-radius:24px;border:1px solid rgba(52,211,153,.22);background:linear-gradient(135deg,rgba(16,185,129,.14),rgba(2,26,20,.85));box-shadow:0 18px 50px rgba(0,0,0,.15)}.ops-eyebrow{font-size:.7rem;letter-spacing:.18em;color:#6ee7b7;font-weight:800}.ops-hero h2{margin:5px 0;font-size:clamp(1.5rem,3vw,2.25rem)}.ops-hero p{margin:0;color:#86a89b}.ops-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.ops-card{padding:20px;border:1px solid var(--card-border);border-radius:20px;background:rgba(6,44,34,.42)}.ops-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}.ops-head h3{margin:0;font-size:1rem}.ops-head p{margin:4px 0 0;color:#86a89b;font-size:.73rem}.ops-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.ops-form label{display:flex;flex-direction:column;gap:6px;color:#a7f3d0;font-size:.75rem;font-weight:700}.ops-form input,.ops-form select,.ops-form textarea{width:100%;padding:10px 11px;border:1px solid var(--card-border);border-radius:10px;background:rgba(0,0,0,.22);color:#ecfdf5;outline:none}.ops-form textarea{min-height:76px;resize:vertical}.ops-full{grid-column:1/-1}.ops-table-wrap{overflow:auto}.ops-table{width:100%;border-collapse:collapse}.ops-table th,.ops-table td{padding:10px 8px;border-bottom:1px solid rgba(52,211,153,.09);font-size:.72rem;text-align:left;white-space:nowrap}.ops-table th{font-size:.63rem;color:#86a89b;text-transform:uppercase}.ops-badge{display:inline-flex;padding:4px 8px;border-radius:999px;font-size:.62rem;font-weight:800;background:rgba(16,185,129,.1);color:#a7f3d0}.ops-badge.warn{background:rgba(234,179,8,.12);color:#fde68a}.ops-badge.danger{background:rgba(239,68,68,.12);color:#fca5a5}.ops-list{display:grid;gap:9px}.ops-item{padding:12px;border:1px solid rgba(52,211,153,.1);border-radius:12px;background:rgba(2,20,15,.35)}.ops-item-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.ops-muted{color:#86a89b;font-size:.7rem;line-height:1.6}.ops-stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.ops-stat{padding:15px;border:1px solid var(--card-border);border-radius:15px;background:rgba(6,44,34,.4)}.ops-stat small{display:block;color:#86a89b}.ops-stat strong{display:block;font-size:1.35rem;margin-top:4px}.ops-action{border:1px solid rgba(52,211,153,.2);background:rgba(16,185,129,.08);color:#a7f3d0;border-radius:9px;padding:7px 10px;cursor:pointer;font-weight:800;font-size:.68rem}.ops-action:hover{background:rgba(16,185,129,.16)}
@@ -5003,6 +5027,37 @@ pen — ruchka 🖊"
           <section class="payment-card">
             <div class="payment-card-head"><div><h3>🧾 Mening to‘lovlarim</h3><p>O‘quvchi o‘zining invoice va to‘lov tarixini ko‘radi.</p></div></div>
             <div id="student-payment-orders" class="student-payment-grid"></div>
+          </section>
+
+          <section class="payment-card">
+            <div class="payment-card-head">
+              <div><h3>💳 Karta orqali manual to‘lov</h3><p>O‘quvchi karta raqamingizga bank ilovasi orqali to‘laydi va chekni yuboradi.</p></div>
+            </div>
+            <div class="manual-card-shell">
+              <div class="manual-card-box">
+                <div class="payment-eyebrow">EMERALD LAB • DIRECT CARD</div>
+                <h3 style="margin-top:5px">💳 To‘lov kartasi</h3>
+                <div id="manual-card-display">Karta ma’lumotlari hali sozlanmagan.</div>
+              </div>
+              <div class="manual-card-box" id="manual-card-admin-box">
+                <div class="payment-card-head"><div><h3>⚙️ Admin karta sozlamalari</h3><p>Faqat karta raqami, ism va bank nomi. CVV/parol kiritmang.</p></div></div>
+                <form class="manual-card-form" onsubmit="saveManualCardSettings(event)">
+                  <label>Karta raqami<input id="manual-card-number" inputmode="numeric" maxlength="19" placeholder="8600 1234 5678 9012" required></label>
+                  <label>Karta egasi<input id="manual-card-holder" placeholder="Ism Familiya" required></label>
+                  <label>Bank<input id="manual-card-bank" placeholder="Bank nomi"></label>
+                  <label>Telefon / izoh<input id="manual-card-note" placeholder="To‘lovdan keyin chek yuboring"></label>
+                  <button class="btn-primary manual-card-form full" type="submit">💾 Karta ma’lumotlarini saqlash</button>
+                </form>
+              </div>
+            </div>
+          </section>
+
+          <section class="payment-card">
+            <div class="payment-card-head payment-row-head">
+              <div><h3>🧾 To‘lov tasdiqlashlari</h3><p>O‘quvchilar yuborgan cheklarni tekshiring.</p></div>
+              <button class="calendar-btn" onclick="loadManualPaymentData()">↻ Yangilash</button>
+            </div>
+            <div id="manual-payment-proofs" class="proof-list"></div>
           </section>
         </div>
       </div>
@@ -12494,11 +12549,14 @@ pen — ruchka 🖊"
       async function initPaymentOrders(){
         if(currentUser?.role!=="admin"){
           document.getElementById("po-admin-create-card")?.classList.add("hidden");
+          document.getElementById("manual-card-admin-box")?.classList.add("hidden");
         }else{
           document.getElementById("po-admin-create-card")?.classList.remove("hidden");
+          document.getElementById("manual-card-admin-box")?.classList.remove("hidden");
         }
         if(!paymentOrdersLoaded) await loadPaymentOrders();
         else {populatePaymentStudentSelect();renderPaymentFinanceKpis();renderPaymentOrders();renderStudentPaymentOrders();}
+        await loadManualPaymentData();
       }
 
       async function createPaymentOrder(event){
@@ -12511,7 +12569,7 @@ pen — ruchka 🖊"
         const due=document.getElementById("po-due").value;
         const note=document.getElementById("po-note").value.trim();
         if(!student||!course||!amount||amount<1||!due){alert("❌ Barcha majburiy maydonlarni to‘ldiring.");return;}
-        const payload={invoice_no:paymentInvoice(),student_email:student,course_title:course,amount,currency,due_date:due,status:"pending",payment_method:"payme",notes:note,created_by:currentUser.email};
+        const payload={invoice_no:paymentInvoice(),student_email:student,course_title:course,amount,currency,due_date:due,status:"pending",payment_method:"manual_card",notes:note,created_by:currentUser.email};
         const {data,error}=await supabaseClient.from("payment_orders").insert(payload).select().single();
         if(error){alert("❌ Payment Order saqlanmadi: "+error.message);return;}
         emeraldPaymentOrders.unshift(data);paymentOrdersLoaded=true;
@@ -12550,8 +12608,134 @@ pen — ruchka 🖊"
         if(!rows.length){box.innerHTML='<div class="payment-empty">💳 Hozircha payment order yo‘q.</div>';return;}
         box.innerHTML=rows.slice(0,30).map(o=>{
           const st=paymentOrderStatusMeta(o.status);const canPay=o.status==="pending"||o.status==="overdue";
-          return `<div class="student-payment-card"><div class="student-payment-top"><strong>🧾 ${paymentSafe(o.invoice_no)}</strong><span class="payment-status ${st.cls}">${st.label}</span></div><div class="student-payment-amount">${paymentMoney(o.amount,o.currency)}</div><div class="student-payment-meta">📚 ${paymentSafe(o.course_title)}<br>📅 Muddat: ${paymentSafe(o.due_date||"—")}<br>💳 Usul: ${paymentSafe(o.payment_method||"payme")}</div>${canPay?`<button class="btn-primary" style="margin-top:12px;width:100%" onclick="openPaymentOrder(${Number(o.id)||0})">💳 To‘lash</button>`:""}<div class="payment-note">Payme checkout keyingi server-side integratsiyada ulanadi. Hozir order/status oqimi ishlaydi.</div></div>`;
+          return `<div class="student-payment-card"><div class="student-payment-top"><strong>🧾 ${paymentSafe(o.invoice_no)}</strong><span class="payment-status ${st.cls}">${st.label}</span></div><div class="student-payment-amount">${paymentMoney(o.amount,o.currency)}</div><div class="student-payment-meta">📚 ${paymentSafe(o.course_title)}<br>📅 Muddat: ${paymentSafe(o.due_date||"—")}<br>💳 Usul: ${paymentSafe(o.payment_method==="manual_card"?"Karta orqali":(o.payment_method||"Karta orqali"))}</div>${canPay&&currentUser?.role==="student"?`<button class="btn-primary" style="margin-top:12px;width:100%" onclick="openManualPaymentProof(${Number(o.id)||0})">💳 Karta bilan to‘lash</button>`:""}${o.status==="paid"?`<div class="payment-note" style="background:rgba(34,197,94,.08);color:#86efac">✅ To‘lov tasdiqlangan.</div>`:""}</div>`;
         }).join("");
+      }
+
+      let emeraldManualCardSettings=null;
+      let emeraldPaymentProofs=[];
+
+      function manualCardSafe(v){return paymentSafe(v);}
+      function formatCardNumber(value){
+        const digits=String(value||"").replace(/\D/g,"").slice(0,19);
+        return digits.replace(/(.{4})/g,"$1 ").trim();
+      }
+
+      async function loadManualPaymentData(){
+        try{
+          const settingsRes=await supabaseClient.from("payment_settings").select("*").eq("is_active",true).order("id",{ascending:false}).limit(1);
+          if(!settingsRes.error) emeraldManualCardSettings=settingsRes.data?.[0]||null;
+          const proofRes=await supabaseClient.from("payment_proofs").select("*").order("created_at",{ascending:false});
+          if(!proofRes.error){
+            emeraldPaymentProofs=proofRes.data||[];
+            if(currentUser?.role==="student") emeraldPaymentProofs=emeraldPaymentProofs.filter(x=>x.student_email===currentUser.email);
+          }
+        }catch(e){console.warn("Manual payment load:",e)}
+        renderManualCardDisplay();
+        renderManualPaymentProofs();
+      }
+
+      function renderManualCardDisplay(){
+        const box=document.getElementById("manual-card-display");if(!box)return;
+        const s=emeraldManualCardSettings;
+        if(!s){box.innerHTML='<div class="payment-empty" style="margin-top:10px">💳 Admin hali karta ma’lumotlarini sozlamagan.</div>';return;}
+        const card=formatCardNumber(s.card_number);
+        box.innerHTML=`<div class="manual-card-number">${manualCardSafe(card)}</div><div class="manual-card-meta">👤 ${manualCardSafe(s.card_holder||"—")}<br>🏦 ${manualCardSafe(s.bank_name||"—")}<br>📝 ${manualCardSafe(s.note||"To‘lovdan keyin chekni yuboring.")}</div><div class="manual-card-actions"><button class="manual-copy" onclick="copyManualCard()">📋 Karta raqamini nusxalash</button></div>${currentUser?.role==="student"?'<div class="payment-note">⚠️ Faqat karta raqamiga pul o‘tkazing. CVV, SMS-kod yoki parolni hech kimga yubormang.</div>':''}`;
+        const num=document.getElementById("manual-card-number");if(num&&currentUser?.role==="admin")num.value=formatCardNumber(s.card_number);
+        const holder=document.getElementById("manual-card-holder");if(holder&&currentUser?.role==="admin")holder.value=s.card_holder||"";
+        const bank=document.getElementById("manual-card-bank");if(bank&&currentUser?.role==="admin")bank.value=s.bank_name||"";
+        const note=document.getElementById("manual-card-note");if(note&&currentUser?.role==="admin")note.value=s.note||"";
+      }
+
+      async function copyManualCard(){
+        const number=emeraldManualCardSettings?.card_number||"";
+        if(!number){alert("Karta raqami sozlanmagan.");return;}
+        try{await navigator.clipboard.writeText(String(number).replace(/\s/g,""));alert("✅ Karta raqami nusxalandi!");}
+        catch(e){prompt("Karta raqami:",String(number).replace(/\s/g,""));}
+      }
+
+      async function saveManualCardSettings(event){
+        event.preventDefault();
+        if(currentUser?.role!=="admin"){alert("❌ Faqat admin karta ma’lumotlarini sozlashi mumkin.");return;}
+        const card=String(document.getElementById("manual-card-number").value||"").replace(/\s/g,"");
+        const holder=document.getElementById("manual-card-holder").value.trim();
+        const bank=document.getElementById("manual-card-bank").value.trim();
+        const note=document.getElementById("manual-card-note").value.trim();
+        if(!/^\d{12,19}$/.test(card)){alert("❌ Karta raqamini to‘g‘ri kiriting.");return;}
+        const payload={card_number:card,card_holder:holder,bank_name:bank,note:note,is_active:true,updated_by:currentUser.email};
+        if(emeraldManualCardSettings?.id){
+          await supabaseClient.from("payment_settings").update(payload).eq("id",emeraldManualCardSettings.id);
+        }else{
+          await supabaseClient.from("payment_settings").insert(payload);
+        }
+        await loadManualPaymentData();
+        alert("✅ Karta ma’lumotlari saqlandi!");
+      }
+
+      function openManualPaymentProof(id){
+        const o=emeraldPaymentOrders.find(x=>Number(x.id)===Number(id));
+        if(!o||currentUser?.role!=="student")return;
+        if(o.status==="paid"){alert("✅ Bu to‘lov allaqachon tasdiqlangan.");return;}
+        const proof=emeraldPaymentProofs.find(x=>Number(x.payment_order_id)===Number(id)&&x.status==="pending");
+        if(proof){alert("⏳ Bu invoice uchun chek allaqachon yuborilgan. Admin tekshiruvini kuting.");return;}
+        const modal=document.createElement("div");modal.className="modal-overlay";modal.id="manual-proof-modal";
+        modal.innerHTML=`<div class="modal-card"><h2>💳 Karta bilan to‘lash</h2><div class="subtitle">${paymentSafe(o.invoice_no)} • ${paymentMoney(o.amount,o.currency)}</div><div class="manual-card-box" style="margin-bottom:14px">${document.getElementById("manual-card-display")?.innerHTML||""}</div><form id="manual-proof-form"><div class="input-group"><label>To‘lov cheki / screenshot</label><input id="manual-proof-file" type="file" accept="image/*,.pdf" required></div><div class="input-group"><label>Izoh</label><textarea id="manual-proof-note" placeholder="Masalan: 15:30 da to‘lov qildim"></textarea></div><div style="display:flex;gap:8px"><button type="button" class="calendar-btn" onclick="document.getElementById('manual-proof-modal')?.remove()">Bekor qilish</button><button class="btn-primary" type="submit" style="flex:1">📤 Chekni yuborish</button></div></form></div>`;
+        document.body.appendChild(modal);
+        document.getElementById("manual-proof-form").onsubmit=async(e)=>{e.preventDefault();await submitManualPaymentProof(o);};
+      }
+
+      async function submitManualPaymentProof(order){
+        const file=document.getElementById("manual-proof-file")?.files?.[0];
+        const note=document.getElementById("manual-proof-note")?.value.trim()||"";
+        if(!file){alert("❌ Chek faylini tanlang.");return;}
+        if(file.size>8*1024*1024){alert("❌ Fayl 8 MB dan kichik bo‘lishi kerak.");return;}
+        try{
+          const safeEmail=String(currentUser.email).replace(/[^a-zA-Z0-9_.-]/g,"_");
+          const path=`${safeEmail}/${order.invoice_no}-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9_.-]/g,"_")}`;
+          const upload=await supabaseClient.storage.from("payment-proofs").upload(path,file,{upsert:false});
+          if(upload.error)throw upload.error;
+          const pub=supabaseClient.storage.from("payment-proofs").getPublicUrl(path);
+          const payload={payment_order_id:order.id,student_email:currentUser.email,invoice_no:order.invoice_no,amount:Number(order.amount||0),currency:order.currency||"UZS",receipt_url:pub.data.publicUrl,note,status:"pending"};
+          const {error}=await supabaseClient.from("payment_proofs").insert(payload);
+          if(error)throw error;
+          await supabaseClient.from("payment_orders").update({payment_method:"manual_card",payment_started_at:new Date().toISOString()}).eq("id",order.id);
+          document.getElementById("manual-proof-modal")?.remove();
+          await loadManualPaymentData();
+          await loadPaymentOrders();
+          renderPaymentFinanceKpis();renderPaymentOrders();renderStudentPaymentOrders();
+          alert("✅ Chek yuborildi! Admin tekshirganidan keyin to‘lov Paid bo‘ladi.");
+        }catch(err){alert("❌ Chek yuborilmadi: "+(err?.message||err));}
+      }
+
+      function renderManualPaymentProofs(){
+        const box=document.getElementById("manual-payment-proofs");if(!box)return;
+        const rows=currentUser?.role==="admin"?emeraldPaymentProofs:emeraldPaymentProofs.filter(x=>x.student_email===currentUser?.email);
+        if(!rows.length){box.innerHTML='<div class="payment-empty">🧾 Hozircha chek yuborilmagan.</div>';return;}
+        box.innerHTML=rows.slice(0,50).map(p=>{
+          const status=p.status||"pending";const cls=status==="approved"?"payment-paid":status==="rejected"?"payment-cancelled":"payment-pending";
+          const adminActions=currentUser?.role==="admin"&&status==="pending"?`<button class="payment-action" onclick="approveManualPayment(${Number(p.id)})">✅ Tasdiqlash</button><button class="payment-action" onclick="rejectManualPayment(${Number(p.id)})">❌ Rad etish</button>`:"";
+          return `<div class="proof-item"><div class="proof-top"><strong>🧾 ${paymentSafe(p.invoice_no)}</strong><span class="payment-status ${cls}">${paymentSafe(status)}</span></div><div class="proof-meta">👤 ${paymentSafe(p.student_email)}<br>💰 ${paymentMoney(p.amount,p.currency)}<br>📅 ${p.created_at?new Date(p.created_at).toLocaleString("uz-UZ"):"—"}</div><div class="proof-actions"><a class="proof-link" href="${paymentSafe(p.receipt_url)}" target="_blank" rel="noopener">📎 Chekni ko‘rish</a>${adminActions}</div></div>`;
+        }).join("");
+      }
+
+      async function approveManualPayment(id){
+        if(currentUser?.role!=="admin")return;
+        const p=emeraldPaymentProofs.find(x=>Number(x.id)===Number(id));if(!p)return;
+        if(!confirm(`✅ ${p.invoice_no} to‘lovini tasdiqlaysizmi?`))return;
+        const proofRes=await supabaseClient.from("payment_proofs").update({status:"approved",reviewed_by:currentUser.email,reviewed_at:new Date().toISOString()}).eq("id",id).select().single();
+        if(proofRes.error){alert("❌ Chek tasdiqlanmadi: "+proofRes.error.message);return;}
+        const orderRes=await supabaseClient.from("payment_orders").update({status:"paid",payment_method:"manual_card",paid_at:new Date().toISOString()}).eq("id",p.payment_order_id).select().single();
+        if(orderRes.error){alert("❌ Order Paid qilinmadi: "+orderRes.error.message);return;}
+        await loadPaymentOrders();await loadManualPaymentData();renderPaymentFinanceKpis();renderPaymentOrders();renderStudentPaymentOrders();
+        alert("✅ To‘lov tasdiqlandi va Paid qilindi.");
+      }
+
+      async function rejectManualPayment(id){
+        if(currentUser?.role!=="admin")return;
+        const reason=prompt("Rad etish sababi:","Chek yoki summa tasdiqlanmadi");if(reason===null)return;
+        const {error}=await supabaseClient.from("payment_proofs").update({status:"rejected",reviewed_by:currentUser.email,reviewed_at:new Date().toISOString(),note:reason}).eq("id",id);
+        if(error){alert("❌ Chek rad etilmadi: "+error.message);return;}
+        await loadManualPaymentData();alert("⚠️ To‘lov cheki rad etildi.");
       }
 
       function openPaymentOrder(id){
