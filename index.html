@@ -2409,6 +2409,23 @@
       .grammar-image-preview.standard img{width:100%;max-height:220px}
       .grammar-image-preview.wide img{width:100%;height:220px;object-fit:cover}
       .grammar-image-preview.compact img{width:min(280px,100%);height:170px}
+      /* ===== SEQUENTIAL GRAMMAR BUILDER ===== */
+      .grammar-sequence-info{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 13px;margin-bottom:14px;border-radius:13px;background:rgba(16,185,129,.08);border:1px solid var(--card-border)}
+      .grammar-sequence-info strong{display:block;color:var(--text-main);font-size:.82rem}
+      .grammar-sequence-info small{display:block;color:var(--text-muted);font-size:.69rem;line-height:1.45;margin-top:3px}
+      .grammar-question-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+      .grammar-empty-list{padding:12px;border-radius:12px;border:1px dashed var(--card-border);color:var(--text-muted);font-size:.74rem;text-align:center}
+      .grammar-question-item{display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:12px;background:rgba(0,0,0,.2);border:1px solid var(--card-border)}
+      .grammar-question-number{width:30px;height:30px;flex:0 0 30px;display:flex;align-items:center;justify-content:center;border-radius:9px;background:rgba(16,185,129,.16);color:var(--emerald-light);font-weight:900;font-size:.72rem}
+      .grammar-question-item-text{min-width:0;flex:1;color:var(--text-main);font-size:.75rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .grammar-question-item-meta{color:var(--text-muted);font-size:.65rem}
+      .grammar-remove-question{border:0;background:rgba(239,68,68,.1);color:#fca5a5;border-radius:8px;padding:6px 8px;cursor:pointer}
+      .grammar-add-question-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+      .grammar-add-question-btn,.grammar-clear-question-btn{padding:10px 13px;border-radius:10px;cursor:pointer;font-size:.76rem;font-weight:800}
+      .grammar-sequence-rule{margin-top:10px;padding:10px 12px;border-radius:11px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.22);color:var(--text-muted);font-size:.69rem;line-height:1.45}
+      .grammar-sequence-rule strong{color:var(--text-main)}
+      .grammar-quiz-step-progress{color:var(--text-muted);font-size:.7rem;font-weight:800}
+
       /* ===== STUDENT GRAMMAR QUIZ ===== */
       .grammar-quiz-shell{position:relative;overflow:hidden;padding:16px;margin-top:14px;border-radius:18px;background:linear-gradient(160deg,rgba(16,185,129,.10),rgba(2,20,15,.55));border:1px solid var(--card-border)}
       .grammar-quiz-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
@@ -3324,28 +3341,27 @@ pen — ruchka 🖊"
               </div>
 
               <div class="grammar-builder-card">
+                <div class="grammar-sequence-info">
+                  <div>
+                    <strong>🔢 Ketma-ket Grammar Testlar</strong>
+                    <small>Bir darsga xohlagancha savol qo'shing. O'quvchi 1 → 2 → 3 → ... tartibida ishlaydi.</small>
+                  </div>
+                  <span id="grammar-question-count" class="grammar-builder-badge">0 ta savol</span>
+                </div>
+
+                <div id="grammar-question-list" class="grammar-question-list">
+                  <div class="grammar-empty-list">Hozircha savol qo'shilmagan.</div>
+                </div>
+
                 <div class="input-group">
                   <label>Test Savoli *</label>
-                  <textarea
-                    id="quiz-question"
-                    rows="2"
-                    placeholder="Masalan: She ___ to school every day."
-                  ></textarea>
+                  <textarea id="quiz-question" rows="2" placeholder="Masalan: She ___ to school every day."></textarea>
                 </div>
 
                 <div class="grammar-option-grid">
-                  <div class="grammar-option-input">
-                    <span class="grammar-option-letter">A</span>
-                    <input type="text" id="quiz-opt-a" placeholder="A variant" autocomplete="off" />
-                  </div>
-                  <div class="grammar-option-input">
-                    <span class="grammar-option-letter">B</span>
-                    <input type="text" id="quiz-opt-b" placeholder="B variant" autocomplete="off" />
-                  </div>
-                  <div class="grammar-option-input">
-                    <span class="grammar-option-letter">C</span>
-                    <input type="text" id="quiz-opt-c" placeholder="C variant" autocomplete="off" />
-                  </div>
+                  <div class="grammar-option-input"><span class="grammar-option-letter">A</span><input type="text" id="quiz-opt-a" placeholder="A variant" autocomplete="off" /></div>
+                  <div class="grammar-option-input"><span class="grammar-option-letter">B</span><input type="text" id="quiz-opt-b" placeholder="B variant" autocomplete="off" /></div>
+                  <div class="grammar-option-input"><span class="grammar-option-letter">C</span><input type="text" id="quiz-opt-c" placeholder="C variant" autocomplete="off" /></div>
                 </div>
 
                 <div class="input-group" style="margin-top:12px">
@@ -3395,6 +3411,15 @@ pen — ruchka 🖊"
                     <div class="grammar-preview-label">O'quvchiga ko'rinishi:</div>
                     <img id="quiz-image-preview-img" alt="Grammar test preview" />
                   </div>
+                </div>
+
+                <div class="grammar-add-question-row">
+                  <button type="button" class="btn-secondary grammar-add-question-btn" onclick="addGrammarQuestionToList()">➕ Savolni testga qo'shish</button>
+                  <button type="button" class="btn-secondary grammar-clear-question-btn" onclick="clearGrammarQuestionForm()">🧹 Tozalash</button>
+                </div>
+
+                <div class="grammar-sequence-rule">
+                  ⚡ <strong>Qoida:</strong> o'quvchi bitta savolda xato qilsa, butun test 1-savoldan qayta boshlanadi.
                 </div>
               </div>
 
@@ -6350,7 +6375,9 @@ pen — ruchka 🖊"
         if (img) img.removeAttribute("src");
       }
 
-      function validateGrammarBuilder() {
+      let pendingGrammarQuestions = [];
+
+      function getGrammarQuestionDraft() {
         const question = document.getElementById("quiz-question")?.value.trim() || "";
         const options = [
           document.getElementById("quiz-opt-a")?.value.trim() || "",
@@ -6361,7 +6388,7 @@ pen — ruchka 🖊"
         if (!question && options.every((x) => !x)) return null;
 
         if (!question || options.some((x) => !x)) {
-          alert("❗ Grammatika testi uchun savol va 3 ta variantning barchasini kiriting.");
+          alert("❗ Savol va A/B/C variantlarning barchasini kiriting.");
           return false;
         }
 
@@ -6370,13 +6397,100 @@ pen — ruchka 🖊"
           return false;
         }
 
-        const correctIndex = getSelectedGrammarCorrectIndex();
-        if (![0, 1, 2].includes(correctIndex)) {
-          alert("❗ To'g'ri javobni belgilang.");
-          return false;
+        return {
+          question,
+          options,
+          correctIndex: getSelectedGrammarCorrectIndex(),
+          image_url: tempGrammarImageUrl || document.getElementById("quiz-image-url")?.value.trim() || "",
+          image_template: document.getElementById("quiz-image-template")?.value || "standard",
+        };
+      }
+
+      function renderPendingGrammarQuestions() {
+        const list=document.getElementById("grammar-question-list");
+        const count=document.getElementById("grammar-question-count");
+        if(!list) return;
+        if(count) count.textContent=`${pendingGrammarQuestions.length} ta savol`;
+
+        if(!pendingGrammarQuestions.length){
+          list.innerHTML=`<div class="grammar-empty-list">Hozircha savol qo'shilmagan.</div>`;
+          return;
         }
 
-        return { question, options, correctIndex };
+        list.innerHTML=pendingGrammarQuestions.map((q,i)=>`
+          <div class="grammar-question-item">
+            <span class="grammar-question-number">${i+1}</span>
+            <div style="min-width:0;flex:1">
+              <div class="grammar-question-item-text">${escapeHtml(q.question)}</div>
+              <div class="grammar-question-item-meta">
+                3 variant • To'g'ri: ${["A","B","C"][q.correctIndex]} ${q.image_url?"• 🖼️ Rasm":""}
+              </div>
+            </div>
+            <button type="button" class="grammar-remove-question" onclick="removeGrammarQuestion(${i})">✕</button>
+          </div>
+        `).join("");
+      }
+
+      function addGrammarQuestionToList() {
+        const draft=getGrammarQuestionDraft();
+        if(draft===null){alert("❗ Avval savolni kiriting.");return;}
+        if(draft===false)return;
+
+        pendingGrammarQuestions.push({id:Date.now()+Math.random(),...draft});
+        renderPendingGrammarQuestions();
+        clearGrammarQuestionForm();
+
+        const status=document.getElementById("quiz-image-status");
+        if(status){
+          status.textContent=`✅ ${pendingGrammarQuestions.length}-savol qo'shildi. Keyingi savolni kiriting.`;
+          status.className="grammar-image-status ok";
+        }
+      }
+
+      function removeGrammarQuestion(index) {
+        pendingGrammarQuestions.splice(index,1);
+        renderPendingGrammarQuestions();
+      }
+
+      function clearGrammarQuestionForm() {
+        ["quiz-question","quiz-opt-a","quiz-opt-b","quiz-opt-c"].forEach(id=>{
+          const el=document.getElementById(id); if(el) el.value="";
+        });
+
+        const first=document.querySelector('input[name="grammar-correct"][value="0"]');
+        if(first) first.checked=true;
+
+        tempGrammarImageUrl=null;
+
+        const url=document.getElementById("quiz-image-url");
+        if(url){url.value="";url.placeholder="https://example.com/grammar-question.jpg";}
+
+        const file=document.getElementById("quiz-image-file");
+        if(file) file.value="";
+
+        const preview=document.getElementById("quiz-image-preview");
+        const img=document.getElementById("quiz-image-preview-img");
+        if(preview) preview.classList.add("hidden");
+        if(img) img.removeAttribute("src");
+      }
+
+      function validateGrammarBuilder() {
+        const draft=getGrammarQuestionDraft();
+
+        if(draft===false)return false;
+
+        // Oxirgi kiritilgan savolni ham avtomatik qo'shamiz.
+        if(draft){
+          pendingGrammarQuestions.push({id:Date.now()+Math.random(),...draft});
+          renderPendingGrammarQuestions();
+          clearGrammarQuestionForm();
+        }
+
+        if(!pendingGrammarQuestions.length)return null;
+
+        return {
+          questions:pendingGrammarQuestions.map(({id,...q})=>q),
+        };
       }
 
       async function addLesson(e) {
@@ -6407,15 +6521,8 @@ pen — ruchka 🖊"
           created_at: new Date().toLocaleDateString(),
           quiz: grammarQuiz
             ? {
-                question: grammarQuiz.question,
-                options: grammarQuiz.options,
-                correctIndex: grammarQuiz.correctIndex,
-                image_url:
-                  tempGrammarImageUrl ||
-                  document.getElementById("quiz-image-url")?.value.trim() ||
-                  "",
-                image_template:
-                  document.getElementById("quiz-image-template")?.value || "standard",
+                version: 2,
+                questions: grammarQuiz.questions,
               }
             : null,
         };
@@ -6433,6 +6540,8 @@ pen — ruchka 🖊"
             : "✅ Dars va Vocabulary muvaffaqiyatli saqlandi!"
         );
         e.target.reset();
+        pendingGrammarQuestions = [];
+        renderPendingGrammarQuestions();
         resetGrammarBuilder();
         updateGrammarImagePreview();
         renderTeacherLessonsList();
@@ -6820,7 +6929,7 @@ pen — ruchka 🖊"
           ${vocabHtml}
 
           ${
-            l.quiz && l.quiz.question
+            l.quiz && (l.quiz.question || (Array.isArray(l.quiz.questions) && l.quiz.questions.length))
               ? renderGrammarQuizContainer(l, grammarDone)
               : ""
           }
@@ -6835,7 +6944,11 @@ pen — ruchka 🖊"
           </div>
         `;
 
-        if (l.quiz && l.quiz.question && !grammarDone) {
+        if (
+          l.quiz &&
+          (l.quiz.question || (Array.isArray(l.quiz.questions) && l.quiz.questions.length)) &&
+          !grammarDone
+        ) {
           startLessonQuiz(l);
         }
 
@@ -6863,216 +6976,230 @@ pen — ruchka 🖊"
       }
 
       function getLessonQuizData(lesson) {
-        if (!lesson || !lesson.quiz) return null;
-        const q = lesson.quiz;
+        if(!lesson || !lesson.quiz)return null;
+        const q=lesson.quiz;
 
-        if (Array.isArray(q.options) && q.options.length >= 2) {
-          const correctIndex = Number.isInteger(q.correctIndex) ? q.correctIndex : 0;
+        if(Array.isArray(q.questions)&&q.questions.length){
           return {
-            question: q.question || "",
-            options: q.options.map((text, index) => ({
-              text: String(text ?? ""),
-              isCorrect: index === correctIndex,
+            questions:q.questions.map(item=>({
+              question:item.question||"",
+              options:Array.isArray(item.options)?item.options.map((txt,i)=>({
+                text:String(txt??""),
+                isCorrect:i===Number(item.correctIndex||0),
+              })):[],
+              imageUrl:item.image_url||"",
+              imageTemplate:item.image_template||"standard",
             })),
-            imageUrl: q.image_url || "",
-            imageTemplate: q.image_template || "standard",
           };
         }
 
-        // Eski {question, correct, wrong} formatini ham ishlatadi.
-        if (q.question && q.correct) {
-          return {
-            question: q.question,
-            options: [
-              { text: q.correct, isCorrect: true },
-              { text: q.wrong || "", isCorrect: false },
-            ].filter((x) => x.text),
-            imageUrl: q.image_url || "",
-            imageTemplate: q.image_template || "standard",
-          };
+        if(Array.isArray(q.options)&&q.options.length>=2){
+          const ci=Number.isInteger(q.correctIndex)?q.correctIndex:0;
+          return {questions:[{
+            question:q.question||"",
+            options:q.options.map((txt,i)=>({text:String(txt??""),isCorrect:i===ci})),
+            imageUrl:q.image_url||"",
+            imageTemplate:q.image_template||"standard",
+          }]};
+        }
+
+        if(q.question&&q.correct){
+          return {questions:[{
+            question:q.question,
+            options:[{text:q.correct,isCorrect:true},{text:q.wrong||"",isCorrect:false}].filter(x=>x.text),
+            imageUrl:q.image_url||"",
+            imageTemplate:q.image_template||"standard",
+          }]};
         }
 
         return null;
       }
 
       function renderGrammarQuizContainer(lesson, grammarDone) {
-        const quiz = getLessonQuizData(lesson);
-        if (!quiz) return "";
+        const quiz=getLessonQuizData(lesson);
+        if(!quiz)return "";
 
-        if (grammarDone) {
+        if(grammarDone){
           return `
             <div class="grammar-quiz-shell">
               <div class="grammar-quiz-top">
                 <span class="grammar-quiz-title">🧠 Grammatika testi</span>
                 <span class="grammar-quiz-counter">✅ Yakunlangan</span>
               </div>
-              <div class="grammar-quiz-progress">
-                <div class="grammar-quiz-progress-fill"></div>
-              </div>
               <div class="grammar-feedback success">
                 <span>✓</span>
-                <div>
-                  <strong>Grammatika testi muvaffaqiyatli yakunlangan.</strong>
-                  <div style="margin-top:3px;opacity:.85;">Bu testni qayta topshirish mumkin emas.</div>
-                </div>
+                <div><strong>${quiz.questions.length} ta savol to'g'ri bajarilgan.</strong></div>
               </div>
-            </div>
-          `;
+            </div>`;
         }
-
         return `<div id="lesson-quiz-box"></div>`;
       }
 
-      function startLessonQuiz(lesson) {
-        const quiz = getLessonQuizData(lesson);
-        if (!quiz) return;
+      function shuffleArray(array){
+        const result=[...array];
+        for(let i=result.length-1;i>0;i--){
+          const j=Math.floor(Math.random()*(i+1));
+          [result[i],result[j]]=[result[j],result[i]];
+        }
+        return result;
+      }
 
-        currentLessonQuiz = {
-          lessonId: lesson.id,
-          lessonTitle: lesson.title,
-          question: quiz.question,
-          options: shuffleArray(quiz.options.map((option) => ({ ...option }))),
-          imageUrl: quiz.imageUrl,
-          imageTemplate: quiz.imageTemplate,
-          answered: false,
-          result: null,
+      function startLessonQuiz(lesson){
+        const quiz=getLessonQuizData(lesson);
+        if(!quiz||!quiz.questions.length)return;
+
+        currentLessonQuiz={
+          lessonId:lesson.id,
+          lessonTitle:lesson.title,
+          questions:quiz.questions.map(q=>({...q,options:shuffleArray(q.options.map(o=>({...o})))})),
+          questionIndex:0,
+          answered:false,
+          result:null,
+          lessonFullyDone:false,
         };
-
         renderLessonQuiz();
       }
 
-      function renderLessonQuiz() {
-        const box = document.getElementById("lesson-quiz-box");
-        const state = currentLessonQuiz;
-        if (!box || !state) return;
+      function renderLessonQuiz(){
+        const box=document.getElementById("lesson-quiz-box");
+        const state=currentLessonQuiz;
+        if(!box||!state)return;
 
-        const letters = ["A", "B", "C"];
-        const imageHtml = state.imageUrl
-          ? `
-            <div class="grammar-student-image ${escapeHtml(state.imageTemplate)}">
-              <img src="${escapeHtml(state.imageUrl)}" alt="Grammar question image" loading="lazy"
-                   onerror="this.parentElement.classList.add('hidden')" />
+        const q=state.questions[state.questionIndex];
+        if(!q)return;
+
+        const total=state.questions.length;
+        const step=state.questionIndex+1;
+        const letters=["A","B","C"];
+
+        const imageHtml=q.imageUrl?`
+          <div class="grammar-student-image ${escapeHtml(q.imageTemplate)}">
+            <img src="${escapeHtml(q.imageUrl)}" alt="Grammar question image" loading="lazy"
+              onerror="this.parentElement.classList.add('hidden')" />
+          </div>`:"";
+
+        let feedback="";
+        if(state.result==="correct"){
+          feedback=`<div class="grammar-feedback success"><span>✓</span><div><strong>To'g'ri!</strong><div style="margin-top:3px;opacity:.85;">Keyingi savol yuklanmoqda...</div></div></div>`;
+        }else if(state.result==="wrong"){
+          feedback=`
+            <div class="grammar-feedback error">
+              <span>✕</span>
+              <div><strong>Xato javob!</strong><div style="margin-top:3px;opacity:.85;">Bitta xato qilganingiz uchun test boshidan boshlanadi.</div></div>
             </div>
-          `
-          : "";
+            <button class="grammar-quiz-action" type="button" onclick="restartSequentialGrammarQuiz()">↻ 1-savoldan qayta boshlash</button>`;
+        }else if(state.result==="completed"){
+          feedback=`
+            <div class="grammar-feedback success"><span>🎉</span><div><strong>Test to'liq yakunlandi!</strong><div style="margin-top:3px;opacity:.85;">${total} / ${total} savol to'g'ri.</div></div></div>
+            <button class="grammar-quiz-action" type="button" onclick="finishLessonGrammarQuiz()">Darsni davom ettirish →</button>`;
+        }
 
-        const feedbackHtml =
-          state.result === "correct"
-            ? `
-              <div class="grammar-feedback success">
-                <span>✓</span>
-                <div>
-                  <strong>To'g'ri javob!</strong>
-                  <div style="margin-top:3px;opacity:.88;">Ajoyib! +20 XP va +15 🪙 Coin berildi.</div>
-                </div>
-              </div>
-              <button class="grammar-quiz-action" type="button" onclick="finishLessonGrammarQuiz()">
-                Darsni davom ettirish →
-              </button>
-            `
-            : state.result === "wrong"
-            ? `
-              <div class="grammar-feedback error">
-                <span>✕</span>
-                <div>
-                  <strong>Noto'g'ri javob.</strong>
-                  <div style="margin-top:3px;opacity:.88;">To'g'ri variant yashil rangda ko'rsatiladi. Qayta urinib ko'ring.</div>
-                </div>
-              </div>
-              <button class="grammar-quiz-action" type="button" onclick="retryLessonGrammarQuiz()">
-                ↻ Qayta urinib ko'rish
-              </button>
-            `
-            : "";
-
-        box.innerHTML = `
+        box.innerHTML=`
           <div class="grammar-quiz-shell">
             <div class="grammar-quiz-top">
               <span class="grammar-quiz-title">🧠 Grammatika Testi</span>
-              <span class="grammar-quiz-counter">1 / 1</span>
+              <span class="grammar-quiz-step-progress">${step} / ${total}</span>
             </div>
             <div class="grammar-quiz-progress">
-              <div class="grammar-quiz-progress-fill"></div>
+              <div class="grammar-quiz-progress-fill" style="width:${Math.round(step/total*100)}%"></div>
             </div>
             ${imageHtml}
-            <div class="grammar-quiz-question">${escapeHtml(state.question)}</div>
+            <div class="grammar-quiz-question">${escapeHtml(q.question)}</div>
             <div class="grammar-quiz-options">
-              ${state.options.map((option, idx) => {
-                const selectedWrong = state.result === "wrong" && state.selectedIndex === idx;
-                const correctOption = state.result === "correct" && option.isCorrect;
-                return `
-                  <button type="button"
-                    class="grammar-student-option ${correctOption ? "correct" : ""} ${selectedWrong ? "wrong" : ""}"
-                    ${state.answered ? "disabled" : `onclick="selectLessonQuizOption(${idx})"`}>
-                    <span class="option-letter">${letters[idx] || idx + 1}</span>
-                    <span style="flex:1;">${escapeHtml(option.text)}</span>
-                    ${correctOption ? '<span>✓</span>' : selectedWrong ? '<span>✕</span>' : ""}
-                  </button>
-                `;
+              ${q.options.map((o,i)=>{
+                const wrong=state.result==="wrong"&&state.selectedIndex===i;
+                const correct=(state.result==="correct"||state.result==="completed")&&state.selectedIndex===i;
+                const disabled=state.answered?"disabled":"";
+                const action=state.answered?"":`onclick="selectLessonQuizOption(${i})"`;
+                return `<button type="button" class="grammar-student-option ${correct?"correct":""} ${wrong?"wrong":""}" ${disabled} ${action}>
+                  <span class="option-letter">${letters[i]||i+1}</span>
+                  <span style="flex:1">${escapeHtml(o.text)}</span>
+                  ${correct?"<span>✓</span>":wrong?"<span>✕</span>":""}
+                </button>`;
               }).join("")}
             </div>
-            ${feedbackHtml}
-          </div>
-        `;
+            ${feedback}
+          </div>`;
       }
 
-      function selectLessonQuizOption(idx) {
-        const state = currentLessonQuiz;
-        if (!state || state.answered) return;
+      function selectLessonQuizOption(idx){
+        const state=currentLessonQuiz;
+        if(!state||state.answered||state.result==="completed")return;
 
-        const chosen = state.options[idx];
-        if (!chosen) return;
+        const q=state.questions[state.questionIndex];
+        const chosen=q?.options?.[idx];
+        if(!chosen)return;
 
-        state.answered = true;
-        state.selectedIndex = idx;
-        state.result = chosen.isCorrect ? "correct" : "wrong";
+        state.answered=true;
+        state.selectedIndex=idx;
 
-        if (chosen.isCorrect) {
-          if (!currentUser.completedGrammarQuizzes)
-            currentUser.completedGrammarQuizzes = [];
+        if(!chosen.isCorrect){
+          state.result="wrong";
 
-          const alreadyCompleted = currentUser.completedGrammarQuizzes.includes(state.lessonId);
+          if(!currentUser.weakPoints)currentUser.weakPoints={};
+          currentUser.weakPoints[state.lessonTitle]=(currentUser.weakPoints[state.lessonTitle]||0)+10;
+          saveUserData(currentUser);
 
-          if (!alreadyCompleted) {
-            currentUser.completedGrammarQuizzes.push(state.lessonId);
-            addRewards(20, 15, state.lessonId, `Grammatika: ${state.lessonTitle}`);
-            saveUserData(currentUser);
-          }
+          renderLessonQuiz();
+          return;
+        }
 
-          if (checkLessonFullCompletion(state.lessonId)) {
-            state.lessonFullyDone = true;
-          }
-        } else {
-          if (!currentUser.weakPoints) currentUser.weakPoints = {};
-          currentUser.weakPoints[state.lessonTitle] =
-            (currentUser.weakPoints[state.lessonTitle] || 0) + 10;
+        if(state.questionIndex<state.questions.length-1){
+          state.result="correct";
+          renderLessonQuiz();
+
+          setTimeout(()=>{
+            if(currentLessonQuiz!==state)return;
+            state.questionIndex++;
+            state.answered=false;
+            state.selectedIndex=null;
+            state.result=null;
+            renderLessonQuiz();
+          },650);
+          return;
+        }
+
+        state.result="completed";
+
+        if(!currentUser.completedGrammarQuizzes)currentUser.completedGrammarQuizzes=[];
+        const already=currentUser.completedGrammarQuizzes.includes(state.lessonId);
+
+        if(!already){
+          currentUser.completedGrammarQuizzes.push(state.lessonId);
+          addRewards(20,15,state.lessonId,`Grammatika: ${state.lessonTitle} (${state.questions.length} savol)`);
           saveUserData(currentUser);
         }
 
+        state.lessonFullyDone=checkLessonFullCompletion(state.lessonId);
         renderLessonQuiz();
       }
 
-      function retryLessonGrammarQuiz() {
-        const state = currentLessonQuiz;
-        if (!state) return;
-        state.answered = false;
-        state.selectedIndex = null;
-        state.result = null;
+      function restartSequentialGrammarQuiz(){
+        const state=currentLessonQuiz;
+        if(!state)return;
+
+        state.questionIndex=0;
+        state.answered=false;
+        state.selectedIndex=null;
+        state.result=null;
+        state.questions=state.questions.map(q=>({...q,options:shuffleArray(q.options.map(o=>({...o})))}));
         renderLessonQuiz();
       }
 
-      function finishLessonGrammarQuiz() {
-        const state = currentLessonQuiz;
-        if (!state) return;
+      function retryLessonGrammarQuiz(){
+        restartSequentialGrammarQuiz();
+      }
 
-        const lessonId = state.lessonId;
-        currentLessonQuiz = null;
+      function finishLessonGrammarQuiz(){
+        const state=currentLessonQuiz;
+        if(!state)return;
+
+        const lessonId=state.lessonId;
+        currentLessonQuiz=null;
         openLessonDetail(lessonId);
 
-        if (state.lessonFullyDone) {
-          setTimeout(() => {
-            alert("🎉 Tabriklaymiz! Siz ushbu darsni to'liq yakunladingiz — Lug'at, Grammatika va Uy vazifasi barchasi bajarildi!");
-          }, 250);
+        if(state.lessonFullyDone){
+          setTimeout(()=>alert("🎉 Tabriklaymiz! Barcha grammatika savollarini xatosiz yakunladingiz!"),250);
         }
       }
 
