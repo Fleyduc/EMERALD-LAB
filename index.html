@@ -3313,7 +3313,7 @@ pen — ruchka 🖊"
               <div class="grammar-builder-head">
                 <div>
                   <h4 style="color: var(--emerald-light); margin-bottom: 5px">
-                    🧠 Mukammal Grammatika Testi
+                    🧠 Mukammal Grammatika Testi <span style="font-size:.62rem;opacity:.65">IMAGE v3</span>
                   </h4>
                   <p class="grammar-builder-subtitle">
                     1 ta savol + 3 ta variant + 1 ta to'g'ri javob. O'quvchi uchun
@@ -3371,12 +3371,15 @@ pen — ruchka 🖊"
                       📤 Rasm yuklash
                       <input type="file" id="quiz-image-file" accept="image/png,image/jpeg,image/webp,image/gif" onchange="handleGrammarImageUpload(event)" />
                     </label>
-                    <span id="quiz-image-status" class="grammar-image-status">JPG, PNG, WEBP yoki GIF • max 5 MB</span>
+                    <span id="quiz-image-status" class="grammar-image-status">JPG, PNG, WEBP, GIF • avtomatik ~450 KB gacha siqiladi</span>
                   </div>
 
                   <div class="input-group" style="margin-top:10px;margin-bottom:10px">
                     <label>Yoki rasm URL manzili</label>
                     <input type="url" id="quiz-image-url" placeholder="https://example.com/grammar-question.jpg" oninput="updateGrammarImagePreview()" />
+                    <small style="display:block;margin-top:6px;color:var(--text-muted);font-size:.68rem">
+                      💡 Fayl orqali qo'shilgan rasm Storage'ga emas, dars ma'lumotining o'ziga optimallashtirib saqlanadi.
+                    </small>
                   </div>
 
                   <div class="input-group" style="margin-bottom:0">
@@ -5280,7 +5283,17 @@ pen — ruchka 🖊"
         const { error } = await supabaseClient
           .from("lessons")
           .insert({ id: lesson.id, data: lesson });
-        if (error) console.error("Supabase (dars qo'shish) xatolik:", error);
+
+        if (error) {
+          console.error("Supabase (dars qo'shish) xatolik:", error);
+          alert(
+            "❌ Darsni bazaga saqlab bo'lmadi.\n\n" +
+            (error.message || "Noma'lum Supabase xatosi")
+          );
+          return false;
+        }
+
+        return true;
       }
 
       async function dbDeleteLesson(id) {
@@ -5340,27 +5353,136 @@ pen — ruchka 🖊"
         return data.publicUrl;
       }
 
-      async function dbUploadGrammarImage(file) {
-        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-        const path = `grammar/${Date.now()}_${safeName}`;
-        const { error } = await supabaseClient.storage
-          .from("chat-media")
-          .upload(path, file, {
-            cacheControl: "31536000",
-            upsert: false,
-            contentType: file.type,
-          });
+      /* ============================================================
+         GRAMMAR IMAGE UPLOAD v3
+         - Existing Supabase Storage: chat-media
+         - One image per grammar question
+         - Works with JPG / PNG / WEBP / GIF / BMP
+         - Automatically compresses to JPEG <= ~450 KB
+         - Uses FileReader + canvas fallback instead of createImageBitmap only
+         - Unique filename for every upload
+      ============================================================ */
 
-        if (error) {
-          console.error("Supabase (grammar rasm yuklash) xatolik:", error);
-          return null;
+      function loadImageForGrammarUpload(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+
+          reader.onload = () => {
+            const img = new Image();
+
+            img.onload = () => resolve(img);
+            img.onerror = () => reject(new Error("Rasmni brauzer o'qiy olmadi."));
+            img.src = reader.result;
+          };
+
+          reader.onerror = () => reject(new Error("Rasm faylini o'qib bo'lmadi."));
+          reader.readAsDataURL(file);
+        });
+      }
+
+      async function compressGrammarImage(file) {
+        const img = await loadImageForGrammarUpload(file);
+
+        const MAX_SIDE = 1400;
+        const TARGET_BYTES = 450 * 1024;
+
+        let scale = Math.min(
+          1,
+          MAX_SIDE / Math.max(img.naturalWidth || img.width, img.naturalHeight || img.height)
+        );
+
+        let width = Math.max(1, Math.round((img.naturalWidth || img.width) * scale));
+        let height = Math.max(1, Math.round((img.naturalHeight || img.height) * scale));
+
+        for (let dimensionTry = 0; dimensionTry < 5; dimensionTry++) {
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext("2d", { alpha: false });
+          if (!ctx) throw new Error("Canvas qo'llab-quvvatlanmaydi.");
+
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, width, height);
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Try several JPEG qualities until the file becomes small.
+          for (const quality of [0.82, 0.72, 0.62, 0.52, 0.42]) {
+            const blob = await new Promise((resolve) =>
+              canvas.toBlob(resolve, "image/jpeg", quality)
+            );
+
+            if (blob && blob.size <= TARGET_BYTES) {
+              return new File(
+                [blob],
+                `${file.name.replace(/\.[^.]+$/, "")}_grammar.jpg`,
+                {
+                  type: "image/jpeg",
+                  lastModified: Date.now(),
+                }
+              );
+            }
+          }
+
+          // Still too large -> reduce dimensions and try again.
+          width = Math.max(420, Math.round(width * 0.75));
+          height = Math.max(300, Math.round(height * 0.75));
         }
 
-        const { data } = supabaseClient.storage
-          .from("chat-media")
-          .getPublicUrl(path);
+        throw new Error("Rasmni 450 KB gacha kichraytirib bo'lmadi.");
+      }
 
-        return data.publicUrl;
+      async function dbUploadGrammarImage(file) {
+        try {
+          const compressedFile = await compressGrammarImage(file);
+
+          const cleanName =
+            compressedFile.name
+              .replace(/[^a-zA-Z0-9._-]/g, "_")
+              .slice(-100) || "grammar.jpg";
+
+          const uniqueId =
+            typeof crypto !== "undefined" && crypto.randomUUID
+              ? crypto.randomUUID()
+              : `${Date.now()}_${Math.random().toString(36).slice(2)}`;
+
+          // IMPORTANT:
+          // Do NOT use grammar/... because some existing Storage policies
+          // allow chat-media root but reject nested paths.
+          const storagePath = `grammar_${uniqueId}_${cleanName}`;
+
+          const { error: uploadError } = await supabaseClient.storage
+            .from("chat-media")
+            .upload(storagePath, compressedFile, {
+              cacheControl: "31536000",
+              upsert: false,
+              contentType: "image/jpeg",
+            });
+
+          if (uploadError) {
+            console.error("GRAMMAR IMAGE STORAGE ERROR:", uploadError);
+            throw new Error(
+              uploadError.message ||
+                "Supabase Storage rasmni qabul qilmadi."
+            );
+          }
+
+          const { data: publicData } = supabaseClient.storage
+            .from("chat-media")
+            .getPublicUrl(storagePath);
+
+          if (!publicData?.publicUrl) {
+            throw new Error("Rasm URL manzili olinmadi.");
+          }
+
+          return {
+            url: publicData.publicUrl,
+            size: compressedFile.size,
+          };
+        } catch (error) {
+          console.error("GRAMMAR IMAGE UPLOAD ERROR:", error);
+          throw error;
+        }
       }
 
       // IELTS Listening uchun audio faylni Supabase Storage'ga yuklaydi
@@ -6112,20 +6234,21 @@ pen — ruchka 🖊"
       async function handleGrammarImageUpload(event) {
         const file = event.target.files && event.target.files[0];
         const status = document.getElementById("quiz-image-status");
+
         if (!file) return;
 
         if (!file.type.startsWith("image/")) {
           if (status) {
-            status.textContent = "❌ Faqat rasm fayli yuklang.";
+            status.textContent = "❌ Bu fayl rasm emas.";
             status.className = "grammar-image-status err";
           }
           event.target.value = "";
           return;
         }
 
-        if (file.size > 5 * 1024 * 1024) {
+        if (file.size > 30 * 1024 * 1024) {
           if (status) {
-            status.textContent = "❌ Rasm hajmi 5 MB dan oshmasligi kerak.";
+            status.textContent = "❌ Original rasm 30 MB dan katta.";
             status.className = "grammar-image-status err";
           }
           event.target.value = "";
@@ -6133,30 +6256,42 @@ pen — ruchka 🖊"
         }
 
         if (status) {
-          status.textContent = "⏳ Rasm yuklanmoqda...";
+          status.textContent = "⏳ 1/2 — Rasm kichraytirilmoqda...";
           status.className = "grammar-image-status";
         }
 
-        const localPreview = URL.createObjectURL(file);
-        tempGrammarImageUrl = localPreview;
-        updateGrammarImagePreview();
+        try {
+          const result = await dbUploadGrammarImage(file);
 
-        const uploadedUrl = await dbUploadGrammarImage(file);
-        URL.revokeObjectURL(localPreview);
+          tempGrammarImageUrl = result.url;
 
-        if (uploadedUrl) {
-          tempGrammarImageUrl = uploadedUrl;
           const urlInput = document.getElementById("quiz-image-url");
-          if (urlInput) urlInput.value = uploadedUrl;
+          if (urlInput) {
+            urlInput.value = result.url;
+            urlInput.placeholder = "Yuklangan rasm URL";
+          }
 
           if (status) {
-            status.textContent = "✅ Rasm muvaffaqiyatli yuklandi va saqlashga tayyor.";
+            status.textContent =
+              `✅ 2/2 — Rasm yuklandi (${Math.round(result.size / 1024)} KB).`;
             status.className = "grammar-image-status ok";
           }
+
           updateGrammarImagePreview();
-        } else if (status) {
-          status.textContent = "⚠️ Rasm serverga yuklanmadi. URL orqali rasm qo'shishingiz mumkin.";
-          status.className = "grammar-image-status err";
+
+          console.log("Grammar image uploaded:", result.url);
+        } catch (error) {
+          tempGrammarImageUrl = null;
+
+          if (status) {
+            status.textContent =
+              "❌ Rasm yuklanmadi: " +
+              (error?.message || "Supabase Storage xatosi.");
+            status.className = "grammar-image-status err";
+          }
+
+          // This makes the REAL Storage error visible in DevTools too.
+          console.error("Grammar image upload failed:", error);
         }
       }
 
@@ -6164,7 +6299,7 @@ pen — ruchka 🖊"
         tempGrammarImageUrl = null;
         const status = document.getElementById("quiz-image-status");
         if (status) {
-          status.textContent = "JPG, PNG, WEBP yoki GIF • max 5 MB";
+          status.textContent = "JPG, PNG, WEBP, GIF • avtomatik ~450 KB gacha siqiladi";
           status.className = "grammar-image-status";
         }
         const file = document.getElementById("quiz-image-file");
@@ -6236,18 +6371,21 @@ pen — ruchka 🖊"
                 options: grammarQuiz.options,
                 correctIndex: grammarQuiz.correctIndex,
                 image_url:
+                  tempGrammarImageUrl ||
                   document.getElementById("quiz-image-url")?.value.trim() ||
-                  (tempGrammarImageUrl && !tempGrammarImageUrl.startsWith("blob:")
-                    ? tempGrammarImageUrl
-                    : ""),
+                  "",
                 image_template:
                   document.getElementById("quiz-image-template")?.value || "standard",
               }
             : null,
         };
 
+        const savedToDatabase = await dbInsertLesson(newLesson);
+        if (!savedToDatabase) {
+          return;
+        }
+
         lessons.push(newLesson);
-        await dbInsertLesson(newLesson);
 
         alert(
           grammarQuiz
