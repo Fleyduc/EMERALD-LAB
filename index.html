@@ -196,9 +196,9 @@
 
       .nav-tab-btn {
         position: relative;
-        display: inline-flex;
+        display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         gap: 5px;
         min-height: 34px;
         background: rgba(255, 255, 255, 0.025);
@@ -212,6 +212,12 @@
         transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
         white-space: nowrap;
         flex: 0 0 auto;
+      }
+
+      .nav-tabs .nav-tab-btn {
+        width: 100%;
+        text-align: left;
+        justify-content: flex-start;
       }
 
       .nav-tab-btn:hover {
