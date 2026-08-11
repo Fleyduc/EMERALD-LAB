@@ -3218,8 +3218,8 @@
             </div>
 
             <div class="input-group hidden" id="admin-code-group">
-              <label>Admin kodi (ixtiyoriy)</label>
-              <input type="password" id="admin-code" placeholder="Faqat adminlar uchun kod" autocomplete="off" />
+              <label>Ustoz/Admin maxsus kodi</label>
+              <input type="password" id="admin-code" placeholder="Ustoz bo'lish uchun maxsus kod majburiy" autocomplete="off" />
             </div>
 
             <div class="input-group hidden" id="level-group">
@@ -3256,8 +3256,8 @@
             </div>
           </div>
           <div class="input-group hidden" id="google-admin-code-group" style="margin-top:4px">
-            <label>Admin kodi (ixtiyoriy)</label>
-            <input type="password" id="google-admin-code" placeholder="Faqat adminlar uchun kod" autocomplete="off" />
+            <label>Ustoz/Admin maxsus kodi</label>
+            <input type="password" id="google-admin-code" placeholder="Ustoz bo'lish uchun maxsus kod majburiy" autocomplete="off" />
           </div>
           <button type="button" class="auth-provider-btn" onclick="signInWithGoogle()">
             <span style="font-size:1.2rem;font-weight:900">G</span> Google bilan davom etish
@@ -3293,8 +3293,8 @@
           </div>
 
           <div class="input-group hidden" id="phone-admin-code-group">
-            <label>Admin kodi (ixtiyoriy)</label>
-            <input type="password" id="phone-admin-code" placeholder="Faqat adminlar uchun kod" autocomplete="off" />
+            <label>Ustoz/Admin maxsus kodi</label>
+            <input type="password" id="phone-admin-code" placeholder="Ustoz bo'lish uchun maxsus kod majburiy" autocomplete="off" />
           </div>
 
           <div id="telegram-login-step" class="hidden" style="margin-top:12px">
@@ -6358,6 +6358,7 @@ pen — ruchka 🖊"
          yangilab turing.
       ============================================================ */
       const ADMIN_SIGNUP_CODE = "EMERALD-ADMIN-2026";
+      const TEACHER_SIGNUP_CODE = "EMERALD-TEACHER-2026";
 
       let users = [];
       let lessons = [];
@@ -7526,9 +7527,13 @@ pen — ruchka 🖊"
             if (password !== confirm) throw new Error("Parollar bir xil emas.");
 
             const adminCodeInput = document.getElementById("admin-code")?.value.trim() || "";
-            const finalRole = (selectedRole === "teacher" && adminCodeInput && adminCodeInput === ADMIN_SIGNUP_CODE)
-              ? "admin"
-              : selectedRole;
+            let finalRole = selectedRole;
+            if (selectedRole === "teacher") {
+              if (!adminCodeInput) throw new Error("Ustoz sifatida ro'yxatdan o'tish uchun maxsus kod kiriting.");
+              if (adminCodeInput === ADMIN_SIGNUP_CODE) finalRole = "admin";
+              else if (adminCodeInput === TEACHER_SIGNUP_CODE) finalRole = "teacher";
+              else throw new Error("Kiritilgan kod noto'g'ri. Ustoz sifatida ro'yxatdan o'tib bo'lmaydi.");
+            }
 
             const { data, error } = await supabaseClient.auth.signUp({
               email,
@@ -7571,9 +7576,13 @@ pen — ruchka 🖊"
         clearAuthMessage();
         try {
           const adminCodeInput = document.getElementById("google-admin-code")?.value.trim() || "";
-          const finalGoogleRole = (googleSelectedRole === "teacher" && adminCodeInput && adminCodeInput === ADMIN_SIGNUP_CODE)
-            ? "admin"
-            : googleSelectedRole;
+          let finalGoogleRole = googleSelectedRole;
+          if (googleSelectedRole === "teacher") {
+            if (!adminCodeInput) throw new Error("Ustoz sifatida ro'yxatdan o'tish uchun maxsus kod kiriting.");
+            if (adminCodeInput === ADMIN_SIGNUP_CODE) finalGoogleRole = "admin";
+            else if (adminCodeInput === TEACHER_SIGNUP_CODE) finalGoogleRole = "teacher";
+            else throw new Error("Kiritilgan kod noto'g'ri. Ustoz sifatida ro'yxatdan o'tib bo'lmaydi.");
+          }
           localStorage.setItem("emerald_pending_google_role", finalGoogleRole);
           const { error } = await supabaseClient.auth.signInWithOAuth({
             provider: "google",
@@ -7615,12 +7624,19 @@ pen — ruchka 🖊"
         const phoneAdminCodeInput =
           document.getElementById("phone-admin-code")?.value.trim() || "";
 
-        const finalPhoneRole =
-          (phoneSelectedRole === "teacher" &&
-            phoneAdminCodeInput &&
-            phoneAdminCodeInput === ADMIN_SIGNUP_CODE)
-            ? "admin"
-            : phoneSelectedRole;
+        let finalPhoneRole = phoneSelectedRole;
+        if (phoneSelectedRole === "teacher") {
+          if (!phoneAdminCodeInput) {
+            return showAuthMessage("Ustoz sifatida ro'yxatdan o'tish uchun maxsus kod kiriting.");
+          }
+          if (phoneAdminCodeInput === ADMIN_SIGNUP_CODE) {
+            finalPhoneRole = "admin";
+          } else if (phoneAdminCodeInput === TEACHER_SIGNUP_CODE) {
+            finalPhoneRole = "teacher";
+          } else {
+            return showAuthMessage("Kiritilgan kod noto'g'ri. Ustoz sifatida ro'yxatdan o'tib bo'lmaydi.");
+          }
+        }
 
         setAuthLoading(btn, true, "Telegram tayyorlanmoqda...");
 
