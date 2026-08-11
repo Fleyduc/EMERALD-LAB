@@ -3297,17 +3297,36 @@
             <input type="password" id="phone-admin-code" placeholder="Faqat adminlar uchun kod" autocomplete="off" />
           </div>
 
+          <div id="telegram-login-step" class="hidden" style="margin-top:12px">
+            <div class="auth-security-note">
+              1️⃣ Telegram botni oching va <b>START</b> tugmasini bosing.
+            </div>
+
+            <a
+              id="telegram-login-link"
+              href="#"
+              target="_blank"
+              rel="noopener"
+              class="submit-btn"
+              style="display:block;text-align:center;text-decoration:none;margin-top:10px"
+            >✈️ Telegram botni ochish</a>
+
+            <div class="auth-security-note" style="margin-top:10px">
+              2️⃣ Bot yuborgan 6 xonali kodni pastga kiriting.
+            </div>
+          </div>
+
           <div id="phone-otp-box" class="hidden">
             <div class="input-group">
-              <label>SMS orqali kelgan 6 xonali kod</label>
+              <label>Telegram orqali kelgan 6 xonali kod</label>
               <input type="text" id="phone-otp" placeholder="123456" inputmode="numeric" autocomplete="one-time-code" maxlength="6" />
             </div>
             <button type="button" class="btn-primary" onclick="verifyPhoneOtp()">✅ Kodni tasdiqlash</button>
-            <button type="button" class="auth-link" style="display:block;margin:10px auto 0" onclick="sendPhoneOtp(true)">Kodni qayta yuborish</button>
+            <button type="button" class="auth-link" style="display:block;margin:10px auto 0" onclick="sendPhoneOtp(true)">Yangi kod olish</button>
           </div>
 
-          <button type="button" class="submit-btn" id="send-phone-otp-btn" onclick="sendPhoneOtp(false)">📩 SMS kod yuborish</button>
-          <div class="auth-security-note">🔒 OTP kodi orqali kirish Supabase Auth bilan boshqariladi.</div>
+          <button type="button" class="submit-btn" id="send-phone-otp-btn" onclick="sendPhoneOtp(false)">✈️ Telegram orqali kod olish</button>
+          <div class="auth-security-note">🔒 SMS ishlatilmaydi. Tasdiqlash kodi Telegram bot orqali yuboriladi.</div>
         </section>
 
         <div class="auth-divider">EMERALD LAB AUTH</div>
@@ -7570,47 +7589,99 @@ pen — ruchka 🖊"
         }
       }
 
+      let telegramLoginId = null;
+      let telegramOtpPending = false;
+
       async function sendPhoneOtp(isResend = false) {
         clearAuthMessage();
+
         const input = document.getElementById("phone-number");
         const phone = normalizeUzPhone(input.value);
-        if (!phone) return showAuthMessage("Telefon raqamini +998 90 123 45 67 formatida kiriting.");
+
+        if (!phone) {
+          return showAuthMessage("Telefon raqamini +998 90 123 45 67 formatida kiriting.");
+        }
 
         const name = document.getElementById("phone-full-name").value.trim();
         const btn = document.getElementById("send-phone-otp-btn");
 
         if (!isResend && !name) {
           const old = users.find((u) => u.phone === phone);
-          if (!old) return showAuthMessage("Yangi telefon akkaunti uchun F.I.Sh ni kiriting.");
+          if (!old) {
+            return showAuthMessage("Yangi telefon akkaunti uchun F.I.Sh ni kiriting.");
+          }
         }
 
-        const phoneAdminCodeInput = document.getElementById("phone-admin-code")?.value.trim() || "";
-        const finalPhoneRole = (phoneSelectedRole === "teacher" && phoneAdminCodeInput && phoneAdminCodeInput === ADMIN_SIGNUP_CODE)
-          ? "admin"
-          : phoneSelectedRole;
+        const phoneAdminCodeInput =
+          document.getElementById("phone-admin-code")?.value.trim() || "";
 
-        setAuthLoading(btn, true, "SMS yuborilmoqda...");
+        const finalPhoneRole =
+          (phoneSelectedRole === "teacher" &&
+            phoneAdminCodeInput &&
+            phoneAdminCodeInput === ADMIN_SIGNUP_CODE)
+            ? "admin"
+            : phoneSelectedRole;
+
+        setAuthLoading(btn, true, "Telegram tayyorlanmoqda...");
+
         try {
-          const { error } = await supabaseClient.auth.signInWithOtp({
-            phone,
-            options: {
-              shouldCreateUser: true,
-              data: {
+          const response = await fetch(
+            `${SUPABASE_URL}/functions/v1/telegram-auth`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                apikey: SUPABASE_ANON_KEY
+              },
+              body: JSON.stringify({
+                action: "request_otp",
+                phone,
                 full_name: name || null,
-                role: finalPhoneRole,
-                level: finalPhoneRole === "student" ? "beginner" : null
-              }
+                role: finalPhoneRole
+              })
             }
-          });
-          if (error) throw error;
+          );
 
-          phoneOtpPending = true;
-          document.getElementById("phone-otp-box").classList.remove("hidden");
-          document.getElementById("send-phone-otp-btn").classList.add("hidden");
-          showAuthMessage(`📩 ${phone} raqamiga SMS kod yuborildi.`, "ok");
+          const result = await response.json();
+
+          if (!response.ok) {
+            throw new Error(
+              result.error || "Telegram OTP yaratishda xatolik."
+            );
+          }
+
+          telegramLoginId = result.login_id;
+          telegramOtpPending = true;
+
+          const telegramStep =
+            document.getElementById("telegram-login-step");
+
+          const telegramLink =
+            document.getElementById("telegram-login-link");
+
+          if (telegramLink) {
+            telegramLink.href = result.telegram_url;
+          }
+
+          if (telegramStep) {
+            telegramStep.classList.remove("hidden");
+          }
+
+          document
+            .getElementById("phone-otp-box")
+            .classList.remove("hidden");
+
+          btn.classList.add("hidden");
+
+          showAuthMessage(
+            "✈️ Telegram botni oching, START tugmasini bosing. Kod Telegramga yuboriladi.",
+            "ok"
+          );
         } catch (error) {
-          console.error("Phone OTP error:", error);
-          showAuthMessage(authErrorText(error));
+          console.error("Telegram OTP error:", error);
+          showAuthMessage(
+            error.message || "Telegram OTP xatosi."
+          );
         } finally {
           setAuthLoading(btn, false);
         }
@@ -7618,37 +7689,132 @@ pen — ruchka 🖊"
 
       async function verifyPhoneOtp() {
         clearAuthMessage();
-        const phone = normalizeUzPhone(document.getElementById("phone-number").value);
-        const token = document.getElementById("phone-otp").value.trim();
-        const name = document.getElementById("phone-full-name").value.trim();
 
-        if (!phone || !/^\d{6}$/.test(token)) {
-          return showAuthMessage("6 xonali SMS kodni to'g'ri kiriting.");
+        const token =
+          document.getElementById("phone-otp").value.trim();
+
+        if (!telegramLoginId || !telegramOtpPending) {
+          return showAuthMessage(
+            "Avval Telegram orqali kod olishni boshlang."
+          );
         }
 
+        if (!/^\d{6}$/.test(token)) {
+          return showAuthMessage(
+            "6 xonali kodni to'g'ri kiriting."
+          );
+        }
+
+        const btn =
+          document.querySelector(
+            "#phone-otp-box .btn-primary"
+          );
+
+        setAuthLoading(btn, true, "Tekshirilmoqda...");
+
         try {
-          const { data, error } = await supabaseClient.auth.verifyOtp({
-            phone,
-            token,
-            type: "sms"
-          });
-          if (error) throw error;
+          const response = await fetch(
+            `${SUPABASE_URL}/functions/v1/telegram-auth`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                apikey: SUPABASE_ANON_KEY
+              },
+              body: JSON.stringify({
+                action: "verify_otp",
+                login_id: telegramLoginId,
+                otp: token
+              })
+            }
+          );
 
-          const phoneAdminCodeInput = document.getElementById("phone-admin-code")?.value.trim() || "";
-          const finalPhoneRole = (phoneSelectedRole === "teacher" && phoneAdminCodeInput && phoneAdminCodeInput === ADMIN_SIGNUP_CODE)
-            ? "admin"
-            : phoneSelectedRole;
+          const result = await response.json();
 
-          await finishAuthenticatedUser(data.user, {
-            phone,
-            full_name: name,
-            role: finalPhoneRole,
-            level: finalPhoneRole === "student" ? "beginner" : null,
-            provider: "phone"
-          });
+          if (!response.ok) {
+            throw new Error(
+              result.error || "Kod noto'g'ri."
+            );
+          }
+
+          if (
+            !result.session ||
+            !result.session.access_token ||
+            !result.session.refresh_token
+          ) {
+            throw new Error("Supabase session yaratilmadi.");
+          }
+
+          const { error: sessionError } =
+            await supabaseClient.auth.setSession({
+              access_token: result.session.access_token,
+              refresh_token: result.session.refresh_token
+            });
+
+          if (sessionError) throw sessionError;
+
+          telegramOtpPending = false;
+          telegramLoginId = null;
+
+          const user = result.user;
+
+          const name =
+            document.getElementById("phone-full-name")
+              ?.value.trim() || "";
+
+          const phone =
+            normalizeUzPhone(
+              document.getElementById("phone-number").value
+            );
+
+          const phoneAdminCodeInput =
+            document.getElementById("phone-admin-code")
+              ?.value.trim() || "";
+
+          const finalPhoneRole =
+            (phoneSelectedRole === "teacher" &&
+              phoneAdminCodeInput &&
+              phoneAdminCodeInput === ADMIN_SIGNUP_CODE)
+              ? "admin"
+              : phoneSelectedRole;
+
+          /*
+           * Mavjud ilovadagi profil/user ma'lumotlarini
+           * saqlash funksiyasini ham ishlatamiz.
+           */
+          if (typeof finishAuthenticatedUser === "function") {
+            await finishAuthenticatedUser(user, {
+              phone,
+              full_name: name,
+              role: finalPhoneRole,
+              level: finalPhoneRole === "student" ? "beginner" : null,
+              provider: "phone"
+            });
+          } else {
+            if (typeof loadUserSession === "function") {
+              await loadUserSession();
+            }
+
+            if (typeof refreshAuthUI === "function") {
+              refreshAuthUI();
+            }
+
+            if (typeof closeAuthModal === "function") {
+              closeAuthModal();
+            }
+          }
+
+          showAuthMessage(
+            "✅ Telegram tasdiqlandi. Tizimga muvaffaqiyatli kirdingiz!",
+            "ok"
+          );
         } catch (error) {
-          console.error("OTP verify error:", error);
-          showAuthMessage(authErrorText(error));
+          console.error("Telegram verify error:", error);
+          showAuthMessage(
+            error.message || "Tasdiqlashda xatolik."
+          );
+        } finally {
+          setAuthLoading(btn, false);
         }
       }
 
@@ -10955,14 +11121,13 @@ pen — ruchka 🖊"
 
       /* ============================================================
          🔔 BILDIRISHNOMALAR VA TELEGRAM INTEGRATSIYASI
-         Diqqat: Telegram orqali real xabar yuborish uchun ustoz
-         @BotFather orqali o'z Telegram botini yaratib, quyidagi
-         TELEGRAM_BOT_TOKEN o'zgaruvchisiga tokenni kiritishi kerak.
-         Token bo'sh bo'lsa, faqat ilova ichidagi 🔔 bildirishnoma
-         ishlayveradi (bu har doim ishlaydi, tokensiz ham).
+         Diqqat: Bot tokeni frontendda SAQLANMAYDI.
+         Telefon OTP uchun token Supabase Edge Function secretida
+         saqlanadi. Frontenddagi sendTelegramNotification funksiyasi
+         xavfsizlik sababli token bo'lmasa hech narsa yubormaydi.
       ============================================================ */
 
-      const TELEGRAM_BOT_TOKEN = "8813822540:AAEY78b6P0w0MgpNl0evmMH1YKCayU2KI-o";
+      const TELEGRAM_BOT_TOKEN = "";
       const TELEGRAM_BOT_USERNAME = "emeraldlab_bot"; // masalan: "EmeraldLabBot" (@ belgisisiz)
 
       async function sendTelegramNotification(chatId, text) {
