@@ -2894,6 +2894,30 @@
         .overall-ring-inner strong{font-size:2.1rem}
       }
 
+      /* ===== SHAXSIY O'QUV REJASI (Study Plan) ===== */
+      .study-plan-item{
+        display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:14px;
+        background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);margin-bottom:8px;
+        transition:.2s ease;
+      }
+      .study-plan-item:hover{border-color:rgba(16,185,129,.25);background:rgba(16,185,129,.05)}
+      .study-plan-item.priority-high{border-left:3px solid var(--danger)}
+      .study-plan-item.priority-mid{border-left:3px solid var(--gold)}
+      .study-plan-item.priority-low{border-left:3px solid var(--emerald-primary)}
+      .study-plan-icon{font-size:1.35rem;line-height:1;flex-shrink:0;margin-top:2px}
+      .study-plan-body{flex:1;min-width:0}
+      .study-plan-title{color:#d1fae5;font-size:.85rem;font-weight:800;margin-bottom:3px}
+      .study-plan-text{color:#94a3b8;font-size:.75rem;line-height:1.5}
+      .study-plan-action{
+        flex-shrink:0;border:0;border-radius:10px;padding:8px 13px;font-size:.72rem;font-weight:900;
+        cursor:pointer;background:linear-gradient(135deg,#10b981,#047857);color:#f0fdf4;
+        box-shadow:0 4px 12px rgba(16,185,129,.25);white-space:nowrap;align-self:center;
+      }
+      .study-plan-action:hover{filter:brightness(1.08)}
+      .study-plan-empty{
+        text-align:center;padding:22px 10px;color:#6ee7b7;font-size:.82rem;
+      }
+
       /* ANALYTICS STYLES */
       .chart-container {
         position: relative;
@@ -6082,7 +6106,7 @@ pen — ruchka 🖊"
             </div>
           </div>
 
-          <!-- Recommendations list -->
+          <!-- Shaxsiy o'quv rejasi (weakPoints + skill progress asosida, avtomatik) -->
           <div
             style="
               margin-top: 1.5rem;
@@ -6096,23 +6120,18 @@ pen — ruchka 🖊"
               style="
                 color: var(--emerald-light);
                 font-size: 0.95rem;
-                margin-bottom: 6px;
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
               "
             >
-              💡 AI Tavsiyalari (Kamchiliklarni to'g'rilash):
+              <span>🧭 Shaxsiy O'quv Rejangiz</span>
+              <span style="font-size:0.7rem; font-weight:400; color: var(--text-muted)">Real natijalar asosida</span>
             </h4>
-            <ul
-              style="
-                padding-left: 20px;
-                font-size: 0.85rem;
-                color: var(--text-main);
-              "
-            >
-              <li>
-                <strong>Faollik:</strong> Darslarni bajarish va testlarni
-                yechish orqali statistikangiz real ko'rsatkichlarga ega bo'ladi.
-              </li>
-            </ul>
+            <div id="study-plan-container">
+              <div style="font-size:0.85rem; color: var(--text-muted)">Yuklanmoqda...</div>
+            </div>
           </div>
         </div>
       </div>
@@ -10722,6 +10741,150 @@ pen — ruchka 🖊"
           available.length >= 4 ? "REAL DATA • LIVE" : `REAL DATA • ${available.length}/6 SKILL`;
       }
 
+      /* ============================================================
+         🧭 SHAXSIY O'QUV REJASI (Study Plan)
+         weakPoints, skill progress va faollik (streak/vocab) asosida
+         avtomatik, shaxsiylashtirilgan tavsiyalar ro'yxatini quradi.
+         Statik "AI Tavsiyalari" bloki o'rniga ishlatiladi.
+      ============================================================ */
+      const STUDY_PLAN_SKILL_TAB = {
+        listening: "listening",
+        reading: "reading",
+        writing: "writing",
+        speaking: "speaking",
+        grammar: "dashboard",
+        vocabulary: "dashboard",
+      };
+
+      function studyPlanNavigate(tab) {
+        // switchMainTab ichki eventni ixtiyoriy talab qiladi, shu bois
+        // "event"siz chaqirish xavfsiz.
+        switchMainTab(tab);
+        // Navigatsiya tugmalaridagi "active" holatini ham qo'lda moslaymiz,
+        // chunki bu chaqiruvda click event yo'q.
+        document.querySelectorAll(".nav-tab-btn").forEach((btn) => {
+          btn.classList.toggle(
+            "active",
+            (btn.getAttribute("onclick") || "").includes(`'${tab}'`)
+          );
+        });
+        document.getElementById("dashboard-content")?.scrollIntoView?.({ behavior: "smooth", block: "start" });
+      }
+
+      function generateStudyPlan(targetUser) {
+        const items = [];
+        const skill = getStudentSkillProgress(targetUser);
+        const skillKeys = ["grammar", "vocabulary", "reading", "listening", "writing", "speaking"];
+
+        // 1) Eng zaif REAL skill(lar) — 70% dan past bo'lganlari, eng
+        //    pastidan boshlab, ko'pi bilan 2 tasi.
+        const weakSkills = skillKeys
+          .filter((k) => skill[k] !== null && skill[k] < 70)
+          .sort((a, b) => skill[a] - skill[b])
+          .slice(0, 2);
+
+        weakSkills.forEach((k) => {
+          items.push({
+            icon: { grammar: "🧠", vocabulary: "📚", reading: "📖", listening: "🎧", writing: "✍️", speaking: "🗣️" }[k],
+            title: `${skill.labels[k]} bo'yicha mashq qiling`,
+            text: `Hozirgi natijangiz — ${skill[k]}%. Muntazam mashq eng tez natija beradi.`,
+            priority: skill[k] < 45 ? "high" : "mid",
+            tab: STUDY_PLAN_SKILL_TAB[k],
+            score: 100 - skill[k],
+          });
+        });
+
+        // 2) weakPoints — eng ko'p xato qilingan aniq mavzular (top 3).
+        const weakPointsObj = targetUser.weakPoints || {};
+        const weakEntries = Object.entries(weakPointsObj)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 3);
+
+        weakEntries.forEach(([topic, score]) => {
+          const isReading = topic.startsWith("📖");
+          const isListening = topic.startsWith("🎧");
+          const cleanTopic = topic.replace(/^📖\s*|^🎧\s*/, "");
+          items.push({
+            icon: isReading ? "📖" : isListening ? "🎧" : "🧠",
+            title: `"${cleanTopic}" mavzusini takrorlang`,
+            text: `Bu mavzuda eng ko'p xatolaringiz qayd etilgan (${score} ball). Qayta urinib ko'ring.`,
+            priority: score >= 30 ? "high" : "mid",
+            tab: isReading ? "reading" : isListening ? "listening" : "dashboard",
+            score: 50 + Number(score),
+          });
+        });
+
+        // 3) Faollik nudge'lari (streak / kunlik vocab).
+        if (!targetUser.streak || targetUser.streak === 0) {
+          items.push({
+            icon: "🔥",
+            title: "Kunlik seriyangizni (streak) boshlang",
+            text: "Har kuni kamida bitta darsni tugatib, streak'ingizni tiklang — barqarorlik eng tez natija beradi.",
+            priority: "low",
+            tab: "dashboard",
+            score: 20,
+          });
+        }
+
+        const todayIdx = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
+        const todayVocab = (targetUser.weeklyVocabStats || [])[todayIdx] || 0;
+        if (todayVocab === 0) {
+          items.push({
+            icon: "📚",
+            title: "Bugungi so'z yodlash maqsadingiz bajarilmagan",
+            text: "Bugun hali birorta ham yangi so'z yodlamadingiz. Bir nechta so'zni takrorlab ko'ring.",
+            priority: "low",
+            tab: "dashboard",
+            score: 15,
+          });
+        }
+
+        // Hech qanday ma'lumot yo'q bo'lsa — umumiy boshlash tavsiyasi.
+        if (items.length === 0) {
+          items.push({
+            icon: "🎉",
+            title: "Ajoyib! Hozircha aniq zaif tomon topilmadi",
+            text: "Barcha skillaringiz yaxshi holatda. Yangi darslar va testlar bilan davom eting.",
+            priority: "low",
+            tab: "dashboard",
+            score: 0,
+          });
+        }
+
+        return items.sort((a, b) => b.score - a.score).slice(0, 5);
+      }
+
+      function renderStudyPlan(targetUser) {
+        const box = document.getElementById("study-plan-container");
+        if (!box) return;
+
+        const isOwnProfile = currentUser && targetUser && currentUser.email === targetUser.email;
+        const plan = generateStudyPlan(targetUser);
+
+        if (!plan.length) {
+          box.innerHTML = `<div class="study-plan-empty">Hozircha tavsiya uchun yetarli ma'lumot yo'q.</div>`;
+          return;
+        }
+
+        box.innerHTML = plan
+          .map((item) => {
+            const actionBtn = isOwnProfile
+              ? `<button class="study-plan-action" onclick="studyPlanNavigate('${item.tab}')">Boshlash →</button>`
+              : "";
+            return `
+              <div class="study-plan-item priority-${item.priority}">
+                <div class="study-plan-icon">${item.icon}</div>
+                <div class="study-plan-body">
+                  <div class="study-plan-title">${escapeHtml(item.title)}</div>
+                  <div class="study-plan-text">${escapeHtml(item.text)}</div>
+                </div>
+                ${actionBtn}
+              </div>
+            `;
+          })
+          .join("");
+      }
+
       function setProgressTrendMode(mode) {
         progressTrendMode = mode === "monthly" ? "monthly" : "weekly";
         document.getElementById("progress-week-btn")?.classList.toggle("active", progressTrendMode === "weekly");
@@ -10833,6 +10996,7 @@ pen — ruchka 🖊"
       function initCharts(targetUser) {
         renderSkillProgress(targetUser);
         renderProgressTrendChart(targetUser);
+        renderStudyPlan(targetUser);
 
         const vocabData = targetUser.weeklyVocabStats || [0, 0, 0, 0, 0, 0, 0];
         const listeningData = targetUser.listeningGrowth || [0, 0, 0, 0, 0];
