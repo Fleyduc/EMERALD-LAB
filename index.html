@@ -562,6 +562,150 @@
         margin: 4px 4px;
       }
 
+
+      /* ============================================================
+         🔐 MODERN MULTI-AUTH UI
+         Email + Password | Google OAuth | +998 Phone OTP
+         ============================================================ */
+      .auth-method-tabs {
+        display:grid;
+        grid-template-columns:repeat(3,1fr);
+        gap:6px;
+        padding:5px;
+        margin-bottom:16px;
+        background:rgba(0,0,0,.28);
+        border:1px solid var(--card-border);
+        border-radius:14px;
+      }
+      .auth-method-tab {
+        border:1px solid transparent;
+        background:transparent;
+        color:var(--text-muted);
+        padding:10px 7px;
+        border-radius:10px;
+        cursor:pointer;
+        font-size:.72rem;
+        font-weight:800;
+        transition:.2s ease;
+      }
+      .auth-method-tab.active {
+        background:rgba(16,185,129,.16);
+        color:#ecfdf5;
+        border-color:rgba(52,211,153,.3);
+        box-shadow:0 0 14px rgba(16,185,129,.12);
+      }
+      .auth-mode-row {
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:10px;
+        margin:0 0 14px;
+      }
+      .auth-mode-title { font-weight:800; font-size:.92rem; }
+      .auth-link {
+        border:0;
+        background:none;
+        color:var(--emerald-light);
+        cursor:pointer;
+        font-size:.76rem;
+        font-weight:800;
+        padding:3px;
+      }
+      .auth-link:hover { text-decoration:underline; }
+      .auth-provider-btn {
+        width:100%;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        gap:9px;
+        min-height:46px;
+        border-radius:12px;
+        border:1px solid var(--card-border);
+        background:rgba(255,255,255,.05);
+        color:var(--text-main);
+        cursor:pointer;
+        font-weight:800;
+        transition:.2s ease;
+      }
+      .auth-provider-btn:hover {
+        background:rgba(255,255,255,.09);
+        border-color:var(--card-border-hover);
+        transform:translateY(-1px);
+      }
+      .auth-divider {
+        display:flex;
+        align-items:center;
+        gap:10px;
+        margin:15px 0;
+        color:var(--text-muted);
+        font-size:.72rem;
+        font-weight:700;
+      }
+      .auth-divider::before,.auth-divider::after {
+        content:"";
+        flex:1;
+        height:1px;
+        background:var(--card-border);
+      }
+      .phone-prefix-wrap {
+        display:grid;
+        grid-template-columns:92px 1fr;
+        gap:7px;
+      }
+      .phone-prefix {
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        border:1px solid var(--card-border);
+        border-radius:12px;
+        background:rgba(2,20,15,.6);
+        color:var(--emerald-light);
+        font-weight:800;
+      }
+      .otp-row {
+        display:grid;
+        grid-template-columns:1fr auto;
+        gap:8px;
+        align-items:end;
+      }
+      .otp-row .btn-primary {
+        width:auto;
+        min-width:130px;
+        margin-top:0;
+      }
+      .auth-message {
+        display:none;
+        margin:10px 0;
+        padding:10px 12px;
+        border-radius:10px;
+        font-size:.78rem;
+        line-height:1.45;
+        border:1px solid var(--card-border);
+      }
+      .auth-message.show { display:block; }
+      .auth-message.ok {
+        color:#a7f3d0;
+        background:rgba(16,185,129,.09);
+        border-color:rgba(52,211,153,.28);
+      }
+      .auth-message.error {
+        color:#fecaca;
+        background:rgba(239,68,68,.09);
+        border-color:rgba(239,68,68,.28);
+      }
+      .auth-security-note {
+        margin-top:12px;
+        text-align:center;
+        color:var(--text-muted);
+        font-size:.68rem;
+      }
+      @media(max-width:520px) {
+        .auth-method-tab { font-size:.64rem; padding:9px 4px; }
+        .phone-prefix-wrap { grid-template-columns:82px 1fr; }
+        .otp-row { grid-template-columns:1fr; }
+        .otp-row .btn-primary { width:100%; }
+      }
+
       /* Modal / Auth UI */
       .modal-overlay {
         position: fixed;
@@ -3025,114 +3169,152 @@
 
     <!-- AUTH MODAL -->
     <div id="auth-modal" class="modal-overlay">
-      <div class="modal-card">
+      <div class="modal-card auth-modal-card">
         <h2>EMERALD<span>LAB</span></h2>
-        <p class="subtitle" data-i18n="welcomeSubtitle">
-          Ingliz tili laboratoriyasiga xush kelibsiz!
-        </p>
+        <p class="subtitle">Xavfsiz kirish: Email, Google yoki +998 telefon raqami</p>
 
-        <form id="auth-form" onsubmit="handleAuth(event)">
-          <!-- Profile Picture Upload -->
-          <div class="avatar-preview-box">
-            <div class="avatar-circle" id="auth-avatar-circle">👤</div>
-            <div>
-              <label
-                style="
-                  font-size: 0.8rem;
-                  color: var(--text-muted);
-                  cursor: pointer;
-                "
-                for="avatar-file-input"
-              >
-                📷 <strong>Profil rasmi yuklash</strong>
-              </label>
-              <input
-                type="file"
-                id="avatar-file-input"
-                accept="image/*"
-                style="display: none"
-                onchange="handleAvatarUpload(event, 'auth-avatar-circle')"
-              />
-              <p
-                style="
-                  font-size: 0.7rem;
-                  color: var(--text-muted);
-                  margin-top: 3px;
-                "
-              >
-                PNG, JPG (Ixtiyoriy)
-              </p>
+        <div class="auth-method-tabs">
+          <button type="button" class="auth-method-tab active" id="auth-tab-email" onclick="switchAuthMethod('email')">✉️ Email</button>
+          <button type="button" class="auth-method-tab" id="auth-tab-google" onclick="switchAuthMethod('google')">G Google</button>
+          <button type="button" class="auth-method-tab" id="auth-tab-phone" onclick="switchAuthMethod('phone')">📱 +998</button>
+        </div>
+
+        <div id="auth-message" class="auth-message"></div>
+
+        <!-- EMAIL / PASSWORD -->
+        <section id="auth-email-panel">
+          <div class="auth-mode-row">
+            <span class="auth-mode-title" id="email-auth-title">Tizimga kirish</span>
+            <button type="button" class="auth-link" id="email-mode-toggle" onclick="toggleEmailAuthMode()">Akkaunt ochish</button>
+          </div>
+
+          <form id="auth-form" onsubmit="handleEmailAuth(event)">
+            <div class="input-group" id="auth-name-group">
+              <label>F.I.Sh</label>
+              <input type="text" id="full-name" placeholder="Masalan: Ali Valiyev" autocomplete="name" />
             </div>
-          </div>
 
-          <div class="input-group">
-            <label data-i18n="nameLabel">F.I.Sh (Ismingiz)</label>
-            <input
-              type="text"
-              id="full-name"
-              data-i18n-ph="namePlaceholder"
-              placeholder="Masalan: Ali Valiyev"
-              required
-            />
-          </div>
+            <div class="input-group">
+              <label>Email</label>
+              <input type="email" id="email" placeholder="example@mail.com" autocomplete="email" required />
+            </div>
 
-          <div class="input-group">
-            <label data-i18n="emailLabel">Email Manzilingiz</label>
-            <input
-              type="email"
-              id="email"
-              placeholder="example@mail.com"
-              required
-            />
-          </div>
+            <div class="input-group">
+              <label>Parol</label>
+              <input type="password" id="auth-password" placeholder="Kamida 8 ta belgi" autocomplete="current-password" minlength="8" required />
+            </div>
 
-          <div class="input-group">
-            <label data-i18n="roleLabel">Rolingizni tanlang</label>
+            <div class="input-group hidden" id="auth-password-confirm-group">
+              <label>Parolni tasdiqlang</label>
+              <input type="password" id="auth-password-confirm" placeholder="Parolni qayta kiriting" autocomplete="new-password" minlength="8" />
+            </div>
+
+            <div class="input-group" id="auth-role-group">
+              <label>Rolingiz</label>
+              <div class="role-selector">
+                <button type="button" class="role-btn active" id="btn-student" onclick="selectRole('student')">🎓 O'quvchi</button>
+                <button type="button" class="role-btn" id="btn-teacher" onclick="selectRole('teacher')">👨‍🏫 Ustoz</button>
+              </div>
+            </div>
+
+            <div class="input-group hidden" id="level-group">
+              <label>Kurs tanlovi</label>
+              <div class="course-gate-note" style="text-align:left;margin:0;padding:12px;border:1px solid var(--card-border);border-radius:12px;background:rgba(16,185,129,.06)">
+                🎓 Akkaunt ochilgach kurs sotib olish kerak:
+                <strong>Beginner — 300 000 UZS</strong> yoki
+                <strong>IELTS — 700 000 UZS</strong>.
+              </div>
+              <select id="student-level" aria-hidden="true">
+                <option value="beginner">beginner</option>
+                <option value="ielts">ielts</option>
+              </select>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submit-btn">Tizimga kirish</button>
+          </form>
+
+          <button type="button" class="auth-link" style="display:block;margin:12px auto 0" onclick="sendPasswordReset()">🔑 Parolni unutdingizmi?</button>
+        </section>
+
+        <!-- GOOGLE -->
+        <section id="auth-google-panel" class="hidden">
+          <div style="text-align:center;padding:8px 0 12px">
+            <div style="font-size:2.3rem;margin-bottom:8px">🔐</div>
+            <h3 style="margin-bottom:6px">Google orqali xavfsiz kirish</h3>
+            <p class="subtitle" style="margin-bottom:14px">Google akkauntingiz bilan bir bosishda kiring. Parol Emerald Lab serverida saqlanmaydi.</p>
+          </div>
+          <div class="input-group" style="margin-top:4px">
+            <label>Google akkaunti uchun rol</label>
             <div class="role-selector">
-              <button
-                type="button"
-                class="role-btn active"
-                id="btn-student"
-                onclick="selectRole('student')"
-                data-i18n="studentRole"
-              >
-                🎓 O'quvchi
-              </button>
-              <button
-                type="button"
-                class="role-btn"
-                id="btn-teacher"
-                onclick="selectRole('teacher')"
-                data-i18n="teacherRole"
-              >
-                👨‍🏫 Ustoz
-              </button>
+              <button type="button" class="role-btn active" id="google-btn-student" onclick="selectGoogleRole('student')">🎓 O'quvchi</button>
+              <button type="button" class="role-btn" id="google-btn-teacher" onclick="selectGoogleRole('teacher')">👨‍🏫 Ustoz</button>
             </div>
           </div>
-
-          <div class="input-group" id="level-group">
-            <label>Kurs tanlovi</label>
-            <div class="course-gate-note" style="text-align:left;margin:0;padding:12px;border:1px solid var(--card-border);border-radius:12px;background:rgba(16,185,129,.06)">
-              🎓 O'quvchi akkauntini ochgandan keyin kursni sotib olish majburiy.
-              <strong>Beginner — 300 000 UZS</strong> yoki
-              <strong>IELTS — 700 000 UZS</strong>.
-              To'lov tasdiqlangach, akkaunt avtomatik ravishda tanlangan kurs roliga yo'naltiriladi.
-            </div>
-            <select id="student-level" class="hidden" aria-hidden="true">
-              <option value="beginner">beginner</option>
-              <option value="ielts">ielts</option>
-            </select>
-          </div>
-
-          <button
-            type="submit"
-            class="submit-btn"
-            id="submit-btn"
-            data-i18n="submitBtn"
-          >
-            Tizimga Kirish
+          <button type="button" class="auth-provider-btn" onclick="signInWithGoogle()">
+            <span style="font-size:1.2rem;font-weight:900">G</span> Google bilan davom etish
           </button>
-        </form>
+        </section>
+
+        <!-- PHONE OTP -->
+        <section id="auth-phone-panel" class="hidden">
+          <div class="auth-mode-row">
+            <span class="auth-mode-title">Telefon orqali kirish</span>
+            <span style="font-size:.7rem;color:var(--text-muted)">SMS OTP</span>
+          </div>
+
+          <div class="input-group">
+            <label>O'zbekiston telefon raqami</label>
+            <div class="phone-prefix-wrap">
+              <div class="phone-prefix">🇺🇿 +998</div>
+              <input type="tel" id="phone-number" placeholder="90 123 45 67" inputmode="numeric" autocomplete="tel" />
+            </div>
+          </div>
+
+          <div id="phone-name-group" class="input-group">
+            <label>F.I.Sh (yangi akkaunt uchun)</label>
+            <input type="text" id="phone-full-name" placeholder="Masalan: Ali Valiyev" autocomplete="name" />
+          </div>
+
+          <div id="phone-role-group" class="input-group">
+            <label>Rol</label>
+            <div class="role-selector">
+              <button type="button" class="role-btn active" id="phone-btn-student" onclick="selectPhoneRole('student')">🎓 O'quvchi</button>
+              <button type="button" class="role-btn" id="phone-btn-teacher" onclick="selectPhoneRole('teacher')">👨‍🏫 Ustoz</button>
+            </div>
+          </div>
+
+          <div id="phone-otp-box" class="hidden">
+            <div class="input-group">
+              <label>SMS orqali kelgan 6 xonali kod</label>
+              <input type="text" id="phone-otp" placeholder="123456" inputmode="numeric" autocomplete="one-time-code" maxlength="6" />
+            </div>
+            <button type="button" class="btn-primary" onclick="verifyPhoneOtp()">✅ Kodni tasdiqlash</button>
+            <button type="button" class="auth-link" style="display:block;margin:10px auto 0" onclick="sendPhoneOtp(true)">Kodni qayta yuborish</button>
+          </div>
+
+          <button type="button" class="submit-btn" id="send-phone-otp-btn" onclick="sendPhoneOtp(false)">📩 SMS kod yuborish</button>
+          <div class="auth-security-note">🔒 OTP kodi orqali kirish Supabase Auth bilan boshqariladi.</div>
+        </section>
+
+        <div class="auth-divider">EMERALD LAB AUTH</div>
+        <div class="auth-security-note">Sessiya Supabase Auth orqali saqlanadi. Kurs/progress ma'lumotlari mavjud Supabase bazangiz bilan bog'lanadi.</div>
+      </div>
+    </div>
+
+    <!-- PASSWORD RECOVERY -->
+    <div id="password-recovery-modal" class="modal-overlay hidden">
+      <div class="modal-card" style="max-width:430px">
+        <h2 style="font-size:1.45rem">🔑 Parolni yangilash</h2>
+        <p class="subtitle">Yangi parolingizni kiriting.</p>
+        <div class="input-group">
+          <label>Yangi parol</label>
+          <input type="password" id="recovery-password" minlength="8" placeholder="Kamida 8 ta belgi" autocomplete="new-password">
+        </div>
+        <div class="input-group">
+          <label>Parolni tasdiqlang</label>
+          <input type="password" id="recovery-password-confirm" minlength="8" placeholder="Parolni qayta kiriting" autocomplete="new-password">
+        </div>
+        <button type="button" class="submit-btn" onclick="updateRecoveredPassword()">Parolni saqlash</button>
       </div>
     </div>
 
@@ -6112,6 +6294,17 @@ pen — ruchka 🖊"
             alohida bergan SQL kodni ishga tushiring (jadvallarni yaratish
             uchun). Batafsili tushuntirish javobim oxirida bor.
       ============================================================ */
+      /* ============================================================
+         AUTH PROVIDER SETUP (Supabase Dashboard)
+         1) Authentication -> Providers -> Email: enable email/password.
+         2) Google: enable Google provider and add Client ID/Secret.
+         3) Phone: enable Phone + SMS provider (Twilio/MessageBird/etc).
+         4) Authentication -> URL Configuration:
+            Site URL = your Vercel/domain URL.
+            Redirect URL = your exact deployed URL/path.
+         5) Google OAuth Console redirect URI:
+            https://YOUR_PROJECT_REF.supabase.co/auth/v1/callback
+         ============================================================ */
       const SUPABASE_URL = "https://axiqdzmftlogejihdwza.supabase.co";
       const SUPABASE_ANON_KEY =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4aXFkem1mdGxvZ2VqaWhkd3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxODYzNDAsImV4cCI6MjEwMTc2MjM0MH0.XwRpoRJNyjrhVC19B1VTzXgTgIwUEsKf23iafvTOOlA";
@@ -6517,26 +6710,16 @@ pen — ruchka 🖊"
           );
         }
 
-        const sessionEmail = localStorage.getItem("emerald_session_email");
-        if (sessionEmail) {
-          currentUser = users.find((u) => u.email === sessionEmail) || null;
-        }
+        // 🔐 Supabase Auth sessionini tiklaymiz.
+        // Eski localStorage email sessiyasi endi login manbai emas.
+        const restored = await restoreSupabaseSession();
 
-        if (currentUser) {
-          updateLastSeen(currentUser);
-          checkDailyStreak(currentUser);
-          document.getElementById("auth-modal").classList.add("hidden");
-
-          if (
-            currentUser.role === "student" &&
-            currentUser.course_status !== "active"
-          ) {
-            showCoursePurchaseGate();
-          } else {
-            loadDashboard(currentUser);
-            renderChatMessages();
-            initCharts(currentUser);
-          }
+        // Fallback: auth session bo'lmasa eski localStorage faqat UI ma'lumotlarini
+        // topish uchun ishlatiladi; yangi xavfsiz login yaratmaydi.
+        if (!restored) {
+          currentUser = null;
+          localStorage.removeItem("emerald_session_email");
+          document.getElementById("auth-modal").classList.remove("hidden");
         }
 
         subscribeRealtimeChat();
@@ -7099,84 +7282,396 @@ pen — ruchka 🖊"
         loadDashboard(currentUser);
       }
 
-      async function handleAuth(event) {
-        event.preventDefault();
+      /* ============================================================
+         🔐 EMERALD LAB AUTHENTICATION
+         - Email + Password
+         - Google OAuth
+         - Uzbekistan +998 SMS OTP
+         - Supabase session restore
+         ============================================================ */
 
-        const name = document.getElementById("full-name").value;
-        const email = document.getElementById("email").value;
-        const level = document.getElementById("student-level").value;
+      let emailAuthMode = "login";
+      let phoneSelectedRole = "student";
+      let googleSelectedRole = "student";
+      let phoneOtpPending = false;
 
-        let existingUser = users.find((u) => u.email === email);
+      function showAuthMessage(message, type = "error") {
+        const box = document.getElementById("auth-message");
+        if (!box) return;
+        box.className = `auth-message show ${type}`;
+        box.textContent = message;
+      }
 
-        if (!existingUser) {
-          existingUser = {
-            id: Date.now(),
-            full_name: name,
-            email: email,
-            role: selectedRole,
-            level: selectedRole === "student" ? level : null,
-            avatar: tempAvatarBase64 || DEFAULT_AVATAR,
-            xp: 0,
-            coins: 20,
-            streak: 0,
-            equippedTitle: "",
-            certificates: [],
-            completedLessons: [],
-            completedVocabQuizzes: [],
-            completedHomeworks: [],
-            lessonHistory: [],
-            learnedTopics: [],
-            weeklyVocabStats: [0, 0, 0, 0, 0, 0, 0],
-            listeningGrowth: [0, 0, 0, 0, 0],
-            readingGrowth: [0, 0, 0, 0, 0],
-            weakPoints: {},
-            notifications: [],
-            telegramChatId: null,
-            badges: [],
-            weeklyXpSnapshot: null,
-            dailyXpSnapshot: null,
-            lastWeeklyBonusWeek: null,
-            lastDailyBonusDay: null,
-            lastSeen: new Date().toLocaleString("uz-UZ", {
-              dateStyle: "short",
-              timeStyle: "short",
-            }),
-          };
-          users.push(existingUser);
+      function clearAuthMessage() {
+        const box = document.getElementById("auth-message");
+        if (box) box.className = "auth-message";
+      }
+
+      function normalizeUzPhone(value) {
+        const digits = String(value || "").replace(/\D/g, "");
+        let d = digits;
+        if (d.startsWith("998")) d = d.slice(3);
+        if (d.startsWith("0")) d = d.slice(1);
+        if (d.length !== 9) return null;
+        if (!/^(20|33|50|55|61|62|65|66|67|68|69|70|71|77|88|90|91|93|94|95|97|98|99)$/.test(d.slice(0,2))) return null;
+        return `+998${d}`;
+      }
+
+      function setAuthLoading(button, loading, loadingText = "Kutilmoqda...") {
+        if (!button) return;
+        if (loading) {
+          button.dataset.originalText = button.textContent;
+          button.disabled = true;
+          button.textContent = loadingText;
         } else {
-          if (tempAvatarBase64) existingUser.avatar = tempAvatarBase64;
-          if (!existingUser.weeklyVocabStats)
-            existingUser.weeklyVocabStats = [0, 0, 0, 0, 0, 0, 0];
-          if (!existingUser.listeningGrowth)
-            existingUser.listeningGrowth = [0, 0, 0, 0, 0];
-          if (!existingUser.readingGrowth)
-            existingUser.readingGrowth = [0, 0, 0, 0, 0];
-          if (!existingUser.weakPoints) existingUser.weakPoints = {};
-          if (!existingUser.notifications) existingUser.notifications = [];
-          if (!existingUser.badges) existingUser.badges = [];
-          if (existingUser.telegramChatId === undefined)
-            existingUser.telegramChatId = null;
+          button.disabled = false;
+          button.textContent = button.dataset.originalText || button.textContent;
+        }
+      }
+
+      function switchAuthMethod(method) {
+        clearAuthMessage();
+        ["email","google","phone"].forEach((m) => {
+          const tab = document.getElementById(`auth-tab-${m}`);
+          const panel = document.getElementById(`auth-${m}-panel`);
+          if (tab) tab.classList.toggle("active", method === m);
+          if (panel) panel.classList.toggle("hidden", method !== m);
+        });
+      }
+
+      function toggleEmailAuthMode() {
+        emailAuthMode = emailAuthMode === "login" ? "signup" : "login";
+        const isSignup = emailAuthMode === "signup";
+        document.getElementById("email-auth-title").textContent = isSignup ? "Yangi akkaunt ochish" : "Tizimga kirish";
+        document.getElementById("email-mode-toggle").textContent = isSignup ? "Kirish" : "Akkaunt ochish";
+        document.getElementById("auth-name-group").classList.toggle("hidden", !isSignup);
+        document.getElementById("auth-password-confirm-group").classList.toggle("hidden", !isSignup);
+        document.getElementById("auth-role-group").classList.toggle("hidden", !isSignup);
+        document.getElementById("level-group").classList.toggle("hidden", !(isSignup && selectedRole === "student"));
+        document.getElementById("submit-btn").textContent = isSignup ? "Akkaunt yaratish" : "Tizimga kirish";
+        document.getElementById("auth-password").autocomplete = isSignup ? "new-password" : "current-password";
+        clearAuthMessage();
+      }
+
+      function selectPhoneRole(role) {
+        phoneSelectedRole = role;
+        document.getElementById("phone-btn-student").classList.toggle("active", role === "student");
+        document.getElementById("phone-btn-teacher").classList.toggle("active", role === "teacher");
+      }
+
+      function selectGoogleRole(role) {
+        googleSelectedRole = role;
+        document.getElementById("google-btn-student").classList.toggle("active", role === "student");
+        document.getElementById("google-btn-teacher").classList.toggle("active", role === "teacher");
+      }
+
+      async function ensureProfileForAuth(authUser, extra = {}) {
+        if (!authUser) throw new Error("Auth foydalanuvchisi topilmadi.");
+
+        const identityEmail = authUser.email || authUser.phone || `${authUser.id}@phone.emerald.local`;
+        let user = users.find((u) =>
+          u.auth_user_id === authUser.id ||
+          u.email === identityEmail ||
+          (authUser.phone && u.phone === authUser.phone)
+        );
+
+        const metadata = authUser.user_metadata || {};
+        const provider =
+          extra.provider ||
+          metadata.provider ||
+          (authUser.app_metadata && authUser.app_metadata.provider) ||
+          "password";
+
+        if (!user) {
+          user = {
+            id: Date.now(),
+            auth_user_id: authUser.id,
+            auth_provider: provider,
+            full_name: extra.full_name || metadata.full_name || metadata.name || (authUser.email ? authUser.email.split("@")[0] : "Emerald Lab User"),
+            email: identityEmail,
+            phone: authUser.phone || extra.phone || null,
+            role: extra.role || metadata.role || "student",
+            level: (extra.role || metadata.role || "student") === "student" ? (extra.level || metadata.level || "beginner") : null,
+            avatar: extra.avatar || metadata.avatar_url || DEFAULT_AVATAR,
+            xp: 0, coins: 20, streak: 0, equippedTitle: "",
+            certificates: [], completedLessons: [], completedVocabQuizzes: [],
+            completedHomeworks: [], lessonHistory: [], learnedTopics: [],
+            weeklyVocabStats: [0,0,0,0,0,0,0],
+            listeningGrowth: [0,0,0,0,0],
+            readingGrowth: [0,0,0,0,0],
+            weakPoints: {}, notifications: [], telegramChatId: null, badges: [],
+            weeklyXpSnapshot: null, dailyXpSnapshot: null,
+            lastWeeklyBonusWeek: null, lastDailyBonusDay: null,
+            lastSeen: new Date().toLocaleString("uz-UZ", {dateStyle:"short", timeStyle:"short"})
+          };
+        } else {
+          user.auth_user_id = authUser.id;
+          user.auth_provider = provider;
+          user.phone = authUser.phone || user.phone || extra.phone || null;
+          if (extra.full_name && !user.full_name) user.full_name = extra.full_name;
+          if (extra.avatar) user.avatar = extra.avatar;
+          if (!user.email) user.email = identityEmail;
+          if (!user.weeklyVocabStats) user.weeklyVocabStats = [0,0,0,0,0,0,0];
+          if (!user.listeningGrowth) user.listeningGrowth = [0,0,0,0,0];
+          if (!user.readingGrowth) user.readingGrowth = [0,0,0,0,0];
+          if (!user.weakPoints) user.weakPoints = {};
+          if (!user.notifications) user.notifications = [];
+          if (!user.badges) user.badges = [];
         }
 
-        localStorage.setItem("emerald_session_email", existingUser.email);
-        currentUser = existingUser;
-        await dbSaveUser(existingUser);
+        await saveUserData(user);
+        return user;
+      }
 
-        checkDailyStreak(currentUser);
+      async function finishAuthenticatedUser(authUser, extra = {}) {
+        const user = await ensureProfileForAuth(authUser, extra);
+        currentUser = user;
+        localStorage.setItem("emerald_session_email", user.email);
+
+        checkDailyStreak(user);
         document.getElementById("auth-modal").classList.add("hidden");
 
-        // O'quvchi uchun kurs sotib olish majburiy.
-        // Teacher/Admin odatdagi dashboardiga o'tadi.
-        if (
-          currentUser.role === "student" &&
-          currentUser.course_status !== "active"
-        ) {
+        if (user.role === "student" && user.course_status !== "active") {
           showCoursePurchaseGate();
           return;
         }
 
-        loadDashboard(currentUser);
+        loadDashboard(user);
         renderChatMessages();
+        if (typeof initCharts === "function") initCharts(user);
+      }
+
+      async function handleEmailAuth(event) {
+        event.preventDefault();
+        clearAuthMessage();
+
+        const email = document.getElementById("email").value.trim().toLowerCase();
+        const password = document.getElementById("auth-password").value;
+        const button = document.getElementById("submit-btn");
+
+        if (!email || !password) return showAuthMessage("Email va parolni kiriting.");
+        if (password.length < 8) return showAuthMessage("Parol kamida 8 ta belgidan iborat bo'lishi kerak.");
+
+        setAuthLoading(button, true, emailAuthMode === "signup" ? "Akkaunt yaratilmoqda..." : "Kirilmoqda...");
+
+        try {
+          if (emailAuthMode === "signup") {
+            const name = document.getElementById("full-name").value.trim();
+            const confirm = document.getElementById("auth-password-confirm").value;
+            const level = document.getElementById("student-level").value;
+
+            if (name.length < 2) throw new Error("F.I.Sh ni to'liq kiriting.");
+            if (password !== confirm) throw new Error("Parollar bir xil emas.");
+
+            const { data, error } = await supabaseClient.auth.signUp({
+              email,
+              password,
+              options: {
+                data: {
+                  full_name: name,
+                  role: selectedRole,
+                  level: selectedRole === "student" ? level : null
+                }
+              }
+            });
+            if (error) throw error;
+
+            if (data.user && data.session) {
+              await finishAuthenticatedUser(data.user, {
+                full_name: name,
+                role: selectedRole,
+                level
+              });
+              showAuthMessage("✅ Akkaunt yaratildi va tizimga kirdingiz.", "ok");
+            } else {
+              showAuthMessage("📩 Emailingizga tasdiqlash havolasi yuborildi. Emailni tasdiqlagach tizimga kiring.", "ok");
+              toggleEmailAuthMode();
+            }
+          } else {
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) throw error;
+            await finishAuthenticatedUser(data.user, { provider: "email" });
+          }
+        } catch (error) {
+          console.error("Email auth error:", error);
+          showAuthMessage(authErrorText(error));
+        } finally {
+          setAuthLoading(button, false);
+        }
+      }
+
+      async function signInWithGoogle() {
+        clearAuthMessage();
+        try {
+          localStorage.setItem("emerald_pending_google_role", googleSelectedRole);
+          const { error } = await supabaseClient.auth.signInWithOAuth({
+            provider: "google",
+            options: {
+              redirectTo: window.location.origin + window.location.pathname
+            }
+          });
+          if (error) throw error;
+        } catch (error) {
+          localStorage.removeItem("emerald_pending_google_role");
+          console.error("Google auth error:", error);
+          showAuthMessage(authErrorText(error));
+        }
+      }
+
+      async function sendPhoneOtp(isResend = false) {
+        clearAuthMessage();
+        const input = document.getElementById("phone-number");
+        const phone = normalizeUzPhone(input.value);
+        if (!phone) return showAuthMessage("Telefon raqamini +998 90 123 45 67 formatida kiriting.");
+
+        const name = document.getElementById("phone-full-name").value.trim();
+        const btn = document.getElementById("send-phone-otp-btn");
+
+        if (!isResend && !name) {
+          const old = users.find((u) => u.phone === phone);
+          if (!old) return showAuthMessage("Yangi telefon akkaunti uchun F.I.Sh ni kiriting.");
+        }
+
+        setAuthLoading(btn, true, "SMS yuborilmoqda...");
+        try {
+          const { error } = await supabaseClient.auth.signInWithOtp({
+            phone,
+            options: {
+              shouldCreateUser: true,
+              data: {
+                full_name: name || null,
+                role: phoneSelectedRole,
+                level: phoneSelectedRole === "student" ? "beginner" : null
+              }
+            }
+          });
+          if (error) throw error;
+
+          phoneOtpPending = true;
+          document.getElementById("phone-otp-box").classList.remove("hidden");
+          document.getElementById("send-phone-otp-btn").classList.add("hidden");
+          showAuthMessage(`📩 ${phone} raqamiga SMS kod yuborildi.`, "ok");
+        } catch (error) {
+          console.error("Phone OTP error:", error);
+          showAuthMessage(authErrorText(error));
+        } finally {
+          setAuthLoading(btn, false);
+        }
+      }
+
+      async function verifyPhoneOtp() {
+        clearAuthMessage();
+        const phone = normalizeUzPhone(document.getElementById("phone-number").value);
+        const token = document.getElementById("phone-otp").value.trim();
+        const name = document.getElementById("phone-full-name").value.trim();
+
+        if (!phone || !/^\d{6}$/.test(token)) {
+          return showAuthMessage("6 xonali SMS kodni to'g'ri kiriting.");
+        }
+
+        try {
+          const { data, error } = await supabaseClient.auth.verifyOtp({
+            phone,
+            token,
+            type: "sms"
+          });
+          if (error) throw error;
+
+          await finishAuthenticatedUser(data.user, {
+            phone,
+            full_name: name,
+            role: phoneSelectedRole,
+            level: phoneSelectedRole === "student" ? "beginner" : null,
+            provider: "phone"
+          });
+        } catch (error) {
+          console.error("OTP verify error:", error);
+          showAuthMessage(authErrorText(error));
+        }
+      }
+
+      async function sendPasswordReset() {
+        clearAuthMessage();
+        const email = document.getElementById("email").value.trim().toLowerCase();
+        if (!email) return showAuthMessage("Avval emailingizni kiriting.");
+
+        try {
+          const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin + window.location.pathname
+          });
+          if (error) throw error;
+          showAuthMessage("📩 Parolni tiklash havolasi emailingizga yuborildi.", "ok");
+        } catch (error) {
+          showAuthMessage(authErrorText(error));
+        }
+      }
+
+      async function updateRecoveredPassword() {
+        clearAuthMessage();
+        const password = document.getElementById("recovery-password").value;
+        const confirm = document.getElementById("recovery-password-confirm").value;
+        if (password.length < 8) return showAuthMessage("Yangi parol kamida 8 ta belgidan iborat bo'lishi kerak.");
+        if (password !== confirm) return showAuthMessage("Parollar bir xil emas.");
+
+        try {
+          const { error } = await supabaseClient.auth.updateUser({ password });
+          if (error) throw error;
+          document.getElementById("password-recovery-modal").classList.add("hidden");
+          document.getElementById("auth-modal").classList.remove("hidden");
+          switchAuthMethod("email");
+          showAuthMessage("✅ Parol muvaffaqiyatli yangilandi. Endi yangi parol bilan kiring.", "ok");
+        } catch (error) {
+          showAuthMessage(authErrorText(error));
+        }
+      }
+
+      function authErrorText(error) {
+        const msg = String(error?.message || error || "Noma'lum xatolik");
+        const lower = msg.toLowerCase();
+        if (lower.includes("invalid login credentials")) return "Email yoki parol noto'g'ri.";
+        if (lower.includes("email not confirmed")) return "Email hali tasdiqlanmagan. Inbox/Spam papkangizni tekshiring.";
+        if (lower.includes("user already registered")) return "Bu email allaqachon ro'yxatdan o'tgan. Kirish rejimidan foydalaning.";
+        if (lower.includes("password")) return "Parol talablarga mos emas. Kamida 8 ta belgi ishlating.";
+        if (lower.includes("phone provider")) return "SMS provayderi Supabase'da sozlanmagan.";
+        if (lower.includes("rate limit")) return "Juda ko'p urinish bo'ldi. Biroz kutib qayta urinib ko'ring.";
+        return msg;
+      }
+
+      async function restoreSupabaseSession() {
+        try {
+          // Listenerni avval ulaymiz: PASSWORD_RECOVERY va OAuth eventlari o'tkazib yuborilmaydi.
+          supabaseClient.auth.onAuthStateChange(async (event, session) => {
+            if (event === "PASSWORD_RECOVERY") {
+              document.getElementById("auth-modal").classList.add("hidden");
+              document.getElementById("password-recovery-modal").classList.remove("hidden");
+              return;
+            }
+            if (session?.user && ["SIGNED_IN", "INITIAL_SESSION"].includes(event)) {
+              try {
+                const pendingRole = localStorage.getItem("emerald_pending_google_role");
+                await finishAuthenticatedUser(session.user, pendingRole ? { role: pendingRole, provider: "google" } : {});
+                localStorage.removeItem("emerald_pending_google_role");
+              } catch (e) {
+                console.error("Auth session profile error:", e);
+              }
+            }
+          });
+
+          const { data, error } = await supabaseClient.auth.getSession();
+          if (error) throw error;
+
+          if (data.session?.user) {
+            const pendingRole = localStorage.getItem("emerald_pending_google_role");
+            await finishAuthenticatedUser(data.session.user, pendingRole ? { role: pendingRole, provider: "google" } : {});
+            localStorage.removeItem("emerald_pending_google_role");
+            return true;
+          }
+
+
+        } catch (error) {
+          console.error("Session restore error:", error);
+        }
+        return false;
       }
 
       function loadDashboard(user) {
@@ -10263,9 +10758,17 @@ pen — ruchka 🖊"
         box.scrollTop = box.scrollHeight;
       }
 
-      function logout() {
-        localStorage.removeItem("emerald_session_email");
-        location.reload();
+      async function logout() {
+        try {
+          const { error } = await supabaseClient.auth.signOut();
+          if (error) throw error;
+        } catch (error) {
+          console.error("Logout error:", error);
+        } finally {
+          currentUser = null;
+          localStorage.removeItem("emerald_session_email");
+          location.reload();
+        }
       }
 
       /* ============================================================
