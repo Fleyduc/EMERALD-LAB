@@ -6357,8 +6357,11 @@ pen — ruchka 🖊"
          qiymatga almashtiring va kerak bo'lganda vaqti-vaqti bilan
          yangilab turing.
       ============================================================ */
-      const ADMIN_SIGNUP_CODE = "EMERALD-ADMIN-2026";
-      const TEACHER_SIGNUP_CODE = "EMERALD-TEACHER-2026";
+      // XAVFSIZLIK: Admin/teacher kodlari endi bu yerda saqlanmaydi.
+      // Kod endi mijoz (browser) tomonida solishtirilmaydi — u faqat
+      // Supabase'ga xom holda yuboriladi va SERVER (Postgres trigger,
+      // supabase_security.sql) tomonida tekshiriladi. Shu tufayli
+      // "View Source" orqali hech kim o'zini admin qila olmaydi.
 
       let users = [];
       let lessons = [];
@@ -6441,6 +6444,19 @@ pen — ruchka 🖊"
           .from("users")
           .upsert({ email: user.email, data: user });
         if (error) console.error("Supabase (user saqlash) xatolik:", error);
+      }
+
+      async function dbFetchUser(email) {
+        const { data, error } = await supabaseClient
+          .from("users")
+          .select("data")
+          .eq("email", email)
+          .maybeSingle();
+        if (error) {
+          console.error("Supabase (foydalanuvchi o'qish) xatolik:", error);
+          return null;
+        }
+        return data && data.data ? { ...data.data, email } : null;
       }
 
       async function dbDeleteUser(email) {
@@ -7453,8 +7469,13 @@ pen — ruchka 🖊"
             full_name: extra.full_name || metadata.full_name || metadata.name || (authUser.email ? authUser.email.split("@")[0] : "Emerald Lab User"),
             email: identityEmail,
             phone: authUser.phone || extra.phone || null,
-            role: extra.role || metadata.role || "student",
-            level: (extra.role || metadata.role || "student") === "student" ? (extra.level || metadata.level || "beginner") : null,
+            // XAVFSIZLIK: role bu yerda hech qachon "admin"/"teacher" qilib
+            // yozilmaydi. Har doim "student" bilan yaratiladi; agar
+            // signup_code to'g'ri bo'lsa, haqiqiy rolni faqat server-side
+            // trigger (supabase_security.sql) ko'taradi.
+            role: "student",
+            signup_code: extra.signup_code || metadata.signup_code || null,
+            level: (extra.level || metadata.level || "beginner"),
             avatar: extra.avatar || metadata.avatar_url || DEFAULT_AVATAR,
             xp: 0, coins: 20, streak: 0, equippedTitle: "",
             certificates: [], completedLessons: [], completedVocabQuizzes: [],
@@ -7483,6 +7504,21 @@ pen — ruchka 🖊"
         }
 
         await saveUserData(user);
+
+        // XAVFSIZLIK: mahalliy obyekt emas, serverdagi haqiqiy qatorni
+        // qayta o'qiymiz — chunki role maydonini faqat server (trigger)
+        // belgilaydi, mijoz emas.
+        try {
+          const fresh = await dbFetchUser(user.email);
+          if (fresh) {
+            const idx = users.findIndex((u) => u.email === fresh.email);
+            if (idx !== -1) users[idx] = fresh; else users.push(fresh);
+            currentUser = fresh;
+            return fresh;
+          }
+        } catch (e) {
+          console.warn("Foydalanuvchini qayta o'qishda xatolik:", e);
+        }
         return user;
       }
 
@@ -7527,22 +7563,22 @@ pen — ruchka 🖊"
             if (password !== confirm) throw new Error("Parollar bir xil emas.");
 
             const adminCodeInput = document.getElementById("admin-code")?.value.trim() || "";
-            let finalRole = selectedRole;
-            if (selectedRole === "teacher") {
-              if (!adminCodeInput) throw new Error("Ustoz sifatida ro'yxatdan o'tish uchun maxsus kod kiriting.");
-              if (adminCodeInput === ADMIN_SIGNUP_CODE) finalRole = "admin";
-              else if (adminCodeInput === TEACHER_SIGNUP_CODE) finalRole = "teacher";
-              else throw new Error("Kiritilgan kod noto'g'ri. Ustoz sifatida ro'yxatdan o'tib bo'lmaydi.");
+            if (selectedRole === "teacher" && !adminCodeInput) {
+              throw new Error("Ustoz sifatida ro'yxatdan o'tish uchun maxsus kod kiriting.");
             }
-
+            // XAVFSIZLIK: rol bu yerda HAL QILINMAYDI. Kod xom holicha
+            // Supabase'ga yuboriladi; haqiqiy rolni faqat server
+            // (invite_codes jadvali + trigger) belgilaydi. Mijoz "role"
+            // maydonini o'zgartirsa ham, server uni e'tiborsiz qoldiradi.
             const { data, error } = await supabaseClient.auth.signUp({
               email,
               password,
               options: {
                 data: {
                   full_name: name,
-                  role: finalRole,
-                  level: finalRole === "student" ? level : null
+                  requested_role: selectedRole,
+                  signup_code: selectedRole === "teacher" ? adminCodeInput : null,
+                  level: selectedRole === "student" ? level : null
                 }
               }
             });
@@ -7551,7 +7587,7 @@ pen — ruchka 🖊"
             if (data.user && data.session) {
               await finishAuthenticatedUser(data.user, {
                 full_name: name,
-                role: finalRole,
+                signup_code: selectedRole === "teacher" ? adminCodeInput : null,
                 level
               });
               showAuthMessage("✅ Akkaunt yaratildi va tizimga kirdingiz.", "ok");
@@ -7576,14 +7612,16 @@ pen — ruchka 🖊"
         clearAuthMessage();
         try {
           const adminCodeInput = document.getElementById("google-admin-code")?.value.trim() || "";
-          let finalGoogleRole = googleSelectedRole;
-          if (googleSelectedRole === "teacher") {
-            if (!adminCodeInput) throw new Error("Ustoz sifatida ro'yxatdan o'tish uchun maxsus kod kiriting.");
-            if (adminCodeInput === ADMIN_SIGNUP_CODE) finalGoogleRole = "admin";
-            else if (adminCodeInput === TEACHER_SIGNUP_CODE) finalGoogleRole = "teacher";
-            else throw new Error("Kiritilgan kod noto'g'ri. Ustoz sifatida ro'yxatdan o'tib bo'lmaydi.");
+          if (googleSelectedRole === "teacher" && !adminCodeInput) {
+            throw new Error("Ustoz sifatida ro'yxatdan o'tish uchun maxsus kod kiriting.");
           }
-          localStorage.setItem("emerald_pending_google_role", finalGoogleRole);
+          // XAVFSIZLIK: rol shu yerda hal qilinmaydi — xom kod saqlanadi,
+          // server (trigger) uni tekshiradi.
+          if (googleSelectedRole === "teacher" && adminCodeInput) {
+            localStorage.setItem("emerald_pending_signup_code", adminCodeInput);
+          } else {
+            localStorage.removeItem("emerald_pending_signup_code");
+          }
           const { error } = await supabaseClient.auth.signInWithOAuth({
             provider: "google",
             options: {
@@ -7624,20 +7662,14 @@ pen — ruchka 🖊"
         const phoneAdminCodeInput =
           document.getElementById("phone-admin-code")?.value.trim() || "";
 
-        let finalPhoneRole = phoneSelectedRole;
-        if (phoneSelectedRole === "teacher") {
-          if (!phoneAdminCodeInput) {
-            return showAuthMessage("Ustoz sifatida ro'yxatdan o'tish uchun maxsus kod kiriting.");
-          }
-          if (phoneAdminCodeInput === ADMIN_SIGNUP_CODE) {
-            finalPhoneRole = "admin";
-          } else if (phoneAdminCodeInput === TEACHER_SIGNUP_CODE) {
-            finalPhoneRole = "teacher";
-          } else {
-            return showAuthMessage("Kiritilgan kod noto'g'ri. Ustoz sifatida ro'yxatdan o'tib bo'lmaydi.");
-          }
+        if (phoneSelectedRole === "teacher" && !phoneAdminCodeInput) {
+          return showAuthMessage("Ustoz sifatida ro'yxatdan o'tish uchun maxsus kod kiriting.");
         }
-
+        // XAVFSIZLIK: rol bu yerda ANIQLANMAYDI. requested_role va xom
+        // signup_code serverga (telegram-auth Edge Function) yuboriladi;
+        // haqiqiy rolni FAQAT o'sha funksiya, kodni invite_codes jadvali
+        // bilan solishtirib, o'zi belgilashi shart. Edge Function client
+        // yuborgan "role" maydoniga hech qachon ishonmasligi kerak.
         setAuthLoading(btn, true, "Telegram tayyorlanmoqda...");
 
         try {
@@ -7653,7 +7685,8 @@ pen — ruchka 🖊"
                 action: "request_otp",
                 phone,
                 full_name: name || null,
-                role: finalPhoneRole
+                requested_role: phoneSelectedRole,
+                signup_code: phoneSelectedRole === "teacher" ? phoneAdminCodeInput : null
               })
             }
           );
@@ -7787,13 +7820,8 @@ pen — ruchka 🖊"
             document.getElementById("phone-admin-code")
               ?.value.trim() || "";
 
-          const finalPhoneRole =
-            (phoneSelectedRole === "teacher" &&
-              phoneAdminCodeInput &&
-              phoneAdminCodeInput === ADMIN_SIGNUP_CODE)
-              ? "admin"
-              : phoneSelectedRole;
-
+          // XAVFSIZLIK: rol shu yerda hisoblanmaydi. Xom kod uzatiladi;
+          // haqiqiy rolni faqat server (trigger) belgilaydi.
           /*
            * Mavjud ilovadagi profil/user ma'lumotlarini
            * saqlash funksiyasini ham ishlatamiz.
@@ -7802,8 +7830,8 @@ pen — ruchka 🖊"
             await finishAuthenticatedUser(user, {
               phone,
               full_name: name,
-              role: finalPhoneRole,
-              level: finalPhoneRole === "student" ? "beginner" : null,
+              signup_code: phoneSelectedRole === "teacher" ? phoneAdminCodeInput : null,
+              level: "beginner",
               provider: "phone"
             });
           } else {
@@ -7892,9 +7920,9 @@ pen — ruchka 🖊"
             }
             if (session?.user && ["SIGNED_IN", "INITIAL_SESSION"].includes(event)) {
               try {
-                const pendingRole = localStorage.getItem("emerald_pending_google_role");
-                await finishAuthenticatedUser(session.user, pendingRole ? { role: pendingRole, provider: "google" } : {});
-                localStorage.removeItem("emerald_pending_google_role");
+                const pendingCode = localStorage.getItem("emerald_pending_signup_code");
+                await finishAuthenticatedUser(session.user, pendingCode ? { signup_code: pendingCode, provider: "google" } : {});
+                localStorage.removeItem("emerald_pending_signup_code");
               } catch (e) {
                 console.error("Auth session profile error:", e);
               }
@@ -7905,9 +7933,9 @@ pen — ruchka 🖊"
           if (error) throw error;
 
           if (data.session?.user) {
-            const pendingRole = localStorage.getItem("emerald_pending_google_role");
-            await finishAuthenticatedUser(data.session.user, pendingRole ? { role: pendingRole, provider: "google" } : {});
-            localStorage.removeItem("emerald_pending_google_role");
+            const pendingCode = localStorage.getItem("emerald_pending_signup_code");
+            await finishAuthenticatedUser(data.session.user, pendingCode ? { signup_code: pendingCode, provider: "google" } : {});
+            localStorage.removeItem("emerald_pending_signup_code");
             return true;
           }
 
@@ -10977,24 +11005,32 @@ pen — ruchka 🖊"
           const isMe = currentUser && m.senderEmail === currentUser.email;
           let mediaHtml = "";
 
-          if (m.mediaUrl) {
+          // XAVFSIZLIK: mediaUrl faqat http(s) bo'lsa ishlatiladi va
+          // atribut ichiga escapeHtml orqali xavfsiz joylashtiriladi —
+          // aks holda "javascript:" yoki qo'shtirnoqdan chiqib ketuvchi
+          // (attribute-breakout) XSS bo'lishi mumkin edi.
+          const safeMediaUrl =
+            typeof m.mediaUrl === "string" && /^https?:\/\//i.test(m.mediaUrl)
+              ? escapeHtml(m.mediaUrl)
+              : "";
+          if (safeMediaUrl) {
             if (m.mediaType === "image") {
-              mediaHtml = `<br><img src="${m.mediaUrl}" class="msg-media" />`;
+              mediaHtml = `<br><img src="${safeMediaUrl}" class="msg-media" />`;
             } else if (m.mediaType === "video") {
-              mediaHtml = `<br><video src="${m.mediaUrl}" controls class="msg-media"></video>`;
+              mediaHtml = `<br><video src="${safeMediaUrl}" controls class="msg-media"></video>`;
             }
           }
 
           box.innerHTML += `
           <div class="message ${isMe ? "sent" : "received"}">
-            <div class="msg-author" onclick="openPublicProfile('${
-              m.senderEmail
-            }')">${m.sender} (${
+            <div class="msg-author" onclick="openPublicProfile('${escapeHtml(
+              m.senderEmail || ""
+            )}')">${escapeHtml(m.sender || "")} (${
             m.role === "teacher" ? "👨‍🏫 Ustoz" : "🎓 O'quvchi"
           })</div>
-            ${m.text ? m.text : ""}
+            ${m.text ? escapeHtml(m.text) : ""}
             ${mediaHtml}
-            <div class="msg-time">${m.time}</div>
+            <div class="msg-time">${escapeHtml(m.time || "")}</div>
           </div>
         `;
         });
@@ -11883,16 +11919,16 @@ pen — ruchka 🖊"
               return `
               <div class="feedback-box" style="margin-bottom: 12px;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                  <strong>${s.lessonTitle}</strong>
-                  <span class="score-badge-large" style="font-size:1.1rem;">Band ${f.overall}</span>
+                  <strong>${escapeHtml(s.lessonTitle || "")}</strong>
+                  <span class="score-badge-large" style="font-size:1.1rem;">Band ${escapeHtml(f.overall)}</span>
                 </div>
                 <div class="grid-2" style="margin: 10px 0; font-size: 0.8rem; color: var(--text-muted);">
-                  <span>Task Achievement: <strong style="color:var(--text-main)">${f.ta}</strong></span>
-                  <span>Coherence & Cohesion: <strong style="color:var(--text-main)">${f.cc}</strong></span>
-                  <span>Lexical Resource: <strong style="color:var(--text-main)">${f.lr}</strong></span>
-                  <span>Grammar: <strong style="color:var(--text-main)">${f.gra}</strong></span>
+                  <span>Task Achievement: <strong style="color:var(--text-main)">${escapeHtml(f.ta)}</strong></span>
+                  <span>Coherence & Cohesion: <strong style="color:var(--text-main)">${escapeHtml(f.cc)}</strong></span>
+                  <span>Lexical Resource: <strong style="color:var(--text-main)">${escapeHtml(f.lr)}</strong></span>
+                  <span>Grammar: <strong style="color:var(--text-main)">${escapeHtml(f.gra)}</strong></span>
                 </div>
-                ${f.comment ? `<p style="font-style: italic; font-size: 0.85rem;">💬 "${f.comment}"</p>` : ""}
+                ${f.comment ? `<p style="font-style: italic; font-size: 0.85rem;">💬 "${escapeHtml(f.comment)}"</p>` : ""}
               </div>
             `;
             } else {
