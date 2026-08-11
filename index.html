@@ -3217,6 +3217,11 @@
               </div>
             </div>
 
+            <div class="input-group hidden" id="admin-code-group">
+              <label>Admin kodi (ixtiyoriy)</label>
+              <input type="password" id="admin-code" placeholder="Faqat adminlar uchun kod" autocomplete="off" />
+            </div>
+
             <div class="input-group hidden" id="level-group">
               <label>Kurs tanlovi</label>
               <div class="course-gate-note" style="text-align:left;margin:0;padding:12px;border:1px solid var(--card-border);border-radius:12px;background:rgba(16,185,129,.06)">
@@ -3250,6 +3255,10 @@
               <button type="button" class="role-btn" id="google-btn-teacher" onclick="selectGoogleRole('teacher')">👨‍🏫 Ustoz</button>
             </div>
           </div>
+          <div class="input-group hidden" id="google-admin-code-group" style="margin-top:4px">
+            <label>Admin kodi (ixtiyoriy)</label>
+            <input type="password" id="google-admin-code" placeholder="Faqat adminlar uchun kod" autocomplete="off" />
+          </div>
           <button type="button" class="auth-provider-btn" onclick="signInWithGoogle()">
             <span style="font-size:1.2rem;font-weight:900">G</span> Google bilan davom etish
           </button>
@@ -3281,6 +3290,11 @@
               <button type="button" class="role-btn active" id="phone-btn-student" onclick="selectPhoneRole('student')">🎓 O'quvchi</button>
               <button type="button" class="role-btn" id="phone-btn-teacher" onclick="selectPhoneRole('teacher')">👨‍🏫 Ustoz</button>
             </div>
+          </div>
+
+          <div class="input-group hidden" id="phone-admin-code-group">
+            <label>Admin kodi (ixtiyoriy)</label>
+            <input type="password" id="phone-admin-code" placeholder="Faqat adminlar uchun kod" autocomplete="off" />
           </div>
 
           <div id="phone-otp-box" class="hidden">
@@ -6314,6 +6328,18 @@ pen — ruchka 🖊"
         SUPABASE_ANON_KEY
       );
 
+      /* ============================================================
+         ADMIN SIGNUP CODE
+         "Ustoz" (teacher) sifatida ro'yxatdan o'tayotganda, agar shu
+         kodni to'g'ri kiritsa, akkaunt "admin" roli bilan yaratiladi.
+         DIQQAT: bu faqat qulaylik uchun oddiy himoya — kod client-side
+         JS ichida ko'rinadi, shuning uchun uni chinakam maxfiy parol
+         deb hisoblamang. O'zingizga xos, taxmin qilish qiyin bo'lgan
+         qiymatga almashtiring va kerak bo'lganda vaqti-vaqti bilan
+         yangilab turing.
+      ============================================================ */
+      const ADMIN_SIGNUP_CODE = "EMERALD-ADMIN-2026";
+
       let users = [];
       let lessons = [];
       let submissions = [];
@@ -6838,6 +6864,12 @@ pen — ruchka 🖊"
         } else {
           levelGroup.classList.remove("hidden");
         }
+
+        const adminCodeGroup = document.getElementById("admin-code-group");
+        if (adminCodeGroup) {
+          adminCodeGroup.classList.toggle("hidden", role !== "teacher");
+          if (role !== "teacher") document.getElementById("admin-code").value = "";
+        }
       }
 
       function handleAvatarUpload(e, previewElemId) {
@@ -7348,6 +7380,7 @@ pen — ruchka 🖊"
         document.getElementById("auth-password-confirm-group").classList.toggle("hidden", !isSignup);
         document.getElementById("auth-role-group").classList.toggle("hidden", !isSignup);
         document.getElementById("level-group").classList.toggle("hidden", !(isSignup && selectedRole === "student"));
+        document.getElementById("admin-code-group").classList.toggle("hidden", !(isSignup && selectedRole === "teacher"));
         document.getElementById("submit-btn").textContent = isSignup ? "Akkaunt yaratish" : "Tizimga kirish";
         document.getElementById("auth-password").autocomplete = isSignup ? "new-password" : "current-password";
         clearAuthMessage();
@@ -7357,12 +7390,22 @@ pen — ruchka 🖊"
         phoneSelectedRole = role;
         document.getElementById("phone-btn-student").classList.toggle("active", role === "student");
         document.getElementById("phone-btn-teacher").classList.toggle("active", role === "teacher");
+        const codeGroup = document.getElementById("phone-admin-code-group");
+        if (codeGroup) {
+          codeGroup.classList.toggle("hidden", role !== "teacher");
+          if (role !== "teacher") document.getElementById("phone-admin-code").value = "";
+        }
       }
 
       function selectGoogleRole(role) {
         googleSelectedRole = role;
         document.getElementById("google-btn-student").classList.toggle("active", role === "student");
         document.getElementById("google-btn-teacher").classList.toggle("active", role === "teacher");
+        const codeGroup = document.getElementById("google-admin-code-group");
+        if (codeGroup) {
+          codeGroup.classList.toggle("hidden", role !== "teacher");
+          if (role !== "teacher") document.getElementById("google-admin-code").value = "";
+        }
       }
 
       async function ensureProfileForAuth(authUser, extra = {}) {
@@ -7463,14 +7506,19 @@ pen — ruchka 🖊"
             if (name.length < 2) throw new Error("F.I.Sh ni to'liq kiriting.");
             if (password !== confirm) throw new Error("Parollar bir xil emas.");
 
+            const adminCodeInput = document.getElementById("admin-code")?.value.trim() || "";
+            const finalRole = (selectedRole === "teacher" && adminCodeInput && adminCodeInput === ADMIN_SIGNUP_CODE)
+              ? "admin"
+              : selectedRole;
+
             const { data, error } = await supabaseClient.auth.signUp({
               email,
               password,
               options: {
                 data: {
                   full_name: name,
-                  role: selectedRole,
-                  level: selectedRole === "student" ? level : null
+                  role: finalRole,
+                  level: finalRole === "student" ? level : null
                 }
               }
             });
@@ -7479,7 +7527,7 @@ pen — ruchka 🖊"
             if (data.user && data.session) {
               await finishAuthenticatedUser(data.user, {
                 full_name: name,
-                role: selectedRole,
+                role: finalRole,
                 level
               });
               showAuthMessage("✅ Akkaunt yaratildi va tizimga kirdingiz.", "ok");
@@ -7503,7 +7551,11 @@ pen — ruchka 🖊"
       async function signInWithGoogle() {
         clearAuthMessage();
         try {
-          localStorage.setItem("emerald_pending_google_role", googleSelectedRole);
+          const adminCodeInput = document.getElementById("google-admin-code")?.value.trim() || "";
+          const finalGoogleRole = (googleSelectedRole === "teacher" && adminCodeInput && adminCodeInput === ADMIN_SIGNUP_CODE)
+            ? "admin"
+            : googleSelectedRole;
+          localStorage.setItem("emerald_pending_google_role", finalGoogleRole);
           const { error } = await supabaseClient.auth.signInWithOAuth({
             provider: "google",
             options: {
@@ -7532,6 +7584,11 @@ pen — ruchka 🖊"
           if (!old) return showAuthMessage("Yangi telefon akkaunti uchun F.I.Sh ni kiriting.");
         }
 
+        const phoneAdminCodeInput = document.getElementById("phone-admin-code")?.value.trim() || "";
+        const finalPhoneRole = (phoneSelectedRole === "teacher" && phoneAdminCodeInput && phoneAdminCodeInput === ADMIN_SIGNUP_CODE)
+          ? "admin"
+          : phoneSelectedRole;
+
         setAuthLoading(btn, true, "SMS yuborilmoqda...");
         try {
           const { error } = await supabaseClient.auth.signInWithOtp({
@@ -7540,8 +7597,8 @@ pen — ruchka 🖊"
               shouldCreateUser: true,
               data: {
                 full_name: name || null,
-                role: phoneSelectedRole,
-                level: phoneSelectedRole === "student" ? "beginner" : null
+                role: finalPhoneRole,
+                level: finalPhoneRole === "student" ? "beginner" : null
               }
             }
           });
@@ -7577,11 +7634,16 @@ pen — ruchka 🖊"
           });
           if (error) throw error;
 
+          const phoneAdminCodeInput = document.getElementById("phone-admin-code")?.value.trim() || "";
+          const finalPhoneRole = (phoneSelectedRole === "teacher" && phoneAdminCodeInput && phoneAdminCodeInput === ADMIN_SIGNUP_CODE)
+            ? "admin"
+            : phoneSelectedRole;
+
           await finishAuthenticatedUser(data.user, {
             phone,
             full_name: name,
-            role: phoneSelectedRole,
-            level: phoneSelectedRole === "student" ? "beginner" : null,
+            role: finalPhoneRole,
+            level: finalPhoneRole === "student" ? "beginner" : null,
             provider: "phone"
           });
         } catch (error) {
