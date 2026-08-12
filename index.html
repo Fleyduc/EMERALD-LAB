@@ -94,7 +94,271 @@
       /* ============================================================
          COMPACT MODERN NAVBAR
          ============================================================ */
-      .navbar {
+      /* ============================================================
+         🌗 LIGHT / DARK MODE
+      ============================================================ */
+      html.light-mode {
+        --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #ecfdf5 55%, #f0fdfa 100%);
+        --card-bg: rgba(255,255,255,.88);
+        --card-border: rgba(16,185,129,.18);
+        --card-border-hover: rgba(16,185,129,.42);
+        --text-main: #0f172a;
+        --text-muted: #475569;
+        --emerald-glow: rgba(16,185,129,.12);
+        --emerald-glow-strong: rgba(16,185,129,.25);
+      }
+
+      html.light-mode body {
+        background: var(--bg-gradient);
+        color: var(--text-main);
+      }
+
+      html.light-mode .navbar {
+        background: rgba(255,255,255,.86);
+        border-bottom-color: rgba(16,185,129,.16);
+        box-shadow: 0 10px 30px rgba(15,23,42,.08);
+      }
+
+      html.light-mode .nav-tab-btn {
+        color: #334155;
+        background: rgba(15,23,42,.025);
+      }
+
+      html.light-mode .nav-tab-btn:hover {
+        color: #064e3b;
+        background: rgba(16,185,129,.08);
+      }
+
+      html.light-mode .lang-switcher,
+      html.light-mode .theme-btn,
+      html.light-mode .translator-trigger {
+        background: rgba(15,23,42,.05);
+        border-color: rgba(15,23,42,.1);
+      }
+
+      html.light-mode .lang-btn {
+        color: #475569;
+      }
+
+      html.light-mode .nav-tabs,
+      html.light-mode .dashboard-trigger {
+        background-color: rgba(255,255,255,.94);
+      }
+
+      html.light-mode input,
+      html.light-mode textarea,
+      html.light-mode select {
+        background: rgba(255,255,255,.92) !important;
+        color: #0f172a !important;
+      }
+
+      html.light-mode .card,
+      html.light-mode .glass-card,
+      html.light-mode .ops-card,
+      html.light-mode .ops-stat {
+        background: rgba(255,255,255,.82);
+        color: #0f172a;
+      }
+
+      html.light-mode .translator-modal,
+      html.light-mode .translator-panel,
+      html.light-mode .translator-output {
+        background: #ffffff;
+        color: #0f172a;
+      }
+
+      html.light-mode .translator-textarea {
+        background: #f8fafc !important;
+        color: #0f172a !important;
+      }
+
+      .theme-btn,
+      .translator-trigger {
+        min-height: 34px;
+        border: 1px solid var(--card-border);
+        border-radius: 10px;
+        padding: 6px 10px;
+        background: rgba(0,0,0,.22);
+        color: var(--text-main);
+        cursor: pointer;
+        font-size: .72rem;
+        font-weight: 800;
+        transition: .2s ease;
+        white-space: nowrap;
+      }
+
+      .theme-btn:hover,
+      .translator-trigger:hover {
+        transform: translateY(-1px);
+        border-color: var(--emerald-light);
+        background: rgba(16,185,129,.10);
+      }
+
+      /* ============================================================
+         🌐 EMERALD LAB TRANSLATOR
+      ============================================================ */
+      .translator-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(2,12,9,.68);
+        backdrop-filter: blur(10px);
+      }
+
+      .translator-modal.hidden { display:none !important; }
+
+      .translator-panel {
+        width: min(900px, 100%);
+        max-height: min(760px, 92vh);
+        overflow: auto;
+        padding: 22px;
+        border-radius: 24px;
+        border: 1px solid var(--card-border);
+        background: #062c22;
+        box-shadow: 0 30px 90px rgba(0,0,0,.35);
+      }
+
+      .translator-head {
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:12px;
+        margin-bottom:16px;
+      }
+
+      .translator-head h2 { font-size:1.15rem; }
+      .translator-head p { color:var(--text-muted); font-size:.7rem; margin-top:3px; }
+
+      .translator-close {
+        width:34px;
+        height:34px;
+        border:1px solid var(--card-border);
+        border-radius:10px;
+        background:transparent;
+        color:var(--text-main);
+        cursor:pointer;
+        font-size:1.1rem;
+      }
+
+      .translator-language-row {
+        display:grid;
+        grid-template-columns:1fr 44px 1fr;
+        gap:9px;
+        align-items:center;
+        margin-bottom:12px;
+      }
+
+      .translator-language-row select {
+        width:100%;
+        padding:11px 12px;
+        border-radius:11px;
+        border:1px solid var(--card-border);
+        background:rgba(0,0,0,.22);
+        color:var(--text-main);
+        outline:none;
+        font-weight:800;
+      }
+
+      .translator-swap {
+        width:44px;
+        height:42px;
+        border:1px solid var(--card-border);
+        border-radius:11px;
+        background:rgba(16,185,129,.10);
+        color:var(--emerald-light);
+        cursor:pointer;
+        font-size:1rem;
+      }
+
+      .translator-grid {
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:12px;
+      }
+
+      .translator-box {
+        border:1px solid var(--card-border);
+        border-radius:16px;
+        padding:10px;
+        background:rgba(0,0,0,.12);
+      }
+
+      .translator-box label {
+        display:block;
+        margin:0 0 7px 2px;
+        color:var(--text-muted);
+        font-size:.68rem;
+        font-weight:800;
+      }
+
+      .translator-textarea {
+        width:100%;
+        min-height:190px;
+        resize:vertical;
+        border:0;
+        outline:none;
+        border-radius:11px;
+        padding:12px;
+        background:rgba(0,0,0,.18);
+        color:var(--text-main);
+        line-height:1.65;
+        font-size:.82rem;
+      }
+
+      .translator-output {
+        min-height:190px;
+        white-space:pre-wrap;
+        overflow:auto;
+        border-radius:11px;
+        padding:12px;
+        background:rgba(0,0,0,.18);
+        line-height:1.65;
+        font-size:.82rem;
+      }
+
+      .translator-actions {
+        display:flex;
+        gap:8px;
+        flex-wrap:wrap;
+        margin-top:10px;
+      }
+
+      .translator-action {
+        border:1px solid var(--card-border);
+        border-radius:10px;
+        padding:9px 13px;
+        background:rgba(16,185,129,.10);
+        color:var(--text-main);
+        cursor:pointer;
+        font-weight:800;
+        font-size:.72rem;
+      }
+
+      .translator-action.primary {
+        background:var(--emerald-primary);
+        color:#022c22;
+        border-color:var(--emerald-light);
+      }
+
+      .translator-status {
+        min-height:20px;
+        margin-top:8px;
+        color:var(--text-muted);
+        font-size:.68rem;
+      }
+
+      @media(max-width:700px){
+        .translator-grid{grid-template-columns:1fr}
+        .translator-language-row{grid-template-columns:1fr}
+        .translator-swap{width:100%}
+        .theme-btn,.translator-trigger{padding:6px 8px}
+      }
+
+            .navbar {
         position: sticky;
         top: 0;
         z-index: 100;
@@ -3509,6 +3773,239 @@
         font-size:.62rem;
         font-weight:800;
       }
+      .constructing-sentence-fields.hidden{display:none}
+      .constructing-answer-slots{
+        display:flex;
+        flex-wrap:wrap;
+        gap:7px;
+        min-height:48px;
+        margin:12px 0 16px;
+        padding:10px;
+        border-radius:12px;
+        border:1px dashed var(--card-border);
+        background:rgba(255,255,255,.025);
+      }
+      .constructing-slot{
+        min-width:58px;
+        min-height:34px;
+        padding:7px 12px;
+        border-radius:8px;
+        border:1px solid var(--card-border);
+        background:rgba(255,255,255,.05);
+        color:var(--text-muted);
+        font-size:.78rem;
+        font-weight:800;
+        text-align:center;
+      }
+      .constructing-slot.filled{
+        color:var(--text-primary);
+        border-color:var(--emerald-primary);
+        background:rgba(16,185,129,.10);
+        cursor:pointer;
+      }
+      .constructing-word-bank{
+        display:flex;
+        flex-wrap:wrap;
+        gap:9px;
+        justify-content:center;
+        margin-top:10px;
+      }
+      .constructing-word-btn{
+        border:1px solid var(--card-border);
+        border-radius:9px;
+        background:rgba(255,255,255,.06);
+        color:var(--text-primary);
+        padding:9px 13px;
+        font-size:.78rem;
+        font-weight:800;
+        cursor:pointer;
+        transition:.15s ease;
+      }
+      .constructing-word-btn:hover{transform:translateY(-1px)}
+      .constructing-word-btn.used{
+        opacity:.32;
+        pointer-events:none;
+      }
+      .constructing-actions{
+        display:flex;
+        justify-content:center;
+        gap:8px;
+        margin-top:14px;
+      }
+      .constructing-check{
+        border:0;
+        border-radius:9px;
+        padding:10px 18px;
+        background:var(--emerald-primary);
+        color:#fff;
+        font-weight:900;
+        cursor:pointer;
+      }
+      .constructing-clear{
+        border:1px solid var(--card-border);
+        border-radius:9px;
+        padding:10px 14px;
+        background:transparent;
+        color:var(--text-primary);
+        font-weight:800;
+        cursor:pointer;
+      }
+      .matching-words-text{
+        margin:12px 0 14px;
+        padding:14px 15px;
+        border-radius:12px;
+        border:1px solid var(--card-border);
+        background:rgba(255,255,255,.04);
+        line-height:1.9;
+        font-size:.84rem;
+        overflow:auto;
+      }
+      .matching-line{margin:2px 0}
+      .matching-blank{
+        display:inline-flex;
+        vertical-align:middle;
+        min-width:88px;
+        height:30px;
+        margin:0 4px;
+        padding:0 10px;
+        align-items:center;
+        justify-content:center;
+        border-radius:7px;
+        border:2px solid #f5b400;
+        background:rgba(245,180,0,.10);
+        color:var(--text-primary);
+        font-weight:800;
+      }
+      .matching-word-bank{
+        display:grid;
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:9px;
+        margin-top:12px;
+      }
+      .matching-word-btn{
+        min-height:40px;
+        border:1px solid var(--card-border);
+        border-radius:9px;
+        background:rgba(255,255,255,.055);
+        color:var(--text-primary);
+        font-size:.78rem;
+        font-weight:800;
+        cursor:pointer;
+      }
+      .matching-word-btn.used{
+        opacity:.30;
+        pointer-events:none;
+      }
+      .matching-check{
+        display:block;
+        width:100%;
+        margin-top:15px;
+        border:0;
+        border-radius:11px;
+        padding:12px 18px;
+        background:#f5b400;
+        color:#111;
+        font-weight:900;
+        cursor:pointer;
+      }
+      .matching-feedback{
+        margin-top:10px;
+        padding:9px 11px;
+        border-radius:9px;
+        font-size:.75rem;
+        font-weight:800;
+      }
+      .matching-feedback.ok{background:rgba(16,185,129,.12);color:var(--emerald-light)}
+      .matching-feedback.bad{background:rgba(239,68,68,.10);color:#ff8a8a}
+      .filling-gaps-text{
+        margin:12px 0 14px;padding:14px 15px;border-radius:12px;
+        border:1px solid var(--card-border);background:rgba(255,255,255,.04);
+        line-height:1.85;font-size:.84rem;overflow:auto;
+      }
+      .filling-blank-wrap{display:inline-flex;vertical-align:middle;align-items:center;gap:4px;margin:0 3px}
+      .filling-blank{
+        width:118px;max-width:38vw;height:32px;padding:4px 9px;border-radius:7px;
+        border:2px solid #f5b400;background:rgba(245,180,0,.08);
+        color:var(--text-primary);outline:none;font:inherit;font-size:.78rem;
+        font-weight:800;text-align:center;
+      }
+      .filling-blank:focus{border-color:var(--emerald-primary);box-shadow:0 0 0 3px rgba(16,185,129,.10)}
+      .filling-check{
+        display:block;width:100%;margin-top:15px;border:0;border-radius:11px;
+        padding:12px 18px;background:#f5b400;color:#111;font-weight:900;cursor:pointer;
+      }
+      .filling-check:disabled{opacity:.5;cursor:not-allowed}
+      .filling-feedback{margin-top:10px;padding:9px 11px;border-radius:9px;font-size:.75rem;font-weight:800}
+      .filling-feedback.ok{background:rgba(16,185,129,.12);color:var(--emerald-light)}
+      .filling-feedback.bad{background:rgba(239,68,68,.10);color:#ff8a8a}
+      .writing-instruction{
+        margin:12px 0 10px;
+        padding:12px 14px;
+        border-radius:10px;
+        background:rgba(245,180,0,.08);
+        border:1px solid rgba(245,180,0,.28);
+        font-size:.78rem;
+        line-height:1.65;
+        font-weight:800;
+      }
+      .writing-sentence-text{
+        margin:10px 0 14px;
+        padding:14px 15px;
+        border-radius:12px;
+        border:1px solid var(--card-border);
+        background:rgba(255,255,255,.04);
+        line-height:2;
+        font-size:.88rem;
+        overflow:auto;
+      }
+      .writing-blank-wrap{
+        display:inline-flex;
+        vertical-align:middle;
+        align-items:center;
+        margin:0 3px;
+      }
+      .writing-blank{
+        min-width:105px;
+        width:120px;
+        max-width:42vw;
+        height:34px;
+        padding:4px 9px;
+        border-radius:7px;
+        border:2px solid #f5b400;
+        background:rgba(245,180,0,.08);
+        color:var(--text-primary);
+        outline:none;
+        font:inherit;
+        font-size:.8rem;
+        font-weight:800;
+        text-align:center;
+      }
+      .writing-blank:focus{
+        border-color:var(--emerald-primary);
+        box-shadow:0 0 0 3px rgba(16,185,129,.10);
+      }
+      .writing-check{
+        display:block;
+        width:100%;
+        margin-top:15px;
+        border:0;
+        border-radius:11px;
+        padding:12px 18px;
+        background:#f5b400;
+        color:#111;
+        font-weight:900;
+        cursor:pointer;
+      }
+      .writing-check:disabled{opacity:.5;cursor:not-allowed}
+      .writing-feedback{
+        margin-top:10px;
+        padding:9px 11px;
+        border-radius:9px;
+        font-size:.75rem;
+        font-weight:800;
+      }
+      .writing-feedback.ok{background:rgba(16,185,129,.12);color:var(--emerald-light)}
+      .writing-feedback.bad{background:rgba(239,68,68,.10);color:#ff8a8a}
 
       /* ===== TEACHER IELTS TAB ORGANIZATION ===== */
 
@@ -3626,6 +4123,14 @@
   <body>
     <div class="ambient-glow"></div>
     <div class="ambient-glow-2"></div>
+    <script>
+      (function(){
+        const saved=localStorage.getItem("emerald_theme");
+        if(saved==="light"){
+          document.documentElement.classList.add("light-mode");
+        }
+      })();
+    </script>
 
     <!-- HEADER NAVBAR -->
     <header class="navbar">
@@ -3646,6 +4151,14 @@
             <button class="lang-btn" onclick="changeLang('ENG')">ENG</button>
             <button class="lang-btn" onclick="changeLang('RUS')">RUS</button>
           </div>
+
+          <button class="translator-trigger" type="button" onclick="openTranslator()" title="UZB ↔ ENG ↔ RUS">
+            🌐 Translator
+          </button>
+
+          <button class="theme-btn" id="theme-toggle-btn" type="button" onclick="toggleTheme()" title="Dark / Bright mode">
+            ☀️ Bright
+          </button>
 
           <div id="user-info"></div>
         </div>
@@ -4663,9 +5176,13 @@ pen — ruchka 🖊"
 
                 <div class="input-group">
                   <label>Savol turi *</label>
-                  <select id="quiz-question-type">
+                  <select id="quiz-question-type" onchange="toggleGrammarQuestionTypeFields()">
                     <option value="standard">📝 Oddiy Multiple Choice</option>
                     <option value="dialogue">💬 Dialogue / Context — rasmdagidek</option>
+                    <option value="constructing">🧩 Constructing Sentences — so'zlarni to'g'ri tartiblash</option>
+                    <option value="matching">🧩 Matching Words — gap ichiga so'zlarni joylash</option>
+                    <option value="filling">✍️ Filling Gaps — bo'sh joylarni to'ldirish</option>
+                    <option value="writing">✍️ Writing Sentences — gaplarni yozish</option>
                   </select>
                   <small style="display:block;margin-top:6px;color:var(--text-muted);font-size:.68rem">
                     💡 Dialogue turida savol ichida <strong>___</strong> yoki <strong>{{blank}}</strong> yozing — o'quvchiga bo'sh joy sifatida ko'rinadi.
@@ -4679,7 +5196,97 @@ pen — ruchka 🖊"
 - Hello, ___"></textarea>
                 </div>
 
-                <div class="grammar-option-grid">
+                <div id="constructing-sentence-fields" class="constructing-sentence-fields hidden">
+                  <div class="input-group">
+                    <label>To'g'ri gap *</label>
+                    <input type="text" id="quiz-sentence-answer" placeholder="Masalan: I have never acted in a play." autocomplete="off" />
+                    <small style="display:block;margin-top:6px;color:var(--text-muted);font-size:.68rem">
+                      To'g'ri gapni aynan qanday chiqishi kerak bo'lsa shunday yozing.
+                    </small>
+                  </div>
+                  <div class="input-group">
+                    <label>So'z / phrase banki *</label>
+                    <textarea id="quiz-sentence-words" rows="2" placeholder="I | have | never | acted | in a play."></textarea>
+                    <small style="display:block;margin-top:6px;color:var(--text-muted);font-size:.68rem">
+                      Har bir bosiladigan blokni <strong>|</strong> bilan ajrating. Masalan: <strong>I | have | never | acted | in a play.</strong>
+                    </small>
+                  </div>
+                </div>
+
+                <div id="matching-words-fields" class="constructing-sentence-fields hidden">
+                  <div class="input-group">
+                    <label>Matn / gaplar *</label>
+                    <textarea id="quiz-matching-text" rows="5" placeholder="The luxury Segoda resort is located high up on the ___ offering beautiful views out to sea.
+Our resort offers three heated ___ which are open all day for you to swim in – or just relax in the warm ___ with a book!
+You will also love exploring the ___."></textarea>
+                    <small style="display:block;margin-top:6px;color:var(--text-muted);font-size:.68rem">
+                      Har bir bo'sh joy uchun <strong>___</strong> yozing.
+                    </small>
+                  </div>
+                  <div class="input-group">
+                    <label>To'g'ri javoblar *</label>
+                    <textarea id="quiz-matching-answers" rows="3" placeholder="cliffs | pools | sunshine | forests"></textarea>
+                    <small style="display:block;margin-top:6px;color:var(--text-muted);font-size:.68rem">
+                      Javoblarni bo'sh joylar tartibida <strong>|</strong> bilan ajrating.
+                    </small>
+                  </div>
+                  <div class="input-group">
+                    <label>Word bank *</label>
+                    <textarea id="quiz-matching-words" rows="3" placeholder="cliffs | forests | pools | scenery | season | soil | sunset | sunshine"></textarea>
+                    <small style="display:block;margin-top:6px;color:var(--text-muted);font-size:.68rem">
+                      Barcha variantlarni <strong>|</strong> bilan ajrating. Ortiqcha chalg'ituvchi so'zlar ham qo'shishingiz mumkin.
+                    </small>
+                  </div>
+                </div>
+
+                <div id="filling-gaps-fields" class="constructing-sentence-fields hidden">
+                  <div class="input-group">
+                    <label>Matn / gaplar *</label>
+                    <textarea id="quiz-filling-text" rows="7" placeholder="Complete the sentences with the correct form of the verbs in brackets. Do not use contractions.
+
+1) A: Sorry we're late. We got stuck in traffic.
+B: Well, if you ___ (set off) earlier, you ___ (miss) the heavy traffic.
+
+2) A: Was the thief who burgled you arrested?
+B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) the things he'd stolen."></textarea>
+                    <small style="display:block;margin-top:6px;color:var(--text-muted);font-size:.68rem">
+                      Har bir javob joyi uchun <strong>___</strong> yozing. Qavs ichidagi fe'l hint sifatida qoladi: <strong>___ (set off)</strong>.
+                    </small>
+                  </div>
+                  <div class="input-group">
+                    <label>To'g'ri javoblar *</label>
+                    <textarea id="quiz-filling-answers" rows="5" placeholder="had set off | would have missed | would have arrested | had found"></textarea>
+                    <small style="display:block;margin-top:6px;color:var(--text-muted);font-size:.68rem">
+                      Javoblarni blanklar tartibida <strong>|</strong> bilan ajrating. Katta-kichik harf farqi hisobga olinmaydi.
+                    </small>
+                  </div>
+                </div>
+
+                <div id="writing-sentences-fields" class="constructing-sentence-fields hidden">
+                  <div class="input-group">
+                    <label>Instruction / Topdagi ko'rsatma *</label>
+                    <textarea id="quiz-writing-instruction" rows="3" placeholder="Complete the sentences with a singular or plural form of child, woman, man, person."></textarea>
+                    <small style="display:block;margin-top:6px;color:var(--text-muted);font-size:.68rem">
+                      Bu matn o'quvchiga savolning eng tepasida ko'rsatiladi.
+                    </small>
+                  </div>
+                  <div class="input-group">
+                    <label>Gap / Sentence *</label>
+                    <textarea id="quiz-writing-text" rows="5" placeholder="My h_____ work in a hospital. My son's a doctor and my daughter's a nurse."></textarea>
+                    <small style="display:block;margin-top:6px;color:var(--text-muted);font-size:.68rem">
+                      O'quvchi <strong>_____</strong> joyiga javobni klaviaturadan yozadi. Masalan: <strong>humans</strong>.
+                    </small>
+                  </div>
+                  <div class="input-group">
+                    <label>To'g'ri javob(lar) *</label>
+                    <textarea id="quiz-writing-answers" rows="3" placeholder="humans"></textarea>
+                    <small style="display:block;margin-top:6px;color:var(--text-muted);font-size:.68rem">
+                      Bir nechta blank bo'lsa javoblarni <strong>|</strong> bilan ajrating.
+                    </small>
+                  </div>
+                </div>
+
+                <div class="grammar-option-grid" id="grammar-multiple-choice-fields">
                   <div class="grammar-option-input"><span class="grammar-option-letter">A</span><input type="text" id="quiz-opt-a" placeholder="A variant" autocomplete="off" /></div>
                   <div class="grammar-option-input"><span class="grammar-option-letter">B</span><input type="text" id="quiz-opt-b" placeholder="B variant" autocomplete="off" /></div>
                   <div class="grammar-option-input"><span class="grammar-option-letter">C</span><input type="text" id="quiz-opt-c" placeholder="C variant" autocomplete="off" /></div>
@@ -6876,6 +7483,54 @@ pen — ruchka 🖊"
       </div>
     </main>
 
+    <!-- 🌐 TRANSLATOR MODAL -->
+    <div class="translator-modal hidden" id="translator-modal" onclick="if(event.target===this) closeTranslator()">
+      <div class="translator-panel" role="dialog" aria-modal="true" aria-labelledby="translator-title">
+        <div class="translator-head">
+          <div>
+            <h2 id="translator-title">🌐 Emerald Lab Translator</h2>
+            <p>English ↔ Uzbek ↔ Russian</p>
+          </div>
+          <button class="translator-close" type="button" onclick="closeTranslator()">✕</button>
+        </div>
+
+        <div class="translator-language-row">
+          <select id="translator-source" onchange="updateTranslatorLabels()">
+            <option value="en">🇬🇧 English</option>
+            <option value="uz">🇺🇿 O'zbekcha</option>
+            <option value="ru">🇷🇺 Русский</option>
+          </select>
+
+          <button class="translator-swap" type="button" onclick="swapTranslatorLanguages()" title="Swap languages">⇄</button>
+
+          <select id="translator-target" onchange="updateTranslatorLabels()">
+            <option value="uz">🇺🇿 O'zbekcha</option>
+            <option value="en">🇬🇧 English</option>
+            <option value="ru">🇷🇺 Русский</option>
+          </select>
+        </div>
+
+        <div class="translator-grid">
+          <div class="translator-box">
+            <label id="translator-source-label">English</label>
+            <textarea id="translator-input" class="translator-textarea" placeholder="Write or paste text here..."></textarea>
+          </div>
+          <div class="translator-box">
+            <label id="translator-target-label">O'zbekcha</label>
+            <div id="translator-output" class="translator-output">Translation will appear here.</div>
+          </div>
+        </div>
+
+        <div class="translator-actions">
+          <button class="translator-action primary" type="button" onclick="translateText()">🔄 Translate</button>
+          <button class="translator-action" type="button" onclick="copyTranslatorResult()">📋 Copy</button>
+          <button class="translator-action" type="button" onclick="clearTranslator()">🗑️ Clear</button>
+        </div>
+
+        <div class="translator-status" id="translator-status"></div>
+      </div>
+    </div>
+
     <script>
       const translations = {
         UZB: {
@@ -6977,6 +7632,7 @@ pen — ruchka 🖊"
       };
 
       let currentLang = "UZB";
+      initTheme();
 
       /* ============================================================
          SUPABASE KONFIGURATSIYASI
@@ -7574,7 +8230,169 @@ pen — ruchka 🖊"
         `;
       }
 
-      function changeLang(lang) {
+      /* ============================================================
+         🌗 THEME SYSTEM
+      ============================================================ */
+      function applyTheme(theme){
+        const root=document.documentElement;
+        const isLight=theme==="light";
+        root.classList.toggle("light-mode",isLight);
+        localStorage.setItem("emerald_theme",theme);
+        const btn=document.getElementById("theme-toggle-btn");
+        if(btn){
+          btn.innerHTML=isLight ? "🌙 Dark" : "☀️ Bright";
+          btn.title=isLight ? "Dark mode" : "Bright mode";
+        }
+      }
+
+      function toggleTheme(){
+        const current=localStorage.getItem("emerald_theme") || "dark";
+        applyTheme(current==="dark" ? "light" : "dark");
+      }
+
+      function initTheme(){
+        const saved=localStorage.getItem("emerald_theme");
+        if(saved==="light" || saved==="dark"){
+          applyTheme(saved);
+          return;
+        }
+        applyTheme(window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+      }
+
+      /* ============================================================
+         🌐 TRANSLATOR: EN / UZ / RU — ALL 6 COMBINATIONS
+         Uses MyMemory's free translation endpoint.
+      ============================================================ */
+      const translatorLanguageNames={
+        en:"English",
+        uz:"O'zbekcha",
+        ru:"Русский"
+      };
+
+      function openTranslator(){
+        const modal=document.getElementById("translator-modal");
+        if(!modal)return;
+        modal.classList.remove("hidden");
+        updateTranslatorLabels();
+        setTimeout(()=>document.getElementById("translator-input")?.focus(),50);
+      }
+
+      function closeTranslator(){
+        document.getElementById("translator-modal")?.classList.add("hidden");
+      }
+
+      function updateTranslatorLabels(){
+        const source=document.getElementById("translator-source")?.value || "en";
+        const target=document.getElementById("translator-target")?.value || "uz";
+        const s=document.getElementById("translator-source-label");
+        const t=document.getElementById("translator-target-label");
+        if(s)s.textContent=translatorLanguageNames[source];
+        if(t)t.textContent=translatorLanguageNames[target];
+
+        const input=document.getElementById("translator-input");
+        if(input){
+          input.placeholder=`${translatorLanguageNames[source]} → ${translatorLanguageNames[target]}...`;
+        }
+      }
+
+      function swapTranslatorLanguages(){
+        const source=document.getElementById("translator-source");
+        const target=document.getElementById("translator-target");
+        if(!source||!target)return;
+        const old=source.value;
+        source.value=target.value;
+        target.value=old;
+
+        const input=document.getElementById("translator-input");
+        const output=document.getElementById("translator-output");
+        if(input && output && output.textContent.trim() && output.textContent.trim()!=="Translation will appear here."){
+          const oldInput=input.value;
+          input.value=output.textContent.trim();
+          output.textContent=oldInput || "Translation will appear here.";
+        }
+        updateTranslatorLabels();
+      }
+
+      async function translateText(){
+        const input=document.getElementById("translator-input");
+        const output=document.getElementById("translator-output");
+        const status=document.getElementById("translator-status");
+        const source=document.getElementById("translator-source")?.value || "en";
+        const target=document.getElementById("translator-target")?.value || "uz";
+
+        if(!input||!output||!status)return;
+        const text=input.value.trim();
+
+        if(!text){
+          output.textContent="Please enter text.";
+          status.textContent="";
+          return;
+        }
+
+        if(source===target){
+          output.textContent=text;
+          status.textContent="Source and target languages are the same.";
+          return;
+        }
+
+        output.textContent="Translating...";
+        status.textContent=`${translatorLanguageNames[source]} → ${translatorLanguageNames[target]}`;
+
+        try{
+          const url=`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${encodeURIComponent(source+"|"+target)}`;
+          const response=await fetch(url,{method:"GET",headers:{"Accept":"application/json"}});
+          if(!response.ok)throw new Error(`HTTP ${response.status}`);
+          const data=await response.json();
+          const translated=data?.responseData?.translatedText;
+
+          if(!translated)throw new Error("Translation is empty.");
+
+          output.textContent=translated;
+          status.textContent=`✅ ${translatorLanguageNames[source]} → ${translatorLanguageNames[target]}`;
+        }catch(error){
+          console.error("Translator error:",error);
+          output.textContent="❌ Translation failed. Check your internet connection and try again.";
+          status.textContent="Free translation service is temporarily unavailable.";
+        }
+      }
+
+      async function copyTranslatorResult(){
+        const output=document.getElementById("translator-output");
+        if(!output)return;
+        const value=output.textContent.trim();
+        if(!value || value==="Translation will appear here." || value.startsWith("❌"))return;
+
+        try{
+          await navigator.clipboard.writeText(value);
+          const status=document.getElementById("translator-status");
+          if(status)status.textContent="✅ Copied.";
+        }catch(e){
+          alert("Copy failed. Please select and copy the text manually.");
+        }
+      }
+
+      function clearTranslator(){
+        const input=document.getElementById("translator-input");
+        const output=document.getElementById("translator-output");
+        const status=document.getElementById("translator-status");
+        if(input)input.value="";
+        if(output)output.textContent="Translation will appear here.";
+        if(status)status.textContent="";
+        input?.focus();
+      }
+
+      document.addEventListener("keydown",(event)=>{
+        if(event.key==="Escape"){
+          const modal=document.getElementById("translator-modal");
+          if(modal && !modal.classList.contains("hidden"))closeTranslator();
+        }
+        if((event.ctrlKey || event.metaKey) && event.key==="Enter"){
+          const modal=document.getElementById("translator-modal");
+          if(modal && !modal.classList.contains("hidden"))translateText();
+        }
+      });
+
+            function changeLang(lang) {
         currentLang = lang;
 
         document.querySelectorAll(".lang-btn").forEach((btn) => {
@@ -9462,31 +10280,131 @@ pen — ruchka 🖊"
 
       function getGrammarQuestionDraft() {
         const question = document.getElementById("quiz-question")?.value.trim() || "";
-        const options = [
+        const questionType = document.getElementById("quiz-question-type")?.value || "standard";
+
+        if (questionType === "constructing") {
+          const sentenceAnswer = document.getElementById("quiz-sentence-answer")?.value.trim() || "";
+          const sentenceWords = (document.getElementById("quiz-sentence-words")?.value || "")
+            .split("|").map(x=>x.trim()).filter(Boolean);
+          if (!question && !sentenceAnswer && !sentenceWords.length) return null;
+          if (!question || !sentenceAnswer || sentenceWords.length < 2) {
+            alert("❗ Constructing Sentences uchun savol, to'g'ri gap va kamida 2 ta word/phrase kiriting.");
+            return false;
+          }
+          if (sentenceAnswer.replace(/\s+/g," ").trim() !== sentenceWords.join(" ").replace(/\s+/g," ").trim()) {
+            alert("❗ Word/phrase banki to'g'ri gap bilan bir xil bo'lishi kerak.");
+            return false;
+          }
+          return {
+            question, question_type:"constructing", options:[], correctIndex:0,
+            sentence_answer:sentenceWords, sentence_words:sentenceWords,
+            matching_text:"", matching_answers:[], matching_words:[],
+            filling_text:"", filling_answers:[],
+            image_url:tempGrammarImageUrl || document.getElementById("quiz-image-url")?.value.trim() || "",
+            image_template:document.getElementById("quiz-image-template")?.value || "standard",
+          };
+        }
+
+        if (questionType === "matching") {
+          const matchingText=document.getElementById("quiz-matching-text")?.value.trim() || "";
+          const matchingAnswers=(document.getElementById("quiz-matching-answers")?.value || "").split("|").map(x=>x.trim()).filter(Boolean);
+          const matchingWords=(document.getElementById("quiz-matching-words")?.value || "").split("|").map(x=>x.trim()).filter(Boolean);
+          const blankCount=(matchingText.match(/___/g)||[]).length;
+          if (!question && !matchingText && !matchingAnswers.length && !matchingWords.length) return null;
+          if (!question || !matchingText || blankCount<1 || matchingAnswers.length!==blankCount) {
+            alert(`❗ Matching Words uchun instruction, matn, ___ blanklar va mos javoblarni kiriting. Blank: ${blankCount}, javob: ${matchingAnswers.length}.`);
+            return false;
+          }
+          if (matchingWords.length<matchingAnswers.length) {
+            alert("❗ Word bankdagi so'zlar soni to'g'ri javoblardan kam bo'lmasligi kerak.");
+            return false;
+          }
+          const bank=matchingWords.map(x=>x.toLowerCase());
+          for(const answer of matchingAnswers){
+            if(!bank.includes(answer.toLowerCase())){
+              alert(`❗ "${answer}" word bank ichida yo'q.`);
+              return false;
+            }
+          }
+          return {
+            question, question_type:"matching", options:[], correctIndex:0,
+            sentence_answer:[], sentence_words:[],
+            matching_text:matchingText, matching_answers:matchingAnswers, matching_words:matchingWords,
+            filling_text:"", filling_answers:[],
+            image_url:tempGrammarImageUrl || document.getElementById("quiz-image-url")?.value.trim() || "",
+            image_template:document.getElementById("quiz-image-template")?.value || "standard",
+          };
+        }
+
+        if (questionType === "writing") {
+          const writingInstruction=document.getElementById("quiz-writing-instruction")?.value.trim() || "";
+          const writingText=document.getElementById("quiz-writing-text")?.value.trim() || "";
+          const writingAnswers=(document.getElementById("quiz-writing-answers")?.value || "")
+            .split("|").map(x=>x.trim()).filter(Boolean);
+
+          const blankCount=(writingText.match(/_{2,}/g)||[]).length;
+
+          if(!question && !writingInstruction && !writingText && !writingAnswers.length) return null;
+
+          if(!question || !writingInstruction || !writingText || blankCount<1 || writingAnswers.length!==blankCount){
+            alert(`❗ Writing Sentences uchun savol, tepadagi instruction, gap, kamida bitta _____ blank va har bir blank uchun javob kiriting. Blank: ${blankCount}, javob: ${writingAnswers.length}.`);
+            return false;
+          }
+
+          return {
+            question, question_type:"writing", options:[], correctIndex:0,
+            sentence_answer:[], sentence_words:[],
+            matching_text:"", matching_answers:[], matching_words:[],
+            filling_text:"", filling_answers:[],
+            writing_instruction:writingInstruction,
+            writing_text:writingText,
+            writing_answers:writingAnswers,
+            image_url:tempGrammarImageUrl || document.getElementById("quiz-image-url")?.value.trim() || "",
+            image_template:document.getElementById("quiz-image-template")?.value || "standard",
+          };
+        }
+
+        if (questionType === "filling") {
+          const fillingText=document.getElementById("quiz-filling-text")?.value.trim() || "";
+          const fillingAnswers=(document.getElementById("quiz-filling-answers")?.value || "").split("|").map(x=>x.trim()).filter(Boolean);
+          const blankCount=(fillingText.match(/___/g)||[]).length;
+          if (!question && !fillingText && !fillingAnswers.length) return null;
+          if (!question || !fillingText || blankCount<1 || fillingAnswers.length!==blankCount) {
+            alert(`❗ Filling Gaps uchun instruction, matn, ___ blanklar va har bir blank uchun javoblarni kiriting. Blank: ${blankCount}, javob: ${fillingAnswers.length}.`);
+            return false;
+          }
+          return {
+            question, question_type:"filling", options:[], correctIndex:0,
+            sentence_answer:[], sentence_words:[],
+            matching_text:"", matching_answers:[], matching_words:[],
+            filling_text:fillingText, filling_answers:fillingAnswers,
+            image_url:tempGrammarImageUrl || document.getElementById("quiz-image-url")?.value.trim() || "",
+            image_template:document.getElementById("quiz-image-template")?.value || "standard",
+          };
+        }
+
+        const options=[
           document.getElementById("quiz-opt-a")?.value.trim() || "",
           document.getElementById("quiz-opt-b")?.value.trim() || "",
           document.getElementById("quiz-opt-c")?.value.trim() || "",
         ];
-
-        if (!question && options.every((x) => !x)) return null;
-
-        if (!question || options.some((x) => !x)) {
+        if(!question && options.every(x=>!x)) return null;
+        if(!question || options.some(x=>!x)){
           alert("❗ Savol va A/B/C variantlarning barchasini kiriting.");
           return false;
         }
-
-        if (new Set(options.map((x) => x.toLowerCase())).size !== 3) {
+        if(new Set(options.map(x=>x.toLowerCase())).size!==3){
           alert("❗ A, B va C variantlari bir-biridan farq qilishi kerak.");
           return false;
         }
-
         return {
-          question,
-          question_type: document.getElementById("quiz-question-type")?.value || "standard",
-          options,
-          correctIndex: getSelectedGrammarCorrectIndex(),
-          image_url: tempGrammarImageUrl || document.getElementById("quiz-image-url")?.value.trim() || "",
-          image_template: document.getElementById("quiz-image-template")?.value || "standard",
+          question, question_type:questionType, options,
+          correctIndex:getSelectedGrammarCorrectIndex(),
+          sentence_answer:[], sentence_words:[],
+          matching_text:"", matching_answers:[], matching_words:[],
+          filling_text:"", filling_answers:[],
+          image_url:tempGrammarImageUrl || document.getElementById("quiz-image-url")?.value.trim() || "",
+          image_template:document.getElementById("quiz-image-template")?.value || "standard",
         };
       }
 
@@ -9507,7 +10425,7 @@ pen — ruchka 🖊"
             <div style="min-width:0;flex:1">
               <div class="grammar-question-item-text">${escapeHtml(q.question)}</div>
               <div class="grammar-question-item-meta">
-                ${q.question_type==="dialogue"?"💬 Dialogue":"📝 Multiple Choice"} • 3 variant • To'g'ri: ${["A","B","C"][q.correctIndex]} ${q.image_url?"• 🖼️ Rasm":""}
+                ${q.question_type==="dialogue"?"💬 Dialogue":q.question_type==="constructing"?"🧩 Constructing Sentences":q.question_type==="matching"?"🧩 Matching Words":q.question_type==="filling"?"✍️ Filling Gaps":q.question_type==="writing"?"✍️ Writing Sentences":"📝 Multiple Choice"} • ${q.question_type==="constructing"?`${(q.sentence_words||[]).length} ta blok`:q.question_type==="matching"?`${(q.matching_answers||[]).length} ta blank`:`3 variant • To'g'ri: ${["A","B","C"][q.correctIndex]}`} ${q.image_url?"• 🖼️ Rasm":""}
               </div>
             </div>
             <button type="button" class="grammar-remove-question" onclick="removeGrammarQuestion(${i})">✕</button>
@@ -9536,13 +10454,31 @@ pen — ruchka 🖊"
         renderPendingGrammarQuestions();
       }
 
+      function toggleGrammarQuestionTypeFields() {
+        const type=document.getElementById("quiz-question-type")?.value || "standard";
+        const sentenceFields=document.getElementById("constructing-sentence-fields");
+        const matchingFields=document.getElementById("matching-words-fields");
+        const fillingFields=document.getElementById("filling-gaps-fields");
+        const writingFields=document.getElementById("writing-sentences-fields");
+        const multipleFields=document.getElementById("grammar-multiple-choice-fields");
+        const correctField=multipleFields?.nextElementSibling;
+
+        if(sentenceFields) sentenceFields.classList.toggle("hidden", type!=="constructing");
+        if(matchingFields) matchingFields.classList.toggle("hidden", type!=="matching");
+        if(fillingFields) fillingFields.classList.toggle("hidden", type!=="filling");
+        if(writingFields) writingFields.classList.toggle("hidden", type!=="writing");
+        if(multipleFields) multipleFields.classList.toggle("hidden", type==="constructing" || type==="matching" || type==="filling" || type==="writing");
+        if(correctField) correctField.classList.toggle("hidden", type==="constructing" || type==="matching" || type==="filling" || type==="writing");
+      }
+
       function clearGrammarQuestionForm() {
-        ["quiz-question","quiz-opt-a","quiz-opt-b","quiz-opt-c"].forEach(id=>{
+        ["quiz-question","quiz-opt-a","quiz-opt-b","quiz-opt-c","quiz-sentence-answer","quiz-sentence-words","quiz-matching-text","quiz-matching-answers","quiz-matching-words","quiz-filling-text","quiz-filling-answers","quiz-writing-instruction","quiz-writing-text","quiz-writing-answers"].forEach(id=>{
           const el=document.getElementById(id); if(el) el.value="";
         });
 
         const typeEl=document.getElementById("quiz-question-type");
         if(typeEl) typeEl.value="standard";
+        toggleGrammarQuestionTypeFields();
 
         const first=document.querySelector('input[name="grammar-correct"][value="0"]');
         if(first) first.checked=true;
@@ -9579,6 +10515,9 @@ pen — ruchka 🖊"
           questions:pendingGrammarQuestions.map(({id,...q})=>q),
         };
       }
+
+      document.getElementById("quiz-question-type")?.addEventListener("change", toggleGrammarQuestionTypeFields);
+      toggleGrammarQuestionTypeFields();
 
       async function addLesson(e) {
         e.preventDefault();
@@ -10860,6 +11799,16 @@ pen — ruchka 🖊"
             questions:q.questions.map(item=>({
               question:item.question||"",
               questionType:item.question_type||"standard",
+              sentenceAnswer:Array.isArray(item.sentence_answer)?item.sentence_answer.map(String):[],
+              sentenceWords:Array.isArray(item.sentence_words)?item.sentence_words.map(String):[],
+              matchingText:item.matching_text||"",
+              matchingAnswers:Array.isArray(item.matching_answers)?item.matching_answers.map(String):[],
+              matchingWords:Array.isArray(item.matching_words)?item.matching_words.map(String):[],
+              fillingText:item.filling_text||"",
+              fillingAnswers:Array.isArray(item.filling_answers)?item.filling_answers.map(String):[],
+              writingInstruction:item.writing_instruction||"",
+              writingText:item.writing_text||"",
+              writingAnswers:Array.isArray(item.writing_answers)?item.writing_answers.map(String):[],
               options:Array.isArray(item.options)?item.options.map((txt,i)=>({
                 text:String(txt??""),
                 isCorrect:i===Number(item.correctIndex||0),
@@ -10875,6 +11824,16 @@ pen — ruchka 🖊"
           return {questions:[{
             question:q.question||"",
             questionType:q.question_type||"standard",
+            sentenceAnswer:Array.isArray(q.sentence_answer)?q.sentence_answer.map(String):[],
+            sentenceWords:Array.isArray(q.sentence_words)?q.sentence_words.map(String):[],
+            matchingText:q.matching_text||"",
+            matchingAnswers:Array.isArray(q.matching_answers)?q.matching_answers.map(String):[],
+            matchingWords:Array.isArray(q.matching_words)?q.matching_words.map(String):[],
+            fillingText:q.filling_text||"",
+            fillingAnswers:Array.isArray(q.filling_answers)?q.filling_answers.map(String):[],
+            writingInstruction:q.writing_instruction||"",
+            writingText:q.writing_text||"",
+            writingAnswers:Array.isArray(q.writing_answers)?q.writing_answers.map(String):[],
             options:q.options.map((txt,i)=>({text:String(txt??""),isCorrect:i===ci})),
             imageUrl:q.image_url||"",
             imageTemplate:q.image_template||"standard",
@@ -10885,6 +11844,16 @@ pen — ruchka 🖊"
           return {questions:[{
             question:q.question,
             questionType:q.question_type||"standard",
+            sentenceAnswer:Array.isArray(q.sentence_answer)?q.sentence_answer.map(String):[],
+            sentenceWords:Array.isArray(q.sentence_words)?q.sentence_words.map(String):[],
+            matchingText:q.matching_text||"",
+            matchingAnswers:Array.isArray(q.matching_answers)?q.matching_answers.map(String):[],
+            matchingWords:Array.isArray(q.matching_words)?q.matching_words.map(String):[],
+            fillingText:q.filling_text||"",
+            fillingAnswers:Array.isArray(q.filling_answers)?q.filling_answers.map(String):[],
+            writingInstruction:q.writing_instruction||"",
+            writingText:q.writing_text||"",
+            writingAnswers:Array.isArray(q.writing_answers)?q.writing_answers.map(String):[],
             options:[{text:q.correct,isCorrect:true},{text:q.wrong||"",isCorrect:false}].filter(x=>x.text),
             imageUrl:q.image_url||"",
             imageTemplate:q.image_template||"standard",
@@ -10930,9 +11899,18 @@ pen — ruchka 🖊"
         currentLessonQuiz={
           lessonId:lesson.id,
           lessonTitle:lesson.title,
-          questions:quiz.questions.map(q=>({...q,options:shuffleArray(q.options.map(o=>({...o})))})),
+          questions:quiz.questions.map(q=>({
+            ...q,
+            options:shuffleArray((q.options||[]).map(o=>({...o}))),
+            sentenceWords:shuffleArray((q.sentenceWords||[]).map(String)),
+            sentenceAnswer:(q.sentenceAnswer||[]).map(String)
+          })),
           questionIndex:0,
           answered:false,
+          selectedSentenceWords:[],
+          selectedMatchingWords:[],
+          fillingInputs:[],
+          writingInputs:[],
           result:null,
           lessonFullyDone:false,
         };
@@ -10968,12 +11946,163 @@ pen — ruchka 🖊"
             return part.replace(/\n/g,'<br>');
           }).join("");
         };
-        const questionHtml=isDialogue
-          ? `<div class="grammar-question-type-badge">💬 Dialogue / Context</div>
-             <div class="grammar-dialogue-question">${renderDialogueQuestion(q.question)}</div>`
-          : `<div class="grammar-quiz-question">${escapeHtml(q.question)}</div>`;
+        const isMatching=q.questionType==="matching";
+        const matchingSelected=Array.isArray(state.selectedMatchingWords)?state.selectedMatchingWords:[];
+        const matchingAnswers=q.matchingAnswers||[];
+        const matchingWords=q.matchingWords||[];
 
-        let feedback="";
+        const renderMatchingText=(value)=>{
+          const safe=escapeHtml(value);
+          let index=0;
+          return safe.split(/(___+)/g).map(part=>{
+            if(/^___+$/.test(part)){
+              const selected=matchingSelected[index];
+              const slotIndex=index++;
+              return `<button type="button" class="matching-blank ${selected?"filled":""}"
+                ${selected?`onclick="removeMatchingWord(${slotIndex})"`:"disabled"}>${selected?escapeHtml(selected):""}</button>`;
+            }
+            return part.replace(/\\n/g,'<br>');
+          }).join("");
+        };
+
+        const matchingHtml=isMatching ? `
+          <div class="grammar-question-type-badge">🧩 Matching Words</div>
+          <div class="grammar-quiz-question">${escapeHtml(q.question)}</div>
+          <div class="matching-words-text">${renderMatchingText(q.matchingText||"")}</div>
+          <div class="matching-word-bank">
+            ${matchingWords.map((word,i)=>{
+              const used=matchingSelected.includes(word);
+              return `<button type="button" class="matching-word-btn ${used?"used":""}"
+                ${used||state.answered?"disabled":""}
+                onclick="selectMatchingWord(${i})">${escapeHtml(word)}</button>`;
+            }).join("")}
+          </div>
+          <button type="button" class="matching-check"
+            ${state.answered||matchingSelected.length!==matchingAnswers.length?"disabled":""}
+            onclick="checkMatchingWords()">Check</button>
+        ` : "";
+
+        const isConstructing=q.questionType==="constructing";
+        const sentenceSelected=Array.isArray(state.selectedSentenceWords)?state.selectedSentenceWords:[];
+        const sentenceAnswer=q.sentenceAnswer||[];
+        const sentenceWords=q.sentenceWords||[];
+
+        const constructingHtml=isConstructing ? `
+          <div class="grammar-question-type-badge">🧩 Constructing Sentences</div>
+          <div class="grammar-quiz-question">${escapeHtml(q.question)}</div>
+          <div class="constructing-answer-slots">
+            ${sentenceAnswer.map((_,i)=>{
+              const value=sentenceSelected[i];
+              return `<button type="button" class="constructing-slot ${value?"filled":""}"
+                ${value?`onclick="removeSentenceWord(${i})"`:"disabled"}>${value?escapeHtml(value):" "}</button>`;
+            }).join("")}
+          </div>
+          <div class="constructing-word-bank">
+            ${sentenceWords.map((word,i)=>{
+              const used=sentenceSelected.includes(word);
+              return `<button type="button" class="constructing-word-btn ${used?"used":""}"
+                ${used||state.answered?"disabled":""}
+                onclick="selectSentenceWord(${i})">${escapeHtml(word)}</button>`;
+            }).join("")}
+          </div>
+          <div class="constructing-actions">
+            <button type="button" class="constructing-clear" ${state.answered?"disabled":""} onclick="clearSentenceWords()">↺ Tozalash</button>
+            <button type="button" class="constructing-check" ${state.answered||sentenceSelected.length!==sentenceAnswer.length?"disabled":""} onclick="checkConstructedSentence()">Tekshirish ✓</button>
+          </div>`
+          : "";
+
+        const isWriting=q.questionType==="writing";
+        const writingAnswers=q.writingAnswers||[];
+        const writingInputs=Array.isArray(state.writingInputs)?state.writingInputs:[];
+
+        const renderWritingText=(value)=>{
+          const safe=escapeHtml(value);
+          let index=0;
+          return safe.split(/(___+|_{2,})/g).map(part=>{
+            if(/^(___+|_{2,})$/.test(part)){
+              const slot=index++;
+              const existing=escapeHtml(writingInputs[slot]||"");
+              return `<span class="writing-blank-wrap">
+                <input class="writing-blank" id="writing-input-${slot}" value="${existing}"
+                  ${state.answered?"disabled":""}
+                  autocomplete="off" autocapitalize="none" spellcheck="false"
+                  oninput="updateWritingInput(${slot},this.value)"
+                  onkeydown="if(event.key==='Enter'){event.preventDefault();checkWritingSentences();}" />
+              </span>`;
+            }
+            return part.replace(/\n/g,"<br>");
+          }).join("");
+        };
+
+        const writingHtml=isWriting ? `
+          <div class="grammar-question-type-badge">✍️ Writing Sentences</div>
+          <div class="writing-instruction">${escapeHtml(q.writingInstruction||"")}</div>
+          <div class="writing-sentence-text">${renderWritingText(q.writingText||"")}</div>
+          <button type="button" class="writing-check"
+            ${state.answered||writingInputs.filter(v=>String(v||"").trim()!=="").length!==writingAnswers.length?"disabled":""}
+            onclick="checkWritingSentences()">Check</button>
+        ` : "";
+
+        const isFilling=q.questionType==="filling";
+        const fillingAnswers=q.fillingAnswers||[];
+        const fillingInputs=Array.isArray(state.fillingInputs)?state.fillingInputs:[];
+
+        const renderFillingText=(value)=>{
+          const safe=escapeHtml(value);
+          let index=0;
+          return safe.split(/(___+)/g).map(part=>{
+            if(/^___+$/.test(part)){
+              const slot=index++;
+              const existing=escapeHtml(fillingInputs[slot]||"");
+              return `<span class="filling-blank-wrap">
+                <input class="filling-blank" id="filling-input-${slot}" value="${existing}"
+                  ${state.answered?"disabled":""}
+                  autocomplete="off" autocapitalize="none" spellcheck="false"
+                  oninput="updateFillingInput(${slot},this.value)"
+                  onkeydown="if(event.key==='Enter'){event.preventDefault();checkFillingGaps();}" />
+              </span>`;
+            }
+            return part.replace(/\n/g,"<br>");
+          }).join("");
+        };
+
+        const fillingHtml=isFilling ? `
+          <div class="grammar-question-type-badge">✍️ Filling Gaps</div>
+          <div class="grammar-quiz-question">${escapeHtml(q.question)}</div>
+          <div class="filling-gaps-text">${renderFillingText(q.fillingText||"")}</div>
+          <button type="button" class="filling-check"
+            ${state.answered||fillingInputs.length!==fillingAnswers.length?"disabled":""}
+            onclick="checkFillingGaps()">Check</button>
+        ` : "";
+
+        const questionHtml=isMatching
+          ? matchingHtml
+          : isFilling
+            ? fillingHtml
+            : isWriting
+              ? writingHtml
+          : isConstructing
+            ? constructingHtml
+            : isDialogue
+              ? `<div class="grammar-question-type-badge">💬 Dialogue / Context</div>
+                 <div class="grammar-dialogue-question">${renderDialogueQuestion(q.question)}</div>`
+              : `<div class="grammar-quiz-question">${escapeHtml(q.question)}</div>`;
+
+        if(isMatching && state.result==="wrong"){
+          feedback=`<div class="matching-feedback bad">❌ Javob noto'g'ri. So'zlarni to'g'ri tartibda joylashtiring.</div>`;
+        } else if(isMatching && (state.result==="correct" || state.result==="completed")){
+          feedback=`<div class="matching-feedback ok">✓ To'g'ri!</div>`;
+        } else if(isFilling && state.result==="wrong"){
+          feedback=`<div class="filling-feedback bad">❌ Javob noto'g'ri. Javoblarni qayta tekshiring.</div>`;
+        } else if(isFilling && (state.result==="correct" || state.result==="completed")){
+          feedback=`<div class="filling-feedback ok">✓ To'g'ri!</div>`;
+        } else if(isWriting && state.result==="wrong"){
+          feedback=`<div class="writing-feedback bad">❌ Javob noto'g'ri. Gapdagi javoblarni qayta tekshiring.</div>`;
+        } else if(isWriting && (state.result==="correct" || state.result==="completed")){
+          feedback=`<div class="writing-feedback ok">✓ To'g'ri!</div>`;
+        } else {
+          feedback="";
+        }
         if(state.result==="correct"){
           feedback=`<div class="grammar-feedback success"><span>✓</span><div><strong>To'g'ri!</strong><div style="margin-top:3px;opacity:.85;">Keyingi savol yuklanmoqda...</div></div></div>`;
         }else if(state.result==="wrong"){
@@ -11000,7 +12129,7 @@ pen — ruchka 🖊"
             </div>
             ${imageHtml}
             ${questionHtml}
-            <div class="grammar-quiz-options">
+            ${isConstructing || isMatching || isFilling || isWriting ? "" : `<div class="grammar-quiz-options">
               ${q.options.map((o,i)=>{
                 const wrong=state.result==="wrong"&&state.selectedIndex===i;
                 const correct=(state.result==="correct"||state.result==="completed")&&state.selectedIndex===i;
@@ -11012,9 +12141,340 @@ pen — ruchka 🖊"
                   ${correct?"<span>✓</span>":wrong?"<span>✕</span>":""}
                 </button>`;
               }).join("")}
-            </div>
+            </div>`}
             ${feedback}
           </div>`;
+      }
+
+      function updateFillingInput(index,value){
+        const state=currentLessonQuiz;
+        if(!state||state.answered)return;
+        if(!Array.isArray(state.fillingInputs))state.fillingInputs=[];
+        state.fillingInputs[index]=value;
+        const q=state.questions[state.questionIndex];
+        const total=(q?.fillingAnswers||[]).length;
+        const check=document.querySelector(".filling-check");
+        if(check)check.disabled=state.answered || state.fillingInputs.filter(v=>String(v||"").trim()!=="").length!==total;
+      }
+
+      function checkFillingGaps(){
+        const state=currentLessonQuiz;
+        if(!state||state.answered)return;
+        const q=state.questions[state.questionIndex];
+        if(!q||q.questionType!=="filling")return;
+
+        const answers=(q.fillingAnswers||[]).map(x=>String(x).trim().toLowerCase().replace(/\s+/g," "));
+        const inputs=(state.fillingInputs||[]).map(x=>String(x||"").trim().toLowerCase().replace(/\s+/g," "));
+        if(inputs.length!==answers.length || inputs.some(x=>!x))return;
+
+        state.answered=true;
+        const correct=inputs.every((value,i)=>value===answers[i]);
+
+        if(!correct){
+          state.result="wrong";
+          renderLessonQuiz();
+          return;
+        }
+
+        if(state.questionIndex<state.questions.length-1){
+          state.result="correct";
+          renderLessonQuiz();
+          setTimeout(()=>{
+            if(currentLessonQuiz!==state)return;
+            state.questionIndex++;
+            state.answered=false;
+            state.selectedIndex=null;
+            state.selectedSentenceWords=[];
+            state.selectedMatchingWords=[];
+            state.fillingInputs=[];
+            state.result=null;
+            renderLessonQuiz();
+          },650);
+          return;
+        }
+
+        state.result="completed";
+        if(!currentUser.completedGrammarQuizzes)currentUser.completedGrammarQuizzes=[];
+        if(!currentUser.completedGrammarQuizVersions)currentUser.completedGrammarQuizVersions={};
+
+        const lessonForQuiz=lessons.find((item)=>item.id===state.lessonId);
+        const isSequenceQuiz=!!(lessonForQuiz?.quiz?.version===2);
+        const alreadyVersioned=isSequenceQuiz
+          ? currentUser.completedGrammarQuizVersions[String(state.lessonId)]===2
+          : currentUser.completedGrammarQuizzes.includes(state.lessonId);
+
+        if(!alreadyVersioned){
+          if(isSequenceQuiz)currentUser.completedGrammarQuizVersions[String(state.lessonId)]=2;
+          if(!currentUser.completedGrammarQuizzes.includes(state.lessonId)){
+            currentUser.completedGrammarQuizzes.push(state.lessonId);
+          }
+          addRewards(20,15,state.lessonId,`Grammatika: ${state.lessonTitle} (${state.questions.length} savol)`);
+          saveUserData(currentUser);
+        }
+
+        state.lessonFullyDone=checkLessonFullCompletion(state.lessonId);
+        renderLessonQuiz();
+      }
+
+      function updateWritingInput(index,value){
+        const state=currentLessonQuiz;
+        if(!state||state.answered)return;
+        if(!Array.isArray(state.writingInputs))state.writingInputs=[];
+        state.writingInputs[index]=value;
+        const q=state.questions[state.questionIndex];
+        const total=(q?.writingAnswers||[]).length;
+        const filled=state.writingInputs.filter(v=>String(v||"").trim()!=="").length;
+        const check=document.querySelector(".writing-check");
+        if(check)check.disabled=state.answered || filled!==total;
+      }
+
+      function checkWritingSentences(){
+        const state=currentLessonQuiz;
+        if(!state||state.answered)return;
+        const q=state.questions[state.questionIndex];
+        if(!q||q.questionType!=="writing")return;
+
+        const answers=(q.writingAnswers||[]).map(x=>String(x).trim().toLowerCase().replace(/\s+/g," "));
+        const inputs=(state.writingInputs||[]).map(x=>String(x||"").trim().toLowerCase().replace(/\s+/g," "));
+
+        if(inputs.length!==answers.length || inputs.some(x=>!x))return;
+
+        state.answered=true;
+        const correct=inputs.every((value,i)=>value===answers[i]);
+
+        if(!correct){
+          state.result="wrong";
+          renderLessonQuiz();
+          return;
+        }
+
+        if(state.questionIndex<state.questions.length-1){
+          state.result="correct";
+          renderLessonQuiz();
+          setTimeout(()=>{
+            if(currentLessonQuiz!==state)return;
+            state.questionIndex++;
+            state.answered=false;
+            state.selectedIndex=null;
+            state.selectedSentenceWords=[];
+            state.selectedMatchingWords=[];
+            state.fillingInputs=[];
+            state.writingInputs=[];
+            state.result=null;
+            renderLessonQuiz();
+          },650);
+          return;
+        }
+
+        state.result="completed";
+
+        if(!currentUser.completedGrammarQuizzes)currentUser.completedGrammarQuizzes=[];
+        if(!currentUser.completedGrammarQuizVersions)currentUser.completedGrammarQuizVersions={};
+
+        const lessonForQuiz=lessons.find((item)=>item.id===state.lessonId);
+        const isSequenceQuiz=!!(lessonForQuiz?.quiz?.version===2);
+        const alreadyVersioned=isSequenceQuiz
+          ? currentUser.completedGrammarQuizVersions[String(state.lessonId)]===2
+          : currentUser.completedGrammarQuizzes.includes(state.lessonId);
+
+        if(!alreadyVersioned){
+          if(isSequenceQuiz)currentUser.completedGrammarQuizVersions[String(state.lessonId)]=2;
+          if(!currentUser.completedGrammarQuizzes.includes(state.lessonId)){
+            currentUser.completedGrammarQuizzes.push(state.lessonId);
+          }
+          addRewards(20,15,state.lessonId,`Grammatika: ${state.lessonTitle} (${state.questions.length} savol)`);
+          saveUserData(currentUser);
+        }
+
+        state.lessonFullyDone=checkLessonFullCompletion(state.lessonId);
+        renderLessonQuiz();
+      }
+
+      function selectMatchingWord(wordIndex){
+        const state=currentLessonQuiz;
+        if(!state||state.answered)return;
+        const q=state.questions[state.questionIndex];
+        if(!q||q.questionType!=="matching")return;
+
+        const word=q.matchingWords?.[wordIndex];
+        if(!word)return;
+        if(!Array.isArray(state.selectedMatchingWords))state.selectedMatchingWords=[];
+        if(state.selectedMatchingWords.length >= (q.matchingAnswers||[]).length)return;
+        if(state.selectedMatchingWords.includes(word))return;
+
+        state.selectedMatchingWords.push(word);
+        renderLessonQuiz();
+      }
+
+      function removeMatchingWord(slotIndex){
+        const state=currentLessonQuiz;
+        if(!state||state.answered)return;
+        if(!Array.isArray(state.selectedMatchingWords))return;
+        state.selectedMatchingWords.splice(slotIndex,1);
+        renderLessonQuiz();
+      }
+
+      function checkMatchingWords(){
+        const state=currentLessonQuiz;
+        if(!state||state.answered)return;
+        const q=state.questions[state.questionIndex];
+        if(!q||q.questionType!=="matching")return;
+
+        const answer=(q.matchingAnswers||[]).map(x=>String(x).trim().toLowerCase());
+        const selected=(state.selectedMatchingWords||[]).map(x=>String(x).trim().toLowerCase());
+
+        if(selected.length!==answer.length)return;
+
+        state.answered=true;
+        const correct=selected.every((word,i)=>word===answer[i]);
+
+        if(!correct){
+          state.result="wrong";
+          renderLessonQuiz();
+          return;
+        }
+
+        if(state.questionIndex<state.questions.length-1){
+          state.result="correct";
+          renderLessonQuiz();
+
+          setTimeout(()=>{
+            if(currentLessonQuiz!==state)return;
+            state.questionIndex++;
+            state.answered=false;
+            state.selectedIndex=null;
+            state.selectedSentenceWords=[];
+            state.selectedMatchingWords=[];
+            state.result=null;
+            renderLessonQuiz();
+          },650);
+          return;
+        }
+
+        state.result="completed";
+
+        if(!currentUser.completedGrammarQuizzes)currentUser.completedGrammarQuizzes=[];
+        if(!currentUser.completedGrammarQuizVersions)currentUser.completedGrammarQuizVersions={};
+
+        const lessonForQuiz=lessons.find((item)=>item.id===state.lessonId);
+        const isSequenceQuiz=!!(lessonForQuiz?.quiz?.version===2);
+        const alreadyVersioned=isSequenceQuiz
+          ? currentUser.completedGrammarQuizVersions[String(state.lessonId)]===2
+          : currentUser.completedGrammarQuizzes.includes(state.lessonId);
+
+        if(!alreadyVersioned){
+          if(isSequenceQuiz)currentUser.completedGrammarQuizVersions[String(state.lessonId)]=2;
+          if(!currentUser.completedGrammarQuizzes.includes(state.lessonId)){
+            currentUser.completedGrammarQuizzes.push(state.lessonId);
+          }
+          addRewards(20,15,state.lessonId,`Grammatika: ${state.lessonTitle} (${state.questions.length} savol)`);
+          saveUserData(currentUser);
+        }
+
+        state.lessonFullyDone=checkLessonFullCompletion(state.lessonId);
+        renderLessonQuiz();
+      }
+
+      function selectSentenceWord(wordIndex){
+        const state=currentLessonQuiz;
+        if(!state||state.answered)return;
+        const q=state.questions[state.questionIndex];
+        if(!q||q.questionType!=="constructing")return;
+
+        const word=q.sentenceWords?.[wordIndex];
+        if(!word)return;
+        if(!Array.isArray(state.selectedSentenceWords))state.selectedSentenceWords=[];
+
+        if(state.selectedSentenceWords.length >= (q.sentenceAnswer||[]).length)return;
+        if(state.selectedSentenceWords.includes(word))return;
+
+        state.selectedSentenceWords.push(word);
+        renderLessonQuiz();
+      }
+
+      function removeSentenceWord(slotIndex){
+        const state=currentLessonQuiz;
+        if(!state||state.answered)return;
+        if(!Array.isArray(state.selectedSentenceWords))return;
+        state.selectedSentenceWords.splice(slotIndex,1);
+        renderLessonQuiz();
+      }
+
+      function clearSentenceWords(){
+        const state=currentLessonQuiz;
+        if(!state||state.answered)return;
+        state.selectedSentenceWords=[];
+        renderLessonQuiz();
+      }
+
+      function checkConstructedSentence(){
+        const state=currentLessonQuiz;
+        if(!state||state.answered)return;
+        const q=state.questions[state.questionIndex];
+        if(!q||q.questionType!=="constructing")return;
+
+        const answer=(q.sentenceAnswer||[]).map(x=>String(x).trim());
+        const selected=(state.selectedSentenceWords||[]).map(x=>String(x).trim());
+
+        if(selected.length!==answer.length)return;
+
+        state.answered=true;
+        state.selectedSentenceIndex=selected;
+        const correct=selected.every((word,i)=>word===answer[i]);
+
+        if(!correct){
+          state.result="wrong";
+
+          if(!currentUser.weakPoints)currentUser.weakPoints={};
+          currentUser.weakPoints[state.lessonTitle]=(currentUser.weakPoints[state.lessonTitle]||0)+10;
+          saveUserData(currentUser);
+
+          renderLessonQuiz();
+          return;
+        }
+
+        if(state.questionIndex<state.questions.length-1){
+          state.result="correct";
+          renderLessonQuiz();
+
+          setTimeout(()=>{
+            if(currentLessonQuiz!==state)return;
+            state.questionIndex++;
+            state.answered=false;
+            state.selectedIndex=null;
+            state.selectedSentenceWords=[];
+            state.result=null;
+            renderLessonQuiz();
+          },650);
+          return;
+        }
+
+        state.result="completed";
+
+        if(!currentUser.completedGrammarQuizzes)currentUser.completedGrammarQuizzes=[];
+        if(!currentUser.completedGrammarQuizVersions)currentUser.completedGrammarQuizVersions={};
+
+        const lessonForQuiz = lessons.find((item) => item.id === state.lessonId);
+        const isSequenceQuiz = !!(lessonForQuiz?.quiz?.version === 2);
+        const alreadyVersioned = isSequenceQuiz
+          ? currentUser.completedGrammarQuizVersions[String(state.lessonId)] === 2
+          : currentUser.completedGrammarQuizzes.includes(state.lessonId);
+
+        if(!alreadyVersioned){
+          if (isSequenceQuiz) {
+            currentUser.completedGrammarQuizVersions[String(state.lessonId)] = 2;
+          }
+
+          if(!currentUser.completedGrammarQuizzes.includes(state.lessonId)){
+            currentUser.completedGrammarQuizzes.push(state.lessonId);
+          }
+
+          addRewards(20,15,state.lessonId,`Grammatika: ${state.lessonTitle} (${state.questions.length} savol)`);
+          saveUserData(currentUser);
+        }
+
+        state.lessonFullyDone=checkLessonFullCompletion(state.lessonId);
+        renderLessonQuiz();
       }
 
       function selectLessonQuizOption(idx){
@@ -11090,8 +12550,16 @@ pen — ruchka 🖊"
         state.questionIndex=0;
         state.answered=false;
         state.selectedIndex=null;
+        state.selectedSentenceWords=[];
+        state.selectedMatchingWords=[];
+        state.fillingInputs=[];
+        state.writingInputs=[];
         state.result=null;
-        state.questions=state.questions.map(q=>({...q,options:shuffleArray(q.options.map(o=>({...o})))}));
+        state.questions=state.questions.map(q=>({
+          ...q,
+          options:shuffleArray((q.options||[]).map(o=>({...o}))),
+          sentenceWords:shuffleArray((q.sentenceWords||[]).map(String))
+        }));
         renderLessonQuiz();
       }
 
