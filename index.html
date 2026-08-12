@@ -7782,6 +7782,10 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
       let submissions = [];
       let chatMessages = [];
       let currentUser = null;
+      // 🚀 dbLoadAll() bilan sessiya tekshiruvini parallel yuritish uchun.
+      // finishAuthenticatedUser shu promise tugashini kutadi (users massivi
+      // to'liq yuklanmaguncha profil qidirilmasligi kerak).
+      let dbLoadAllPromise = null;
 
       /* ============================================================
          MA'LUMOTLAR BAZASI YORDAMCHI FUNKSIYALARI (Supabase)
@@ -8240,14 +8244,17 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         renderReadingPassageInputs();
         renderListeningSectionInputs();
 
-        try {
-          await dbLoadAll();
-        } catch (err) {
+        // 🚀 Bazani yuklash (dbLoadAll) va Supabase sessiyasini tekshirish
+        // ENDI PARALLEL ishlaydi (avval ketma-ket edi — shu narsa login/ochilish
+        // sekinligining asosiy sababi bo'lgan). finishAuthenticatedUser ichida
+        // dbLoadAllPromise kutiladi, shu bois foydalanuvchi massivi hali bo'sh
+        // bo'lganda profil noto'g'ri (dublikat) yaratilib qolmaydi.
+        dbLoadAllPromise = dbLoadAll().catch((err) => {
           console.error("Ma'lumotlarni yuklashda xatolik:", err);
           alert(
             "Ma'lumotlar bazasiga ulanib bo'lmadi. Iltimos, internetni tekshiring yoki keyinroq urinib ko'ring."
           );
-        }
+        });
 
         // 🔐 Supabase Auth sessionini tiklaymiz.
         // Eski localStorage email sessiyasi endi login manbai emas.
@@ -8261,6 +8268,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           document.getElementById("auth-modal").classList.remove("hidden");
         }
 
+        await dbLoadAllPromise;
         subscribeRealtimeChat();
       };
 
@@ -9455,6 +9463,10 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
       }
 
       async function finishAuthenticatedUser(authUser, extra = {}) {
+        // Foydalanuvchilar massivi hali yuklanayotgan bo'lishi mumkin
+        // (dbLoadAll endi parallel ishlaydi) — profil qidirishdan oldin kutamiz.
+        if (dbLoadAllPromise) await dbLoadAllPromise;
+
         const user = await ensureProfileForAuth(authUser, extra);
         currentUser = user;
         localStorage.setItem("emerald_session_email", user.email);
@@ -9844,6 +9856,11 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
       async function restoreSupabaseSession() {
         try {
           // Listenerni avval ulaymiz: PASSWORD_RECOVERY va OAuth eventlari o'tkazib yuborilmaydi.
+          // ⚠️ Bu listener sessiya mavjud bo'lsa darhol "INITIAL_SESSION" eventini
+          // ham beradi — shuning uchun pastda getSession() natijasidan yana bir
+          // marta finishAuthenticatedUser() CHAQIRILMAYDI (avval ikkalasi ham
+          // ishlab, profil ikki marta saqlanib/o'qilib, dashboard ikki marta
+          // qayta chizilgani login sekinligining sababi edi).
           supabaseClient.auth.onAuthStateChange(async (event, session) => {
             if (event === "PASSWORD_RECOVERY") {
               document.getElementById("auth-modal").classList.add("hidden");
@@ -9864,14 +9881,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           const { data, error } = await supabaseClient.auth.getSession();
           if (error) throw error;
 
-          if (data.session?.user) {
-            const pendingCode = localStorage.getItem("emerald_pending_signup_code");
-            await finishAuthenticatedUser(data.session.user, pendingCode ? { signup_code: pendingCode, provider: "google" } : {});
-            localStorage.removeItem("emerald_pending_signup_code");
-            return true;
-          }
-
-
+          return !!data.session?.user;
         } catch (error) {
           console.error("Session restore error:", error);
         }
