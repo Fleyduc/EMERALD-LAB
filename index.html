@@ -1,113 +1,3 @@
-
-
-/* EMERALD_SCHEDULE_V2
-   1-vazifa: student ro'yxatdan o'tgan kundan ochiladi.
-   Keyingi vazifalar: M/W/F 08:00 Uzbekistan time, ketma-ket.
-*/
-const EMERALD_TZ = "Asia/Tashkent";
-
-function getStudentStartDate(user) {
-  const raw =
-    user?.registeredAt ||
-    user?.registrationDate ||
-    user?.createdAt ||
-    user?.created_at ||
-    user?.signupAt ||
-    user?.signup_at ||
-    null;
-
-  if (!raw) return new Date();
-
-  const d = new Date(raw);
-  return Number.isNaN(d.getTime()) ? new Date() : d;
-}
-
-function getTashkentParts(date = new Date()) {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: EMERALD_TZ,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hourCycle: "h23"
-  }).formatToParts(date);
-
-  const out = {};
-  for (const p of parts) if (p.type !== "literal") out[p.type] = Number(p.value);
-  return out;
-}
-
-function getTashkentDateKey(date = new Date()) {
-  const p = getTashkentParts(date);
-  return `${p.year}-${String(p.month).padStart(2,"0")}-${String(p.day).padStart(2,"0")}`;
-}
-
-function taskIsOpenedBySchedule(user, taskIndex, now = new Date()) {
-  // First task opens immediately from registration.
-  if (taskIndex === 0) {
-    return now.getTime() >= getStudentStartDate(user).getTime();
-  }
-
-  const start = getStudentStartDate(user);
-
-  // Count scheduled M/W/F 08:00 Asia/Tashkent slots after registration.
-  // We use calendar days in Tashkent, not the browser's local timezone.
-  const startParts = getTashkentParts(start);
-  const nowParts = getTashkentParts(now);
-
-  // Build the registration calendar date in UTC-like arithmetic only for
-  // comparing calendar days; actual opening is always evaluated in Tashkent.
-  const startDay = new Date(Date.UTC(startParts.year, startParts.month - 1, startParts.day));
-  const nowDay = new Date(Date.UTC(nowParts.year, nowParts.month - 1, nowParts.day));
-
-  if (nowDay < startDay) return false;
-
-  let slots = 0;
-  const cursor = new Date(startDay);
-
-  while (cursor <= nowDay) {
-    const weekday = cursor.getUTCDay(); // 0 Sun ... 1 Mon ... 3 Wed ... 5 Fri
-
-    if (weekday === 1 || weekday === 3 || weekday === 5) {
-      const sameRegistrationDay =
-        cursor.getTime() === startDay.getTime();
-
-      // On registration day, first task is already available. Additional
-      // tasks require a future scheduled slot at 08:00 Tashkent.
-      if (!sameRegistrationDay || startParts.hour >= 8) {
-        const slotDate = cursor.getTime();
-        const currentDate = nowDay.getTime();
-
-        if (slotDate < currentDate) {
-          slots++;
-        } else if (slotDate === currentDate && nowParts.hour >= 8) {
-          slots++;
-        }
-      }
-    }
-
-    cursor.setUTCDate(cursor.getUTCDate() + 1);
-  }
-
-  // taskIndex 1 = first scheduled task after task #1, etc.
-  return slots >= taskIndex;
-}
-
-function isTaskAvailableForStudent(user, taskIndex, completedIndexes = []) {
-  if (!taskIsOpenedBySchedule(user, taskIndex)) return false;
-
-  // Strict sequence: every previous task must be completed.
-  for (let i = 0; i < taskIndex; i++) {
-    if (!completedIndexes.includes(i)) return false;
-  }
-
-  return true;
-}
-
-/* EMERALD_SCHEDULE_V2 */
-
 <!DOCTYPE html>
 <html lang="uz">
   <head>
@@ -6899,6 +6789,7 @@ pen — ruchka 🖊"
     </main>
 
     <script>
+
       const translations = {
         UZB: {
           welcomeSubtitle: "Ingliz tili laboratoriyasiga xush kelibsiz!",
@@ -9791,12 +9682,23 @@ pen — ruchka 🖊"
       const LESSON_ICONS = ["📘", "📗", "📙", "📕", "📓", "📔", "📒", "🗂️"];
 
       // ============================================================
-      // EMERALD LESSON SCHEDULE
-      // 1-dars: o'quvchi akkaunt yaratgan KUNIDAN boshlab ochiq.
-      // 2-dars va undan keyingi darslar:
-      // Dushanba / Chorshanba / Juma, 08:00 Asia/Tashkent.
-      // Bunda oldingi dars ham TO'LIQ tugagan bo'lishi shart.
+      // EMERALD LESSON SCHEDULE — REAL UNLOCK LOGIC
+      //
+      // 1-vazifa:
+      //   O'quvchi ro'yxatdan o'tgan (account created) kundan boshlab
+      //   darhol ochiladi.
+      //
+      // 2-vazifa va keyingilari:
+      //   Dushanba / Chorshanba / Juma 08:00 (Asia/Tashkent).
+      //   Har bir keyingi vazifa oldingi vazifa tugagan bo'lsa ham,
+      //   o'z vaqt-slotidan oldin ochilmaydi.
+      //
+      // Misol:
+      //   Wed 10:00 signup -> #1 darhol, #2 Fri 08:00, #3 Mon 08:00
+      //   Wed 07:00 signup -> #1 darhol, #2 Wed 08:00, #3 Fri 08:00
       // ============================================================
+
+      const EMERALD_TIMEZONE = "Asia/Tashkent";
 
       function getStudentRegistrationDate(user) {
         const raw =
@@ -9808,20 +9710,18 @@ pen — ruchka 🖊"
           user?.signup_at ||
           null;
 
-        if (raw) {
-          const d = new Date(raw);
-          if (!Number.isNaN(d.getTime())) return d;
+        if (!raw) {
+          console.warn("EMERALD: registeredAt topilmadi; hozirgi vaqt fallback sifatida ishlatilmoqda.");
+          return new Date();
         }
 
-        // Supabase Auth user created_at finishAuthenticatedUser orqali
-        // currentUser.registeredAt ga yoziladi. Juda eski profillar uchun
-        // fallback sifatida hozirgi vaqt ishlatiladi.
-        return new Date();
+        const date = new Date(raw);
+        return Number.isNaN(date.getTime()) ? new Date() : date;
       }
 
-      function tashkentParts(date = new Date()) {
+      function getTashkentParts(date = new Date()) {
         const parts = new Intl.DateTimeFormat("en-US", {
-          timeZone: "Asia/Tashkent",
+          timeZone: EMERALD_TIMEZONE,
           year: "numeric",
           month: "2-digit",
           day: "2-digit",
@@ -9832,74 +9732,72 @@ pen — ruchka 🖊"
         }).formatToParts(date);
 
         const result = {};
-        parts.forEach((p) => {
-          if (p.type !== "literal") result[p.type] = Number(p.value);
-        });
+        for (const part of parts) {
+          if (part.type !== "literal") result[part.type] = Number(part.value);
+        }
         return result;
       }
 
-      // Hozirgi vaqtgacha registrationdan KEYIN o'tgan M/W/F 08:00
-      // slotlar sonini hisoblaydi.
+      function isMWF(dayOfWeek) {
+        return dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 5;
+      }
+
+      // Shu o'quvchi ro'yxatdan o'tganidan keyin kelgan M/W/F 08:00
+      // slotlari sonini hisoblaydi.
       function countAvailableMWFSlotsFromRegistration(user, now = new Date()) {
         const registration = getStudentRegistrationDate(user);
-        const start = tashkentParts(registration);
-        const current = tashkentParts(now);
+        const reg = getTashkentParts(registration);
+        const cur = getTashkentParts(now);
 
-        const startDay = new Date(
-          Date.UTC(start.year, start.month - 1, start.day)
+        const registrationDay = new Date(
+          Date.UTC(reg.year, reg.month - 1, reg.day)
         );
         const currentDay = new Date(
-          Date.UTC(current.year, current.month - 1, current.day)
+          Date.UTC(cur.year, cur.month - 1, cur.day)
         );
 
-        if (currentDay < startDay) return 0;
+        if (currentDay < registrationDay) return 0;
 
         let slots = 0;
-        const cursor = new Date(startDay);
 
-        while (cursor <= currentDay) {
-          const weekday = cursor.getUTCDay();
-          const isMWF = weekday === 1 || weekday === 3 || weekday === 5;
+        for (
+          let day = new Date(registrationDay);
+          day <= currentDay;
+          day.setUTCDate(day.getUTCDate() + 1)
+        ) {
+          if (!isMWF(day.getUTCDay())) continue;
 
-          if (isMWF) {
-            const sameDay = cursor.getTime() === startDay.getTime();
+          const isRegistrationDay =
+            day.getTime() === registrationDay.getTime();
 
-            // Registrationdan keyin bo'ladigan 08:00 slotgina hisoblanadi.
-            // Masalan:
-            // Wed 07:30 -> Wed 08:00 = 1-slot
-            // Wed 10:00 -> Wed 08:00 o'tib ketgan = keyingi Fri 08:00
-            const slotAfterRegistration =
-              !sameDay || start.hour < 8;
+          // Registration M/W/F kunida:
+          // - 08:00 dan OLDIN signup -> shu kun 08:00 sloti hisoblanadi.
+          // - 08:00 yoki undan KEYIN signup -> shu kun sloti o'tib ketgan,
+          //   keyingi M/W/F slotidan boshlanadi.
+          if (isRegistrationDay && reg.hour >= 8) continue;
 
-            if (slotAfterRegistration) {
-              const slotIsReached =
-                cursor.getTime() < currentDay.getTime() ||
-                (sameDay
-                  ? current.hour >= 8
-                  : cursor.getTime() === currentDay.getTime() &&
-                    current.hour >= 8);
+          // Pastdagi kunlarning 08:00 sloti allaqachon o'tgan.
+          // Bugungi kun bo'lsa, faqat 08:00 dan keyin slot ochiladi.
+          const isToday =
+            day.getTime() === currentDay.getTime();
 
-              if (slotIsReached) slots++;
-            }
+          if (!isToday || cur.hour >= 8) {
+            slots++;
           }
-
-          cursor.setUTCDate(cursor.getUTCDate() + 1);
         }
 
         return slots;
       }
 
       function isLessonScheduleOpen(lessonIndex, user, now = new Date()) {
-        // 1-dars registration qilingan kundan darhol ochiladi.
+        // #1 — registration kunidan darhol.
         if (lessonIndex === 0) {
           return now.getTime() >= getStudentRegistrationDate(user).getTime();
         }
 
-        // lessonIndex=1 => registrationdan keyingi birinchi M/W/F 08:00
-        // lessonIndex=2 => ikkinchi M/W/F 08:00 va hokazo.
-        return (
-          countAvailableMWFSlotsFromRegistration(user, now) >= lessonIndex
-        );
+        // #2 => 1 ta M/W/F slot o'tgan bo'lishi kerak.
+        // #3 => 2 ta slot o'tgan bo'lishi kerak.
+        return countAvailableMWFSlotsFromRegistration(user, now) >= lessonIndex;
       }
 
       function isLessonUnlocked(lessonId) {
