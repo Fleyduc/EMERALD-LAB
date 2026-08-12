@@ -10913,6 +10913,13 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           const avatar = student
             ? student.avatar || DEFAULT_AVATAR
             : DEFAULT_AVATAR;
+          const status = s.status || (s.grade ? "approved" : "pending");
+          const statusBadge =
+            status === "approved"
+              ? `<span class="badge badge-gold">✅ ${s.grade || "Tasdiqlangan"}</span>`
+              : status === "rejected"
+              ? `<span class="badge" style="background:rgba(239,68,68,.15); color:#fca5a5;">❌ Rad etilgan</span>`
+              : `<span class="badge" style="background:rgba(245,158,11,.15); color:#fbbf24;">⏳ Kutilmoqda</span>`;
 
           tbody.innerHTML += `
           <tr>
@@ -10928,11 +10935,11 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
             <td><p style="font-size: 0.85rem; color: var(--text-muted);">${
               s.text
             }</p></td>
-            <td><span class="badge badge-gold">${
-              s.grade || "Baholanmagan"
-            }</span></td>
+            <td>${statusBadge}</td>
             <td style="text-align: right;">
-              <button class="btn-primary" style="padding: 6px 12px; font-size: 0.75rem;" onclick="gradeSubmission(${idx})">Baholash</button>
+              <button class="btn-primary" style="padding: 6px 12px; font-size: 0.75rem;" onclick="gradeSubmission(${idx})">${
+                status === "pending" ? "Ko'rib chiqish" : "Qayta ko'rish"
+              }</button>
             </td>
           </tr>
         `;
@@ -10940,23 +10947,37 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
       }
 
       async function gradeSubmission(idx) {
-        const grade = prompt(
-          "Baho va izoh kiriting (Masalan: Band 7.5 - Ajoyib!)"
+        const s = submissions[idx];
+        const approve = confirm(
+          `"${s.lessonTitle}" uy vazifasini tasdiqlaysizmi?\n\nOK — Tasdiqlash (talaba keyingi darsga o'ta oladi)\nBekor qilish — Rad etish (talaba qayta topshirishi kerak bo'ladi)`
         );
-        if (grade) {
-          submissions[idx].grade = grade;
-          await dbUpdateSubmission(submissions[idx]);
+        const feedback = prompt(
+          approve
+            ? "Baho va izoh kiriting (ixtiyoriy, masalan: Band 7.5 - Ajoyib!)"
+            : "Rad etish sababini yozing (talabaga shu holda ko'rsatiladi)"
+        );
+        if (feedback === null) return;
 
-          let student = users.find(
-            (u) => u.email === submissions[idx].studentEmail
-          );
-          if (student) {
+        s.grade = feedback || (approve ? "Tasdiqlandi" : "Rad etildi");
+        s.status = approve ? "approved" : "rejected";
+        await dbUpdateSubmission(s);
+
+        let student = users.find((u) => u.email === s.studentEmail);
+        if (student) {
+          ensureCompletionStateData(student);
+          let justFullyDone = false;
+
+          if (approve) {
+            if (!student.completedHomeworks.includes(s.lessonId)) {
+              student.completedHomeworks.push(s.lessonId);
+            }
+
             student.xp = (student.xp || 0) + 50;
             student.coins = (student.coins || 0) + 25;
 
             if (!student.lessonHistory) student.lessonHistory = [];
             student.lessonHistory.push({
-              lessonTitle: `Topshiriq: ${submissions[idx].lessonTitle}`,
+              lessonTitle: `Topshiriq: ${s.lessonTitle}`,
               date: new Date().toLocaleString("uz-UZ", {
                 dateStyle: "short",
                 timeStyle: "short",
@@ -10972,14 +10993,42 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
               student.readingGrowth[student.readingGrowth.length - 1] + 0.2
             );
 
+            // Endi Lug'at va Grammatika ham bajarilgan bo'lsa, dars
+            // to'liq yakunlanadi va keyingi dars ochiladi.
+            const completion = getLessonCompletionState(s.lessonId, student);
+            if (
+              completion.fullyDone &&
+              !(student.completedLessons || []).includes(s.lessonId)
+            ) {
+              if (!student.completedLessons) student.completedLessons = [];
+              student.completedLessons.push(s.lessonId);
+              justFullyDone = true;
+            }
+
             await dbSaveUser(student);
             notifyUser(
               student.email,
-              `✅ Ustoz "${submissions[idx].lessonTitle}" uy vazifangizni baholadi: ${grade}`
+              `✅ Ustoz "${s.lessonTitle}" uy vazifangizni tasdiqladi: ${s.grade}${
+                justFullyDone ? " 🎉 Dars to'liq yakunlandi, keyingi darsga o'tishingiz mumkin!" : ""
+              }`
+            );
+          } else {
+            // Rad etilganda Lug'at va Grammatika progressi TEGILMAYDI —
+            // completedHomeworks ga hali qo'shilmagan edi, shuning uchun
+            // talaba uchun faqat uy vazifasini qayta yuborish ochiladi.
+            await dbSaveUser(student);
+            notifyUser(
+              student.email,
+              `❌ Ustoz "${s.lessonTitle}" uy vazifangizni rad etdi: ${s.grade}. Iltimos, qayta yozib yuboring.`
             );
           }
-          renderSubmissions();
+
+          if (currentUser && currentUser.email === student.email) {
+            currentUser = student;
+            renderStudentLessons();
+          }
         }
+        renderSubmissions();
       }
 
       function playWordAudio(word, event) {
@@ -11862,7 +11911,8 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           .join("");
       }
 
-      function getLessonCompletionState(lessonId) {
+      function getLessonCompletionState(lessonId, user) {
+        user = user || currentUser;
         const l = lessons.find((x) => x.id === lessonId);
         if (!l) {
           return {
@@ -11888,7 +11938,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         const homeworkRequired = true;
 
         const vocabDone = !vocabRequired ||
-          (currentUser.completedVocabQuizzes || []).includes(lessonId);
+          (user.completedVocabQuizzes || []).includes(lessonId);
 
         // Yangi ketma-ket Grammar Test (version: 2) uchun eski
         // completedGrammarQuizzes flag'i avtomatik qabul qilinmaydi.
@@ -11897,16 +11947,20 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         let grammarDone = false;
         if (grammarRequired) {
           if (l.quiz && l.quiz.version === 2) {
-            const versions = currentUser.completedGrammarQuizVersions || {};
+            const versions = user.completedGrammarQuizVersions || {};
             grammarDone = versions[String(lessonId)] === 2;
           } else {
             grammarDone =
-              (currentUser.completedGrammarQuizzes || []).includes(lessonId);
+              (user.completedGrammarQuizzes || []).includes(lessonId);
           }
         }
 
+        // Uy vazifasi faqat USTOZ TASDIQLAGANDA "bajarildi" deb
+        // hisoblanadi (completedHomeworks). Talaba shunchaki yuborgani
+        // (pending holat) hali yetarli emas — pastdagi
+        // getHomeworkStatus() shu jarayonni kuzatadi.
         const homeworkDone =
-          (currentUser.completedHomeworks || []).includes(lessonId);
+          (user.completedHomeworks || []).includes(lessonId);
 
         return {
           lesson: l,
@@ -11918,6 +11972,20 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           homeworkDone,
           fullyDone: vocabDone && grammarDone && homeworkDone,
         };
+      }
+
+      // Berilgan dars uchun talabaning eng so'nggi uy vazifa topshirig'i
+      // qanday holatda ekanini qaytaradi: "pending" (yuborilgan, hali
+      // tekshirilmagan), "approved" (ustoz tasdiqlagan) yoki "rejected"
+      // (ustoz rad etgan — qayta yuborish kerak). Hech narsa
+      // topshirilmagan bo'lsa null qaytaradi.
+      function getHomeworkStatus(lessonId, email) {
+        const subs = submissions.filter(
+          (s) => s.lessonId === lessonId && s.studentEmail === email
+        );
+        if (!subs.length) return null;
+        const last = subs[subs.length - 1];
+        return last.status || (last.grade ? "approved" : "pending");
       }
 
       function repairStaleLessonCompletion(lessonId, state) {
@@ -11954,6 +12022,13 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         const vocabDone = completion.vocabDone;
         const grammarDone = completion.grammarDone;
         const homeworkDone = completion.homeworkDone;
+        const homeworkStatus = getHomeworkStatus(l.id, currentUser.email);
+        const lastHomeworkSubs = submissions.filter(
+          (s) => s.lessonId === l.id && s.studentEmail === currentUser.email
+        );
+        const lastHomeworkNote = lastHomeworkSubs.length
+          ? lastHomeworkSubs[lastHomeworkSubs.length - 1].grade
+          : "";
 
         let vocabHtml = "";
         if (l.vocabulary && l.vocabulary.length > 0) {
@@ -12027,7 +12102,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
                   🔒 Bu dars allaqachon yakunlangan. Siz uni faqat ko'rishingiz mumkin — test va vazifani qayta topshirib bo'lmaydi.
                 </div>`
               : `<div style="background: rgba(16,185,129,0.06); border: 1px solid var(--card-border); border-radius: 12px; padding: 10px 14px; margin-bottom: 12px; font-size: 0.78rem; color: var(--text-muted);">
-                  ℹ️ Dars to'liq yakunlanishi uchun: Lug'at testini 100% xatosiz topshiring, Grammatika testiga to'g'ri javob bering va Uy vazifasini yozib yuboring.
+                  ℹ️ Dars to'liq yakunlanishi uchun: Lug'at testini 100% xatosiz topshiring, Grammatika testiga to'g'ri javob bering va Uy vazifasini yuboring — ustoz uni tasdiqlagach dars yakunlanadi.
                 </div>`
           }
           <p style="margin: 10px 0; color: var(--text-muted); white-space: pre-line;">${
@@ -12050,8 +12125,20 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           <div style="margin-top: 15px;">
             ${
               homeworkDone
-                ? `<p style="font-size: 0.85rem; color: var(--text-muted);">🔒 Vazifa yuborilgan — bu dars uchun endi qayta vazifa yubora olmaysiz.</p>`
-                : `<textarea id="homework-${l.id}" placeholder="Uy vazifangizni shu yerga yozib yuboring..." rows="2"></textarea>
+                ? `<p style="font-size: 0.85rem; color: var(--text-muted);">🔒 Uy vazifasi ustoz tomonidan tasdiqlangan — bu dars uchun endi qayta vazifa yubora olmaysiz.</p>${
+                    lastHomeworkNote
+                      ? `<p style="font-size: 0.8rem; color: var(--emerald-light); margin-top: 4px;">✅ Baho/izoh: ${lastHomeworkNote}</p>`
+                      : ""
+                  }`
+                : homeworkStatus === "pending"
+                ? `<p style="font-size: 0.85rem; color: var(--text-muted);">⏳ Vazifangiz yuborildi, ustoz hali tekshirmagan. Tasdiqlangach dars yakunlanadi.</p>`
+                : `${
+                    homeworkStatus === "rejected"
+                      ? `<p style="font-size: 0.82rem; color: var(--danger); margin-bottom: 6px;">❌ Ustoz oldingi vazifangizni rad etdi${
+                          lastHomeworkNote ? ": " + lastHomeworkNote : ""
+                        }. Iltimos, qayta yozib yuboring.</p>`
+                      : ""
+                  }<textarea id="homework-${l.id}" placeholder="Uy vazifangizni shu yerga yozib yuboring..." rows="2"></textarea>
                   <button class="btn-primary" style="margin-top: 8px;" onclick="submitHomework(${l.id})">Vazifani Yuborish</button>`
             }
           </div>
@@ -13493,6 +13580,14 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         const lesson = lessons.find((l) => l.id === lessonId);
         const lessonTitle = lesson ? lesson.title : "";
 
+        const status = getHomeworkStatus(lessonId, currentUser.email);
+        if (status === "approved") {
+          return alert("Bu uy vazifasi allaqachon ustoz tomonidan tasdiqlangan.");
+        }
+        if (status === "pending") {
+          return alert("Vazifangiz hali ustoz tomonidan tekshirilmoqda, iltimos kuting.");
+        }
+
         const textEl = document.getElementById(`homework-${lessonId}`);
         const text = textEl ? textEl.value : "";
         if (!text) return alert("Iltimos, matn kiriting!");
@@ -13505,29 +13600,18 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           lessonTitle,
           text,
           grade: null,
+          // Uy vazifasi endi darhol "bajarildi" deb hisoblanmaydi — ustoz
+          // uni tasdiqlagach (status: "approved") dars yakunlanadi. Ustoz
+          // rad etsa (status: "rejected"), talaba qayta yubora oladi va
+          // Lug'at/Grammatika progressi tegilmaydi.
+          status: "pending",
         };
         submissions.push(newSubmission);
         await dbInsertSubmission(newSubmission);
 
-        if (!currentUser.completedHomeworks) currentUser.completedHomeworks = [];
-        if (!currentUser.completedHomeworks.includes(lessonId)) {
-          currentUser.completedHomeworks.push(lessonId);
-        }
-
-        const fullyDone = checkLessonFullCompletion(lessonId);
-        saveUserData(currentUser);
-
         alert(
-          "Vazifa muvaffaqiyatli ustozga yuborildi va ko'rinadigan bo'ldi!"
+          "Vazifa muvaffaqiyatli ustozga yuborildi! Ustoz tekshirib tasdiqlagach, dars to'liq yakunlanadi."
         );
-
-        if (fullyDone) {
-          setTimeout(() => {
-            alert(
-              "🎉 Tabriklaymiz! Siz ushbu darsni to'liq yakunladingiz — Lug'at, Grammatika va Uy vazifasi barchasi bajarildi!"
-            );
-          }, 300);
-        }
 
         openLessonDetail(lessonId);
       }
