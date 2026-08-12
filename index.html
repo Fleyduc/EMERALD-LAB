@@ -7508,9 +7508,28 @@ pen — ruchka 🖊"
       }
 
       function getNextStageNotification() {
-        if (!currentUser) return null;
+        if (!currentUser || currentUser.role !== "student") return null;
         const list = Array.isArray(currentUser.notifications) ? currentUser.notifications : [];
-        return list.find((n) => n.type === "next_stage_payment" && n.action === "open_next_stage_payment") || null;
+        const saved = list.find((n) => n.type === "next_stage_payment" && n.action === "open_next_stage_payment");
+        if (saved) return saved;
+
+        // Fallback: if the notification record was not loaded/saved correctly,
+        // derive the dashboard action directly from the trusted final-test result.
+        const result = (currentUser.finalTestResults || {})[currentUser.level];
+        if (result?.passed === true) {
+          const nextLevel = getNextLevelAfter(currentUser.level);
+          if (!nextLevel) return null;
+          return {
+            id: `next-stage-fallback-${currentUser.level}`,
+            type: "next_stage_payment",
+            levelKey: currentUser.level,
+            nextLevel,
+            action: "open_next_stage_payment",
+            text: `Final testdan ${result.score || 0}% bilan o'tdingiz. Keyingi bosqich uchun to'lov va chek yuboring.`,
+            read: false,
+          };
+        }
+        return null;
       }
 
       function renderNextStageNotificationCard() {
@@ -7538,11 +7557,16 @@ pen — ruchka 🖊"
 
       async function openNextStageNotification() {
         const note = getNextStageNotification();
-        if (!note) return;
+        if (!note) {
+          alert("❌ Keyingi bosqich mavjud emas yoki final test natijasi topilmadi.");
+          return;
+        }
 
         // Notification is read, but remains visible as a dashboard action card.
-        note.read = true;
-        await saveUserData(currentUser);
+        if (!String(note.id).startsWith("next-stage-fallback-")) {
+          note.read = true;
+          await saveUserData(currentUser);
+        }
         renderNotificationBell();
 
         if (note.nextLevel) {
@@ -10386,9 +10410,14 @@ pen — ruchka 🖊"
         renderLevelRoadmap(currentUser);
         renderStudentLessons();
         renderStudentCertificates();
+
+        // Immediately refresh the dashboard action card after a successful final test.
+        // The student stays on the current level until payment is approved.
         if (typeof loadDashboard === "function") {
-          document.getElementById("student-level-badge").innerText =
-            emeraldLevelLabel(currentUser.level).toUpperCase();
+          loadDashboard(currentUser);
+        } else {
+          renderNextStageNotificationCard();
+          renderNotificationBell();
         }
       }
 
