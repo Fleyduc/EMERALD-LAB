@@ -10880,6 +10880,9 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
          ============================================================ */
       const EMERALD_TASK_OPEN_DAYS = [1, 3, 5]; // Mon, Wed, Fri
       const EMERALD_TASK_OPEN_HOUR = 8;
+      // 🔕 Hozircha Dushanba/Chorshanba/Juma jadvali o'chirilgan.
+      // Qayta yoqish uchun bu qiymatni "true" ga qaytaring.
+      const EMERALD_TASK_SCHEDULE_ENABLED = false;
 
       function uzParts(value = new Date()) {
         const parts = new Intl.DateTimeFormat("en-CA", {
@@ -10910,6 +10913,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
 
       function getEmeraldTaskSchedule(user = currentUser, now = new Date()) {
         if (!user) return { availableCount: 0, nextOpen: null };
+        if (!EMERALD_TASK_SCHEDULE_ENABLED) return { availableCount: Infinity, nextOpen: null };
 
         const registeredAt = user.registered_at || user.created_at || now.toISOString();
         const reg = uzParts(registeredAt);
