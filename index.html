@@ -1,13 +1,4 @@
 
-/* EMERALD_TASK_GATE_V2 */
-function emeraldCanOpenTask(user, taskIndex, completedIndexes) {
-  return isTaskAvailableForStudent(
-    user,
-    Number(taskIndex),
-    Array.isArray(completedIndexes) ? completedIndexes : []
-  );
-}
-
 
 /* EMERALD_SCHEDULE_V2
    1-vazifa: student ro'yxatdan o'tgan kundan ochiladi.
@@ -8459,6 +8450,8 @@ pen — ruchka 🖊"
             role: "student",
             signup_code: extra.signup_code || metadata.signup_code || null,
             level: (extra.level || metadata.level || "pre-beginner"),
+            // Darslar jadvali uchun haqiqiy Supabase Auth ro'yxatdan o'tgan vaqti.
+            registeredAt: authUser.created_at || new Date().toISOString(),
             avatar: extra.avatar || metadata.avatar_url || DEFAULT_AVATAR,
             xp: 0, coins: 20, streak: 0, equippedTitle: "",
             certificates: [], completedLessons: [], completedVocabQuizzes: [],
@@ -8474,6 +8467,12 @@ pen — ruchka 🖊"
         } else {
           user.auth_user_id = authUser.id;
           user.auth_provider = provider;
+          // Eski profillarda maydon bo'lmasa, Auth created_at dan bir marta
+          // boshlanish sanasini tiklaymiz.
+          if (!user.registeredAt) {
+            user.registeredAt =
+              authUser.created_at || new Date().toISOString();
+          }
           user.phone = authUser.phone || user.phone || extra.phone || null;
           if (extra.full_name && !user.full_name) user.full_name = extra.full_name;
           if (extra.avatar) user.avatar = extra.avatar;
@@ -9791,10 +9790,118 @@ pen — ruchka 🖊"
 
       const LESSON_ICONS = ["📘", "📗", "📙", "📕", "📓", "📔", "📒", "🗂️"];
 
-      // Bir darajadagi (target_level) darslar ketma-ket ochiladi: keyingi
-      // dars faqat undan oldingi dars TO'LIQ yakunlangandan keyin (Lug'at
-      // 100%, Grammatika va Uy vazifasi barchasi) ochiladi. Darajadagi
-      // birinchi dars har doim ochiq.
+      // ============================================================
+      // EMERALD LESSON SCHEDULE
+      // 1-dars: o'quvchi akkaunt yaratgan KUNIDAN boshlab ochiq.
+      // 2-dars va undan keyingi darslar:
+      // Dushanba / Chorshanba / Juma, 08:00 Asia/Tashkent.
+      // Bunda oldingi dars ham TO'LIQ tugagan bo'lishi shart.
+      // ============================================================
+
+      function getStudentRegistrationDate(user) {
+        const raw =
+          user?.registeredAt ||
+          user?.registrationDate ||
+          user?.createdAt ||
+          user?.created_at ||
+          user?.signupAt ||
+          user?.signup_at ||
+          null;
+
+        if (raw) {
+          const d = new Date(raw);
+          if (!Number.isNaN(d.getTime())) return d;
+        }
+
+        // Supabase Auth user created_at finishAuthenticatedUser orqali
+        // currentUser.registeredAt ga yoziladi. Juda eski profillar uchun
+        // fallback sifatida hozirgi vaqt ishlatiladi.
+        return new Date();
+      }
+
+      function tashkentParts(date = new Date()) {
+        const parts = new Intl.DateTimeFormat("en-US", {
+          timeZone: "Asia/Tashkent",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hourCycle: "h23"
+        }).formatToParts(date);
+
+        const result = {};
+        parts.forEach((p) => {
+          if (p.type !== "literal") result[p.type] = Number(p.value);
+        });
+        return result;
+      }
+
+      // Hozirgi vaqtgacha registrationdan KEYIN o'tgan M/W/F 08:00
+      // slotlar sonini hisoblaydi.
+      function countAvailableMWFSlotsFromRegistration(user, now = new Date()) {
+        const registration = getStudentRegistrationDate(user);
+        const start = tashkentParts(registration);
+        const current = tashkentParts(now);
+
+        const startDay = new Date(
+          Date.UTC(start.year, start.month - 1, start.day)
+        );
+        const currentDay = new Date(
+          Date.UTC(current.year, current.month - 1, current.day)
+        );
+
+        if (currentDay < startDay) return 0;
+
+        let slots = 0;
+        const cursor = new Date(startDay);
+
+        while (cursor <= currentDay) {
+          const weekday = cursor.getUTCDay();
+          const isMWF = weekday === 1 || weekday === 3 || weekday === 5;
+
+          if (isMWF) {
+            const sameDay = cursor.getTime() === startDay.getTime();
+
+            // Registrationdan keyin bo'ladigan 08:00 slotgina hisoblanadi.
+            // Masalan:
+            // Wed 07:30 -> Wed 08:00 = 1-slot
+            // Wed 10:00 -> Wed 08:00 o'tib ketgan = keyingi Fri 08:00
+            const slotAfterRegistration =
+              !sameDay || start.hour < 8;
+
+            if (slotAfterRegistration) {
+              const slotIsReached =
+                cursor.getTime() < currentDay.getTime() ||
+                (sameDay
+                  ? current.hour >= 8
+                  : cursor.getTime() === currentDay.getTime() &&
+                    current.hour >= 8);
+
+              if (slotIsReached) slots++;
+            }
+          }
+
+          cursor.setUTCDate(cursor.getUTCDate() + 1);
+        }
+
+        return slots;
+      }
+
+      function isLessonScheduleOpen(lessonIndex, user, now = new Date()) {
+        // 1-dars registration qilingan kundan darhol ochiladi.
+        if (lessonIndex === 0) {
+          return now.getTime() >= getStudentRegistrationDate(user).getTime();
+        }
+
+        // lessonIndex=1 => registrationdan keyingi birinchi M/W/F 08:00
+        // lessonIndex=2 => ikkinchi M/W/F 08:00 va hokazo.
+        return (
+          countAvailableMWFSlotsFromRegistration(user, now) >= lessonIndex
+        );
+      }
+
       function isLessonUnlocked(lessonId) {
         const l = lessons.find((x) => x.id === lessonId);
         if (!l) return false;
@@ -9803,8 +9910,15 @@ pen — ruchka 🖊"
           (x) => x.target_level === l.target_level && x.type !== "writing"
         );
         const idx = levelLessons.findIndex((x) => x.id === lessonId);
-        if (idx <= 0) return true;
+        if (idx < 0) return false;
 
+        // Vaqt bo'yicha ochilish.
+        if (!isLessonScheduleOpen(idx, currentUser)) return false;
+
+        // 1-dars uchun boshqa dars sharti yo'q.
+        if (idx === 0) return true;
+
+        // Keyingi dars faqat oldingi dars TO'LIQ tugagandan keyin ochiladi.
         const prevLesson = levelLessons[idx - 1];
         const completed = currentUser.completedLessons || [];
         return completed.includes(prevLesson.id);
@@ -9812,6 +9926,20 @@ pen — ruchka 🖊"
 
       function handleLessonCardClick(lessonId) {
         if (!isLessonUnlocked(lessonId)) {
+          const l = lessons.find((x) => x.id === lessonId);
+          const levelLessons = l
+            ? lessons.filter(
+                (x) => x.target_level === l.target_level && x.type !== "writing"
+              )
+            : [];
+          const idx = l ? levelLessons.findIndex((x) => x.id === lessonId) : -1;
+
+          if (idx > 0 && !isLessonScheduleOpen(idx, currentUser)) {
+            return alert(
+              "🕐 Bu vazifa hali ochilmagan. Vazifalar Dushanba, Chorshanba va Juma kunlari 08:00 (O'zbekiston vaqti) da navbat bilan ochiladi."
+            );
+          }
+
           return alert(
             "🔒 Bu dars hali qulflangan. Avval oldingi darsni to'liq yakunlang: Lug'at testi (100%), Grammatika testi va Uy vazifasi."
           );
