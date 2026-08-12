@@ -2921,6 +2921,43 @@
         opacity: 0.3;
       }
 
+      .vocab-write-tiles {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 18px 0 10px;
+      }
+      .vocab-write-tile {
+        width: 42px;
+        height: 50px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px solid var(--card-border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--text-main);
+        text-transform: uppercase;
+        transition: 0.15s ease;
+      }
+      .vocab-write-tile.filled {
+        border-color: var(--gold);
+        background: rgba(245, 158, 11, 0.15);
+      }
+      .vocab-write-tile.correct {
+        border-color: var(--emerald-primary);
+        background: rgba(16, 185, 129, 0.18);
+        color: var(--emerald-light);
+      }
+      .vocab-write-tile.wrong {
+        border-color: var(--danger);
+        background: rgba(239, 68, 68, 0.18);
+        color: var(--danger);
+      }
+
       .shop-card {
         background: rgba(2, 20, 15, 0.6);
         border: 1px solid var(--card-border);
@@ -4711,6 +4748,20 @@
 
         <div id="vocab-quiz-dots" class="vocab-quiz-dots"></div>
 
+        <p
+          id="vocab-quiz-round-label"
+          style="
+            font-size: 0.72rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 800;
+            margin-bottom: 8px;
+          "
+        >
+          1-bosqich: Tarjimani toping
+        </p>
+
         <!-- QUESTION VIEW -->
         <div id="vocab-quiz-question-view">
           <p
@@ -4753,6 +4804,65 @@
           </div>
 
           <div id="vocab-quiz-options" style="display: grid; gap: 10px"></div>
+        </div>
+
+        <!-- WRITE VIEW (2-bosqich: tarjimasini yozish) -->
+        <div id="vocab-quiz-write-view" class="hidden">
+          <p
+            style="
+              font-size: 0.8rem;
+              color: var(--text-muted);
+              text-transform: uppercase;
+              letter-spacing: 1px;
+              margin-bottom: 6px;
+            "
+          >
+            So'zni inglizcha to'g'ri yozing
+          </p>
+
+          <div class="vocab-quiz-word-box">
+            <div class="vocab-quiz-word-row">
+              <div
+                id="vocab-quiz-write-trans"
+                style="font-size: 1.7rem; font-weight: 800; color: white"
+              >
+                tarjima
+              </div>
+            </div>
+          </div>
+
+          <div
+            id="vocab-quiz-write-tiles"
+            class="vocab-write-tiles"
+            onclick="document.getElementById('vocab-quiz-write-input').focus()"
+          ></div>
+
+          <input
+            type="text"
+            id="vocab-quiz-write-input"
+            autocomplete="off"
+            autocapitalize="off"
+            autocorrect="off"
+            spellcheck="false"
+            oninput="handleVocabWriteInput(event)"
+            style="
+              position: absolute;
+              opacity: 0;
+              height: 1px;
+              width: 1px;
+              pointer-events: none;
+            "
+          />
+
+          <p
+            style="
+              font-size: 0.72rem;
+              color: var(--text-muted);
+              margin-top: 6px;
+            "
+          >
+            Katakchalarga bosing va so'zni klaviaturada yozing
+          </p>
         </div>
 
         <!-- RESULT VIEW -->
@@ -12832,12 +12942,22 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           index: 0,
           correctCount: 0,
           locked: false,
+          writeQuestions: [],
+          writeIndex: 0,
+          writeCorrectCount: 0,
+          writeLocked: false,
         };
 
         document.getElementById("vocab-quiz-result-view").classList.add("hidden");
+        document.getElementById("vocab-quiz-write-view").classList.add("hidden");
         document
           .getElementById("vocab-quiz-question-view")
           .classList.remove("hidden");
+        const roundLabel = document.getElementById("vocab-quiz-round-label");
+        if (roundLabel) {
+          roundLabel.innerText = "1-bosqich: Tarjimani toping";
+          roundLabel.classList.remove("hidden");
+        }
         document.getElementById("lesson-detail-modal").classList.add("hidden");
         document.getElementById("vocab-quiz-modal").classList.remove("hidden");
         renderVocabQuizQuestion();
@@ -12850,11 +12970,12 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
 
         document.getElementById("vocab-quiz-word").innerText = q.word;
         document.getElementById("vocab-quiz-phonetic").innerText = q.phonetic;
+        const totalSteps = state.questions.length * 2;
         document.getElementById(
           "vocab-quiz-progress-text"
-        ).innerText = `${state.index + 1} / ${state.questions.length}`;
+        ).innerText = `${state.index + 1} / ${totalSteps}`;
         document.getElementById("vocab-quiz-progress-fill").style.width =
-          `${(state.index / state.questions.length) * 100}%`;
+          `${(state.index / totalSteps) * 100}%`;
 
         const dotsBox = document.getElementById("vocab-quiz-dots");
         if (dotsBox) {
@@ -12928,15 +13049,155 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           if (state.index < state.questions.length) {
             renderVocabQuizQuestion();
           } else {
-            finishVocabQuiz();
+            startVocabWriteRound();
           }
         }, 900);
       }
 
+      // ================= 2-BOSQICH: SO'ZNI YOZISH (Round 2) =================
+      function startVocabWriteRound() {
+        const state = vocabQuizState;
+        if (!state) return;
+
+        // Round 1'dagi so'zlarni qayta aralashtirib, yozish mashqi uchun
+        // yangi tartibda tayyorlaymiz.
+        state.writeQuestions = shuffleArray(
+          state.questions.map((q) => ({
+            word: q.word,
+            phonetic: q.phonetic,
+            trans: q.correct,
+          }))
+        );
+        state.writeIndex = 0;
+        state.writeCorrectCount = 0;
+        state.writeLocked = false;
+
+        document
+          .getElementById("vocab-quiz-question-view")
+          .classList.add("hidden");
+        document
+          .getElementById("vocab-quiz-write-view")
+          .classList.remove("hidden");
+
+        const roundLabel = document.getElementById("vocab-quiz-round-label");
+        if (roundLabel) roundLabel.innerText = "2-bosqich: So'zni yozing";
+
+        renderVocabWriteQuestion();
+      }
+
+      function renderVocabWriteQuestion() {
+        const state = vocabQuizState;
+        if (!state) return;
+        const q = state.writeQuestions[state.writeIndex];
+        state.writeLocked = false;
+
+        document.getElementById("vocab-quiz-write-trans").innerText = q.trans;
+
+        const totalSteps = state.questions.length * 2;
+        const stepNow = state.questions.length + state.writeIndex + 1;
+        document.getElementById(
+          "vocab-quiz-progress-text"
+        ).innerText = `${stepNow} / ${totalSteps}`;
+        document.getElementById("vocab-quiz-progress-fill").style.width =
+          `${((stepNow - 1) / totalSteps) * 100}%`;
+
+        const dotsBox = document.getElementById("vocab-quiz-dots");
+        if (dotsBox) {
+          dotsBox.innerHTML = state.questions
+            .map((_, i) => {
+              const idx = state.questions.length + i;
+              const cls =
+                i < state.writeIndex
+                  ? "done"
+                  : i === state.writeIndex
+                  ? "active"
+                  : "";
+              return `<span class="vocab-quiz-dot ${cls}"></span>`;
+            })
+            .join("");
+        }
+
+        const input = document.getElementById("vocab-quiz-write-input");
+        if (input) {
+          input.value = "";
+          input.disabled = false;
+          setTimeout(() => input.focus(), 50);
+        }
+        renderVocabWriteTiles("");
+      }
+
+      function renderVocabWriteTiles(val, statusClass) {
+        const state = vocabQuizState;
+        if (!state) return;
+        const q = state.writeQuestions[state.writeIndex];
+        const tilesBox = document.getElementById("vocab-quiz-write-tiles");
+        if (!tilesBox) return;
+        tilesBox.innerHTML = q.word
+          .split("")
+          .map((ch, i) => {
+            const letter = val[i] || "";
+            const cls = statusClass
+              ? statusClass
+              : letter
+              ? "filled"
+              : "";
+            return `<div class="vocab-write-tile ${cls}">${letter}</div>`;
+          })
+          .join("");
+      }
+
+      function handleVocabWriteInput(e) {
+        const state = vocabQuizState;
+        if (!state || state.writeLocked) {
+          e.target.value = "";
+          return;
+        }
+        const q = state.writeQuestions[state.writeIndex];
+        const maxLen = q.word.length;
+        let val = e.target.value.toUpperCase().replace(/[^A-Z']/g, "");
+        if (val.length > maxLen) val = val.slice(0, maxLen);
+        e.target.value = val;
+        renderVocabWriteTiles(val);
+        if (val.length === maxLen) {
+          checkVocabWriteAnswer(val);
+        }
+      }
+
+      function checkVocabWriteAnswer(val) {
+        const state = vocabQuizState;
+        const q = state.writeQuestions[state.writeIndex];
+        state.writeLocked = true;
+
+        const isCorrect = val.toUpperCase() === q.word.toUpperCase();
+        renderVocabWriteTiles(
+          isCorrect ? q.word.toUpperCase() : val,
+          isCorrect ? "correct" : "wrong"
+        );
+
+        if (isCorrect) {
+          state.writeCorrectCount++;
+        } else if ("speechSynthesis" in window) {
+          // Xato bo'lsa, to'g'ri talaffuzni eshittiramiz
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(q.word);
+          utterance.lang = "en-US";
+          window.speechSynthesis.speak(utterance);
+        }
+
+        setTimeout(() => {
+          state.writeIndex++;
+          if (state.writeIndex < state.writeQuestions.length) {
+            renderVocabWriteQuestion();
+          } else {
+            finishVocabQuiz();
+          }
+        }, isCorrect ? 900 : 1400);
+      }
+
       function finishVocabQuiz() {
         const state = vocabQuizState;
-        const total = state.questions.length;
-        const correct = state.correctCount;
+        const total = state.questions.length + state.writeQuestions.length;
+        const correct = state.correctCount + state.writeCorrectCount;
         const percent = Math.round((correct / total) * 100);
         const passed = percent === 100;
 
@@ -12944,6 +13205,11 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         document
           .getElementById("vocab-quiz-question-view")
           .classList.add("hidden");
+        document
+          .getElementById("vocab-quiz-write-view")
+          .classList.add("hidden");
+        const roundLabel = document.getElementById("vocab-quiz-round-label");
+        if (roundLabel) roundLabel.classList.add("hidden");
         document.getElementById("vocab-quiz-result-view").classList.remove(
           "hidden"
         );
@@ -12951,6 +13217,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         const dotsBox = document.getElementById("vocab-quiz-dots");
         if (dotsBox) {
           dotsBox.innerHTML = state.questions
+            .concat(state.writeQuestions)
             .map(() => `<span class="vocab-quiz-dot done"></span>`)
             .join("");
         }
@@ -13036,6 +13303,8 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
 
       function closeVocabQuiz() {
         document.getElementById("vocab-quiz-modal").classList.add("hidden");
+        document.getElementById("vocab-quiz-write-view").classList.add("hidden");
+        window.speechSynthesis && window.speechSynthesis.cancel();
         const lessonId = vocabQuizState ? vocabQuizState.lessonId : null;
         vocabQuizState = null;
         // Dars tafsiloti oynasini yangilaymiz, shunda tugma va vazifa
