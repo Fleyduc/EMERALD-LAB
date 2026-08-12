@@ -3471,6 +3471,45 @@
       .grammar-sequence-rule strong{color:var(--text-main)}
       .grammar-quiz-step-progress{color:var(--text-muted);font-size:.7rem;font-weight:800}
 
+      /* ===== GRAMMAR DIALOGUE / CONTEXT QUESTION ===== */
+      .grammar-dialogue-question{
+        margin:12px 0 14px;
+        padding:14px 16px;
+        border-radius:13px;
+        background:rgba(255,255,255,.045);
+        border:1px solid var(--card-border);
+        font-size:.9rem;
+        line-height:1.8;
+        white-space:pre-line;
+      }
+      .grammar-dialogue-blank{
+        display:inline-flex;
+        vertical-align:middle;
+        min-width:88px;
+        height:30px;
+        margin:0 4px;
+        padding:0 12px;
+        align-items:center;
+        justify-content:center;
+        border-radius:7px;
+        border:1.5px solid var(--emerald-primary);
+        background:rgba(16,185,129,.08);
+        box-shadow:inset 0 -2px 0 rgba(16,185,129,.2);
+      }
+      .grammar-question-type-badge{
+        display:inline-flex;
+        align-items:center;
+        gap:5px;
+        margin-bottom:8px;
+        padding:4px 8px;
+        border-radius:999px;
+        background:rgba(16,185,129,.10);
+        border:1px solid var(--card-border);
+        color:var(--emerald-light);
+        font-size:.62rem;
+        font-weight:800;
+      }
+
       /* ===== TEACHER IELTS TAB ORGANIZATION ===== */
 
       .teacher-homework-inbox{margin-top:24px;padding:18px;border:1px solid rgba(16,185,129,.22);border-radius:20px;background:linear-gradient(135deg,rgba(16,185,129,.07),rgba(15,23,42,.22));box-shadow:0 10px 30px rgba(0,0,0,.08)}
@@ -4623,8 +4662,21 @@ pen — ruchka 🖊"
                 </div>
 
                 <div class="input-group">
+                  <label>Savol turi *</label>
+                  <select id="quiz-question-type">
+                    <option value="standard">📝 Oddiy Multiple Choice</option>
+                    <option value="dialogue">💬 Dialogue / Context — rasmdagidek</option>
+                  </select>
+                  <small style="display:block;margin-top:6px;color:var(--text-muted);font-size:.68rem">
+                    💡 Dialogue turida savol ichida <strong>___</strong> yoki <strong>{{blank}}</strong> yozing — o'quvchiga bo'sh joy sifatida ko'rinadi.
+                  </small>
+                </div>
+
+                <div class="input-group">
                   <label>Test Savoli *</label>
-                  <textarea id="quiz-question" rows="2" placeholder="Masalan: She ___ to school every day."></textarea>
+                  <textarea id="quiz-question" rows="3" placeholder="Masalan:
+- Hello, are you here on business?
+- Hello, ___"></textarea>
                 </div>
 
                 <div class="grammar-option-grid">
@@ -9430,6 +9482,7 @@ pen — ruchka 🖊"
 
         return {
           question,
+          question_type: document.getElementById("quiz-question-type")?.value || "standard",
           options,
           correctIndex: getSelectedGrammarCorrectIndex(),
           image_url: tempGrammarImageUrl || document.getElementById("quiz-image-url")?.value.trim() || "",
@@ -9454,7 +9507,7 @@ pen — ruchka 🖊"
             <div style="min-width:0;flex:1">
               <div class="grammar-question-item-text">${escapeHtml(q.question)}</div>
               <div class="grammar-question-item-meta">
-                3 variant • To'g'ri: ${["A","B","C"][q.correctIndex]} ${q.image_url?"• 🖼️ Rasm":""}
+                ${q.question_type==="dialogue"?"💬 Dialogue":"📝 Multiple Choice"} • 3 variant • To'g'ri: ${["A","B","C"][q.correctIndex]} ${q.image_url?"• 🖼️ Rasm":""}
               </div>
             </div>
             <button type="button" class="grammar-remove-question" onclick="removeGrammarQuestion(${i})">✕</button>
@@ -9487,6 +9540,9 @@ pen — ruchka 🖊"
         ["quiz-question","quiz-opt-a","quiz-opt-b","quiz-opt-c"].forEach(id=>{
           const el=document.getElementById(id); if(el) el.value="";
         });
+
+        const typeEl=document.getElementById("quiz-question-type");
+        if(typeEl) typeEl.value="standard";
 
         const first=document.querySelector('input[name="grammar-correct"][value="0"]');
         if(first) first.checked=true;
@@ -10803,6 +10859,7 @@ pen — ruchka 🖊"
           return {
             questions:q.questions.map(item=>({
               question:item.question||"",
+              questionType:item.question_type||"standard",
               options:Array.isArray(item.options)?item.options.map((txt,i)=>({
                 text:String(txt??""),
                 isCorrect:i===Number(item.correctIndex||0),
@@ -10817,6 +10874,7 @@ pen — ruchka 🖊"
           const ci=Number.isInteger(q.correctIndex)?q.correctIndex:0;
           return {questions:[{
             question:q.question||"",
+            questionType:q.question_type||"standard",
             options:q.options.map((txt,i)=>({text:String(txt??""),isCorrect:i===ci})),
             imageUrl:q.image_url||"",
             imageTemplate:q.image_template||"standard",
@@ -10826,6 +10884,7 @@ pen — ruchka 🖊"
         if(q.question&&q.correct){
           return {questions:[{
             question:q.question,
+            questionType:q.question_type||"standard",
             options:[{text:q.correct,isCorrect:true},{text:q.wrong||"",isCorrect:false}].filter(x=>x.text),
             imageUrl:q.image_url||"",
             imageTemplate:q.image_template||"standard",
@@ -10898,6 +10957,22 @@ pen — ruchka 🖊"
               onerror="this.parentElement.classList.add('hidden')" />
           </div>`:"";
 
+        const isDialogue=q.questionType==="dialogue";
+        const renderDialogueQuestion=(value)=>{
+          const safe=escapeHtml(value);
+          const parts=safe.split(/(___+|\{\{blank\}\})/g);
+          return parts.map(part=>{
+            if(/^___+$/.test(part)||part==="{{blank}}"){
+              return '<span class="grammar-dialogue-blank" aria-hidden="true"></span>';
+            }
+            return part.replace(/\n/g,'<br>');
+          }).join("");
+        };
+        const questionHtml=isDialogue
+          ? `<div class="grammar-question-type-badge">💬 Dialogue / Context</div>
+             <div class="grammar-dialogue-question">${renderDialogueQuestion(q.question)}</div>`
+          : `<div class="grammar-quiz-question">${escapeHtml(q.question)}</div>`;
+
         let feedback="";
         if(state.result==="correct"){
           feedback=`<div class="grammar-feedback success"><span>✓</span><div><strong>To'g'ri!</strong><div style="margin-top:3px;opacity:.85;">Keyingi savol yuklanmoqda...</div></div></div>`;
@@ -10924,7 +10999,7 @@ pen — ruchka 🖊"
               <div class="grammar-quiz-progress-fill" style="width:${Math.round(step/total*100)}%"></div>
             </div>
             ${imageHtml}
-            <div class="grammar-quiz-question">${escapeHtml(q.question)}</div>
+            ${questionHtml}
             <div class="grammar-quiz-options">
               ${q.options.map((o,i)=>{
                 const wrong=state.result==="wrong"&&state.selectedIndex===i;
