@@ -1627,6 +1627,63 @@
         background: rgba(2, 20, 15, 0.9);
       }
 
+      /* ===== 🖼️ USTOZ VAZIFA/DARS ASOSIY RASMI ===== */
+      .teacher-task-image-upload {
+        border: 1px dashed var(--card-border-hover);
+        border-radius: 14px;
+        padding: 12px;
+        background: rgba(16, 185, 129, 0.06);
+        margin: 12px 0;
+      }
+      .teacher-task-image-upload label {
+        display: block;
+        font-size: .78rem;
+        font-weight: 800;
+        color: var(--emerald-light);
+        margin-bottom: 7px;
+      }
+      .teacher-task-image-upload input[type="file"] {
+        width: 100%;
+        padding: 9px;
+        border: 1px solid var(--card-border);
+        border-radius: 10px;
+        background: rgba(0,0,0,.18);
+        color: var(--text-main);
+      }
+      .teacher-task-image-help {
+        display: block;
+        margin-top: 6px;
+        color: var(--text-muted);
+        font-size: .68rem;
+      }
+      .teacher-task-image-preview {
+        display: block;
+        width: 100%;
+        max-height: 260px;
+        object-fit: contain;
+        margin-top: 10px;
+        border-radius: 12px;
+        border: 1px solid var(--card-border);
+        background: rgba(0,0,0,.12);
+      }
+      .teacher-task-main-image {
+        width: 100%;
+        margin: 12px 0 14px;
+        border: 1px solid var(--card-border);
+        border-radius: 14px;
+        overflow: hidden;
+        background: rgba(0,0,0,.12);
+      }
+      .teacher-task-main-image img {
+        display: block;
+        width: 100%;
+        max-height: 420px;
+        object-fit: contain;
+      }
+      .lesson-card .teacher-task-main-image {
+        margin: 0 0 12px;
+      }
+
       /* ===== 📅 VAZIFA JADVALI ===== */
       .lesson-schedule-info {
         margin-top: 10px;
@@ -5036,6 +5093,15 @@
                 />
               </div>
 
+              <div class="teacher-task-image-upload">
+                <label>🖼️ Darsning asosiy rasmi</label>
+                <input type="file" id="lesson-main-image-file"
+                  accept="image/png,image/jpeg,image/webp,image/gif"
+                  onchange="previewTeacherTaskImage(event, 'lesson-main-image-preview')" />
+                <span class="teacher-task-image-help">Dars mavzusini ifodalovchi rasm. Rasm avtomatik optimallashtirib dars bilan birga saqlanadi.</span>
+                <img id="lesson-main-image-preview" class="teacher-task-image-preview hidden" alt="Dars rasmi preview" />
+              </div>
+
               <div class="input-group">
                 <label data-i18n="lessonTextLabel"
                   >Dars Topshiriqlari / Matni</label
@@ -5417,6 +5483,15 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
                 </div>
               </div>
 
+              <div class="teacher-task-image-upload">
+                <label>🖼️ Vazifaning asosiy rasmi</label>
+                <input type="file" id="wt-main-image-file"
+                  accept="image/png,image/jpeg,image/webp,image/gif"
+                  onchange="previewTeacherTaskImage(event, 'wt-main-image-preview')" />
+                <span class="teacher-task-image-help">Task 1 diagram/chart yoki mavzuga mos rasmni shu yerga biriktiring.</span>
+                <img id="wt-main-image-preview" class="teacher-task-image-preview hidden" alt="Writing vazifa rasmi preview" />
+              </div>
+
               <div class="input-group">
                 <label>Mavzu / Savol Matni (Prompt)</label>
                 <textarea
@@ -5522,6 +5597,15 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
                 </div>
               </div>
 
+              <div class="teacher-task-image-upload">
+                <label>🖼️ Reading testining asosiy rasmi</label>
+                <input type="file" id="rt-main-image-file"
+                  accept="image/png,image/jpeg,image/webp,image/gif"
+                  onchange="previewTeacherTaskImage(event, 'rt-main-image-preview')" />
+                <span class="teacher-task-image-help">Reading mavzusiga mos asosiy rasmni test bilan birga saqlash mumkin.</span>
+                <img id="rt-main-image-preview" class="teacher-task-image-preview hidden" alt="Reading rasmi preview" />
+              </div>
+
               <div class="grid-2">
                 <div class="input-group">
                   <label>Vaqt Rejimi</label>
@@ -5615,6 +5699,15 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
                     <option value="full">Full Test (Section 1+2+3+4)</option>
                   </select>
                 </div>
+              </div>
+
+              <div class="teacher-task-image-upload">
+                <label>🖼️ Listening testining asosiy rasmi</label>
+                <input type="file" id="lt-main-image-file"
+                  accept="image/png,image/jpeg,image/webp,image/gif"
+                  onchange="previewTeacherTaskImage(event, 'lt-main-image-preview')" />
+                <span class="teacher-task-image-help">Listening mavzusiga mos asosiy rasmni test bilan birga saqlash mumkin.</span>
+                <img id="lt-main-image-preview" class="teacher-task-image-preview hidden" alt="Listening rasmi preview" />
               </div>
 
               <div class="grid-2">
@@ -6498,6 +6591,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
                 <span>⏱️</span>
                 <span id="reading-workspace-title">Reading</span>
               </div>
+              <div id="reading-workspace-title-image"></div>
               <div style="display: flex; align-items: center; gap: 12px">
                 <span
                   id="reading-timer"
@@ -6648,6 +6742,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
                 <span>⏱️</span>
                 <span id="listening-workspace-title">Listening</span>
               </div>
+              <div id="listening-workspace-title-image"></div>
               <div style="display: flex; align-items: center; gap: 12px">
                 <span
                   id="listening-timer"
@@ -8016,6 +8111,69 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
 
           reader.readAsDataURL(file);
         });
+      }
+
+      // Ustoz vazifa/darsga biriktiradigan asosiy rasm.
+      // Rasm kichraytiriladi va Data URL sifatida vazifaning o'zida saqlanadi.
+      async function compressTeacherTaskImage(file, maxSize = 900, quality = 0.82) {
+        if (!file || !file.type || !file.type.startsWith("image/")) return null;
+
+        const dataUrl = await fileToDataUrl(file);
+
+        return await new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => {
+            const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.max(1, Math.round(img.width * scale));
+            canvas.height = Math.max(1, Math.round(img.height * scale));
+
+            const ctx = canvas.getContext("2d");
+            if (!ctx) {
+              resolve(dataUrl);
+              return;
+            }
+
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL("image/jpeg", quality));
+          };
+          img.onerror = () => resolve(dataUrl);
+          img.src = dataUrl;
+        });
+      }
+
+      async function getTeacherTaskImage(fileInputId) {
+        const input = document.getElementById(fileInputId);
+        const file = input?.files?.[0];
+        if (!file) return "";
+        return await compressTeacherTaskImage(file);
+      }
+
+      function previewTeacherTaskImage(event, previewId) {
+        const preview = document.getElementById(previewId);
+        const file = event.target.files?.[0];
+
+        if (!preview || !file) {
+          if (preview) preview.classList.add("hidden");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = () => {
+          preview.src = reader.result;
+          preview.classList.remove("hidden");
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function teacherTaskImageHtml(imageUrl, alt = "Vazifa rasmi") {
+        if (!imageUrl) return "";
+        return `
+          <div class="teacher-task-main-image">
+            <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(alt)}" loading="lazy"
+              onerror="this.parentElement.classList.add('hidden')" />
+          </div>
+        `;
       }
 
       // IELTS Listening uchun audio faylni Supabase Storage'ga yuklaydi
@@ -10537,12 +10695,15 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           }
         });
 
+        const mainImageUrl = await getTeacherTaskImage("lesson-main-image-file");
+
         const newLesson = {
           id: Date.now(),
           title: document.getElementById("lesson-title").value,
           target_level: document.getElementById("lesson-level").value,
           video_url: document.getElementById("lesson-video").value,
           content_text: document.getElementById("lesson-text").value,
+          image_url: mainImageUrl,
           vocabulary: vocabList,
           created_at: new Date().toLocaleDateString(),
           quiz: grammarQuiz
@@ -10570,6 +10731,11 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         renderPendingGrammarQuestions();
         resetGrammarBuilder();
         updateGrammarImagePreview();
+        const lessonImagePreview = document.getElementById("lesson-main-image-preview");
+        if (lessonImagePreview) {
+          lessonImagePreview.src = "";
+          lessonImagePreview.classList.add("hidden");
+        }
         renderTeacherLessonsList();
       }
 
@@ -11722,7 +11888,10 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         document.getElementById("lesson-detail-level").innerText =
           l.target_level;
 
+        const lessonMainImageHtml = teacherTaskImageHtml(l.image_url, `${l.title} — asosiy rasm`);
+
         document.getElementById("lesson-detail-body").innerHTML = `
+          ${lessonMainImageHtml}
           ${
             isDone
               ? `<div style="background: rgba(16,185,129,0.1); border: 1px solid var(--emerald-primary); border-radius: 12px; padding: 10px 14px; margin-bottom: 12px; font-size: 0.85rem; color: var(--emerald-light);">
@@ -14789,12 +14958,14 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         e.preventDefault();
 
         const taskType = document.getElementById("wt-tasktype").value;
+        const mainImageUrl = await getTeacherTaskImage("wt-main-image-file");
         const newTask = {
           id: Date.now(),
           type: "writing",
           title: document.getElementById("wt-title").value,
           taskType,
           target_level: "ielts",
+          image_url: mainImageUrl,
           prompt: document.getElementById("wt-prompt").value,
           rules: document.getElementById("wt-rules").value,
           sample: document.getElementById("wt-sample").value,
@@ -14807,6 +14978,11 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
 
         alert("✅ Writing vazifasi muvaffaqiyatli saqlandi va o'quvchilarga ko'rinadigan bo'ldi!");
         e.target.reset();
+        const writingImagePreview = document.getElementById("wt-main-image-preview");
+        if (writingImagePreview) {
+          writingImagePreview.src = "";
+          writingImagePreview.classList.add("hidden");
+        }
         renderWritingTasksAdminList();
       }
 
@@ -15000,6 +15176,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
 
             return `
             <div class="lesson-card ${isDone ? "is-done" : ""}">
+              ${teacherTaskImageHtml(t.image_url, `${t.title} — vazifa rasmi`)}
               <div style="display:flex; align-items:center; justify-content:space-between;">
                 <div class="lesson-card-icon">✍️</div>
                 ${isDone ? `<span class="badge" style="background:rgba(16,185,129,0.25); color:var(--emerald-light);">✅ Yuborilgan</span>` : ""}
@@ -15063,7 +15240,8 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           .classList.remove("hidden");
         document.getElementById("writing-workspace-title").innerText = task.title;
 
-        let rulesHtml = `<strong>📌 Mavzu:</strong> ${task.prompt}`;
+        let rulesHtml = teacherTaskImageHtml(task.image_url, `${task.title} — vazifa rasmi`);
+        rulesHtml += `<strong>📌 Mavzu:</strong> ${task.prompt}`;
         if (task.rules) {
           rulesHtml += `<br><br><strong>📋 Qoidalar:</strong> ${task.rules}`;
         }
@@ -15590,6 +15768,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           (sum, p) => sum + p.questions.length,
           0
         );
+        const mainImageUrl = await getTeacherTaskImage("rt-main-image-file");
 
         const newTask = {
           id: Date.now(),
@@ -15597,6 +15776,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           title: document.getElementById("rt-title").value,
           mode,
           target_level: "ielts",
+          image_url: mainImageUrl,
           timeMode,
           timeLimit: timeMode === "unlimited" ? null : timeLimitInput,
           passages,
@@ -15612,6 +15792,11 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         );
         e.target.reset();
         renderReadingPassageInputs();
+        const readingImagePreview = document.getElementById("rt-main-image-preview");
+        if (readingImagePreview) {
+          readingImagePreview.src = "";
+          readingImagePreview.classList.add("hidden");
+        }
         renderReadingTasksAdminList();
       }
 
@@ -15730,6 +15915,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
 
             return `
             <div class="lesson-card ${isComplete ? "is-done" : ""}">
+              ${teacherTaskImageHtml(t.image_url, `${t.title} — Reading rasmi`)}
               <div style="display:flex; align-items:center; justify-content:space-between;">
                 <div class="lesson-card-icon">\ud83d\udcd6</div>
                 ${statusBadge}
@@ -16071,6 +16257,8 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           .getElementById("reading-workspace-card")
           .classList.remove("hidden");
         document.getElementById("reading-workspace-title").innerText = task.title;
+        const mainTaskImage = document.getElementById("reading-workspace-title-image");
+        if (mainTaskImage) mainTaskImage.innerHTML = teacherTaskImageHtml(task.image_url, `${task.title} — Reading rasmi`);
 
         const wrap = document.getElementById("reading-passages-workspace");
         let qCounter = 0;
@@ -16697,6 +16885,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           (sum, p) => sum + p.questions.length,
           0
         );
+        const mainImageUrl = await getTeacherTaskImage("lt-main-image-file");
 
         const newTask = {
           id: Date.now(),
@@ -16704,6 +16893,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           title: document.getElementById("lt-title").value,
           mode,
           target_level: "ielts",
+          image_url: mainImageUrl,
           timeMode,
           timeLimit: timeMode === "unlimited" ? null : timeLimitInput,
           sections,
@@ -16720,6 +16910,11 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         e.target.reset();
         tempListeningAudioUrls = {};
         renderListeningSectionInputs();
+        const listeningImagePreview = document.getElementById("lt-main-image-preview");
+        if (listeningImagePreview) {
+          listeningImagePreview.src = "";
+          listeningImagePreview.classList.add("hidden");
+        }
         renderListeningTasksAdminList();
       }
 
@@ -16838,6 +17033,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
 
             return `
             <div class="lesson-card ${isComplete ? "is-done" : ""}">
+              ${teacherTaskImageHtml(t.image_url, `${t.title} — Listening rasmi`)}
               <div style="display:flex; align-items:center; justify-content:space-between;">
                 <div class="lesson-card-icon">\ud83c\udfa7</div>
                 ${statusBadge}
@@ -16963,6 +17159,8 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           .getElementById("listening-workspace-card")
           .classList.remove("hidden");
         document.getElementById("listening-workspace-title").innerText = task.title;
+        const mainTaskImage = document.getElementById("listening-workspace-title-image");
+        if (mainTaskImage) mainTaskImage.innerHTML = teacherTaskImageHtml(task.image_url, `${task.title} — Listening rasmi`);
 
         const wrap = document.getElementById("listening-sections-workspace");
         let qCounter = 0;
