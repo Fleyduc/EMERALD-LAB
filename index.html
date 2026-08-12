@@ -905,66 +905,106 @@
         margin-top: 12px;
       }
 
-      /* ===== DARAJALAR YO'L XARITASI (ROADMAP) ===== */
+      /* ===== DARAJALAR YO'L XARITASI (ROADMAP) — v2 chiroyli dizayn ===== */
       .roadmap-wrap {
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: 18px;
       }
 
       .roadmap-module {
+        position: relative;
         border: 1px solid var(--card-border);
-        border-radius: 14px;
-        padding: 12px 14px;
-        background: rgba(0, 0, 0, 0.14);
+        border-radius: 18px;
+        padding: 16px 18px 18px;
+        background: linear-gradient(160deg, rgba(16,185,129,0.08) 0%, rgba(0,0,0,0.18) 100%);
+        overflow: hidden;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease;
+      }
+
+      .roadmap-module::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 0% 0%, rgba(52,211,153,0.10), transparent 55%);
+        pointer-events: none;
+      }
+
+      .roadmap-module:hover {
+        border-color: var(--card-border-hover);
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
       }
 
       .roadmap-module-head {
-        font-size: 0.8rem;
-        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: 0.82rem;
+        font-weight: 800;
         color: var(--emerald-light);
-        margin-bottom: 10px;
-        letter-spacing: 0.01em;
+        margin-bottom: 14px;
+        letter-spacing: 0.02em;
+        position: relative;
+      }
+
+      .roadmap-module-progress {
+        font-size: 0.66rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        background: rgba(0, 0, 0, 0.28);
+        border: 1px solid var(--card-border);
+        padding: 3px 10px;
+        border-radius: 999px;
+        white-space: nowrap;
       }
 
       .roadmap-row {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         flex-wrap: wrap;
         gap: 0;
+        position: relative;
       }
 
       .roadmap-step {
         display: flex;
         flex-direction: column;
         align-items: center;
-        width: 92px;
+        width: 96px;
         text-align: center;
-        gap: 6px;
+        gap: 8px;
+        position: relative;
       }
 
       .roadmap-dot {
-        width: 38px;
-        height: 38px;
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1rem;
+        font-size: 1.05rem;
         border: 2px solid var(--card-border);
-        background: rgba(0, 0, 0, 0.25);
+        background: rgba(0, 0, 0, 0.3);
         flex-shrink: 0;
+        position: relative;
+        z-index: 2;
+        transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, border-color 0.25s ease;
       }
 
       .roadmap-step-title {
-        font-size: 0.66rem;
+        font-size: 0.68rem;
         line-height: 1.25;
         color: var(--text-muted);
+        font-weight: 600;
+        transition: color 0.2s ease, opacity 0.2s ease;
       }
 
       .roadmap-step.done .roadmap-dot {
         border-color: var(--emerald-primary);
-        background: rgba(16, 185, 129, 0.18);
+        background: linear-gradient(160deg, #10b981, #047857);
+        box-shadow: 0 0 14px rgba(16, 185, 129, 0.45);
       }
 
       .roadmap-step.done .roadmap-step-title {
@@ -973,9 +1013,15 @@
 
       .roadmap-step.current .roadmap-dot {
         border-color: var(--emerald-light);
-        background: rgba(16, 185, 129, 0.28);
-        box-shadow: 0 0 16px var(--emerald-glow-strong);
-        transform: scale(1.12);
+        background: radial-gradient(circle, rgba(16,185,129,0.4), rgba(16,185,129,0.15));
+        box-shadow: 0 0 0 5px rgba(16, 185, 129, 0.14), 0 0 22px var(--emerald-glow-strong);
+        transform: scale(1.18);
+        animation: roadmapPulse 2.2s ease-in-out infinite;
+      }
+
+      @keyframes roadmapPulse {
+        0%, 100% { box-shadow: 0 0 0 5px rgba(16, 185, 129, 0.14), 0 0 18px var(--emerald-glow-strong); }
+        50% { box-shadow: 0 0 0 9px rgba(16, 185, 129, 0.08), 0 0 28px var(--emerald-glow-strong); }
       }
 
       .roadmap-step.current .roadmap-step-title {
@@ -983,33 +1029,255 @@
         font-weight: 800;
       }
 
+      .roadmap-step.locked-final .roadmap-dot {
+        border-color: var(--gold);
+        background: radial-gradient(circle, rgba(245,158,11,0.35), rgba(245,158,11,0.1));
+        box-shadow: 0 0 16px rgba(245, 158, 11, 0.4);
+        cursor: pointer;
+      }
+
       .roadmap-step.upcoming .roadmap-dot {
-        opacity: 0.55;
+        opacity: 0.5;
       }
 
       .roadmap-step.upcoming .roadmap-step-title {
-        opacity: 0.55;
+        opacity: 0.5;
       }
 
       .roadmap-connector {
-        height: 2px;
-        width: 22px;
+        height: 3px;
+        width: 26px;
         background: var(--card-border);
         flex-shrink: 0;
-        margin: 0 -2px 18px;
+        margin: 20px -2px 0;
+        border-radius: 3px;
+        position: relative;
+        z-index: 1;
       }
 
       .roadmap-connector.done {
-        background: var(--emerald-primary);
+        background: linear-gradient(90deg, var(--emerald-primary), var(--emerald-light));
+      }
+
+      .roadmap-step-percent {
+        font-size: 0.6rem;
+        font-weight: 700;
+        color: var(--emerald-light);
+        opacity: 0.85;
       }
 
       @media (max-width: 680px) {
         .roadmap-step {
-          width: 78px;
+          width: 80px;
+        }
+        .roadmap-dot {
+          width: 38px;
+          height: 38px;
         }
         .roadmap-connector {
-          width: 12px;
+          width: 14px;
+          margin-top: 17px;
         }
+      }
+
+      /* ===== YAKUNIY TEST (FINAL TEST) ===== */
+      .final-test-question-card {
+        border: 1px solid var(--card-border);
+        border-radius: 14px;
+        padding: 14px 16px;
+        background: rgba(0, 0, 0, 0.2);
+        margin-bottom: 14px;
+      }
+
+      .final-test-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border: 1px solid var(--card-border);
+        border-radius: 10px;
+        margin-top: 8px;
+        cursor: pointer;
+        transition: border-color 0.2s ease, background 0.2s ease;
+        font-size: 0.85rem;
+      }
+
+      .final-test-option:hover {
+        border-color: var(--card-border-hover);
+        background: rgba(16, 185, 129, 0.08);
+      }
+
+      .final-test-option.selected {
+        border-color: var(--emerald-primary);
+        background: rgba(16, 185, 129, 0.16);
+        color: var(--text-main);
+        font-weight: 700;
+      }
+
+      .final-test-gate-card {
+        border: 1px solid var(--card-border);
+        border-radius: 16px;
+        padding: 20px;
+        background: linear-gradient(160deg, rgba(245,158,11,0.08), rgba(0,0,0,0.18));
+      }
+
+      .final-test-progress-bar {
+        width: 100%;
+        height: 10px;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        margin: 10px 0;
+      }
+
+      .final-test-progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--emerald-primary), var(--emerald-light));
+        border-radius: 999px;
+        transition: width 0.4s ease;
+      }
+
+      /* ===== SERTIFIKAT ===== */
+      .cert-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 16px;
+        margin-top: 14px;
+      }
+
+      .cert-mini-card {
+        border: 1px solid rgba(245, 158, 11, 0.35);
+        border-radius: 16px;
+        padding: 16px;
+        background: linear-gradient(160deg, rgba(245,158,11,0.1), rgba(0,0,0,0.2));
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        text-align: center;
+      }
+
+      .cert-mini-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 26px rgba(245, 158, 11, 0.2);
+      }
+
+      .cert-mini-icon {
+        font-size: 2.2rem;
+        margin-bottom: 8px;
+      }
+
+      .cert-mini-title {
+        font-weight: 800;
+        color: var(--gold);
+        font-size: 0.9rem;
+      }
+
+      .cert-mini-sub {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+
+      .cert-paper {
+        position: relative;
+        background: linear-gradient(160deg, #f8fdf9 0%, #eefbf3 100%);
+        color: #064e3b;
+        border-radius: 14px;
+        padding: 40px 36px;
+        border: 10px solid #0b3d2e;
+        outline: 2px solid #f59e0b;
+        outline-offset: -22px;
+        text-align: center;
+        max-width: 720px;
+        margin: 0 auto;
+        font-family: "Plus Jakarta Sans", serif;
+      }
+
+      .cert-paper .cert-emblem {
+        font-size: 2.6rem;
+        margin-bottom: 6px;
+      }
+
+      .cert-paper .cert-brand {
+        font-size: 0.8rem;
+        letter-spacing: 0.14em;
+        font-weight: 800;
+        color: #047857;
+        text-transform: uppercase;
+      }
+
+      .cert-paper .cert-title {
+        font-size: 1.7rem;
+        font-weight: 800;
+        margin: 14px 0 4px;
+        letter-spacing: 0.03em;
+        color: #064e3b;
+      }
+
+      .cert-paper .cert-sub {
+        font-size: 0.78rem;
+        color: #059669;
+        margin-bottom: 20px;
+      }
+
+      .cert-paper .cert-name {
+        font-size: 1.9rem;
+        font-weight: 800;
+        color: #0b3d2e;
+        margin: 10px 0;
+        border-bottom: 2px solid #f59e0b;
+        display: inline-block;
+        padding-bottom: 6px;
+      }
+
+      .cert-paper .cert-desc {
+        font-size: 0.85rem;
+        color: #065f46;
+        max-width: 520px;
+        margin: 14px auto;
+        line-height: 1.6;
+      }
+
+      .cert-paper .cert-meta-row {
+        display: flex;
+        justify-content: center;
+        gap: 28px;
+        flex-wrap: wrap;
+        margin: 18px 0;
+      }
+
+      .cert-paper .cert-meta-item {
+        font-size: 0.76rem;
+        color: #065f46;
+      }
+
+      .cert-paper .cert-meta-item strong {
+        display: block;
+        font-size: 0.95rem;
+        color: #0b3d2e;
+      }
+
+      .cert-paper .cert-signatures {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 34px;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+
+      .cert-paper .cert-sign-line {
+        border-top: 1.5px solid #0b3d2e;
+        width: 160px;
+        padding-top: 6px;
+        font-size: 0.72rem;
+        color: #065f46;
+        margin: 0 auto;
+      }
+
+      .cert-paper .cert-id {
+        margin-top: 24px;
+        font-size: 0.68rem;
+        color: #059669;
+        letter-spacing: 0.05em;
       }
 
       @media (max-width: 680px) {
@@ -3334,6 +3602,7 @@
           💳 Payment
         </button>
         <button class="nav-tab-btn" id="nav-operations" onclick="switchMainTab('operations', event)" title="Courses & Tasks">🏫 Courses</button>
+        <button class="nav-tab-btn" id="nav-certificates" onclick="switchMainTab('certificates', event)" title="Yakuniy Test & Sertifikatlar">🏆 Sertifikat</button>
 
       </div>
     </header>
@@ -6041,6 +6310,116 @@ pen — ruchka 🖊"
       </div>
 
       <!-- 3. ANALITIKA VA PROGRESS PANEL TAB [YANGI FEATURE 2] -->
+      <!-- ============================================================
+           🏆 YAKUNIY TEST & SERTIFIKATLAR
+      ============================================================ -->
+      <div id="tab-certificates" class="main-tab-content hidden">
+        <!-- USTOZ KO'RINISHI -->
+        <div id="cert-teacher-view" class="hidden">
+          <div class="card">
+            <div class="card-title">
+              <span>🏆</span>
+              <span>Yakuniy Test Yaratish</span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 14px;">
+              Har bir bosqich uchun bitta yakuniy test yarating. O'quvchi shu bosqichdagi barcha
+              vazifalarni 100% tugatgach, testni topshiradi. Belgilangan o'tish balidan (masalan 80%)
+              yuqori natija — o'quvchi keyingi bosqichga o'tadi va sertifikat oladi.
+            </p>
+            <form onsubmit="saveFinalTest(event)">
+              <div class="input-group">
+                <label>Bosqich (daraja)</label>
+                <select id="ft-level-select" required></select>
+              </div>
+              <div class="input-group">
+                <label>O'tish balli (%)</label>
+                <input type="number" id="ft-passscore" value="80" min="1" max="100" required />
+              </div>
+              <div id="ft-questions-builder"></div>
+              <button type="button" class="btn-primary" style="margin-bottom: 14px;" onclick="addFinalTestQuestionRow()">➕ Savol qo'shish</button>
+              <button type="submit" class="btn-primary">💾 Yakuniy Testni Saqlash</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <div class="card-title">
+              <span>📋</span>
+              <span>Yaratilgan Yakuniy Testlar</span>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Bosqich</th>
+                  <th>Savollar</th>
+                  <th>O'tish balli</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="final-tests-admin-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- O'QUVCHI KO'RINISHI -->
+        <div id="cert-student-view" class="hidden">
+          <div class="card">
+            <div class="card-title">
+              <span>🏆</span>
+              <span>Yakuniy Test</span>
+            </div>
+            <div id="cert-current-level-gate"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">
+              <span>🎓</span>
+              <span>Mening Sertifikatlarim</span>
+            </div>
+            <div class="cert-grid" id="student-certificates-grid"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== YAKUNIY TEST MODALLARI ===== -->
+      <div id="final-test-gate-modal" class="modal-overlay hidden">
+        <div class="modal-card" style="text-align: left">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
+            <h3 id="final-test-gate-level-title" style="margin-bottom: 14px;"></h3>
+            <span onclick="closeFinalTestGate()" style="cursor:pointer; font-size:1.6rem; color:var(--text-muted); flex-shrink:0;">✕</span>
+          </div>
+          <div id="final-test-gate-body"></div>
+        </div>
+      </div>
+
+      <div id="final-test-take-modal" class="modal-overlay hidden">
+        <div class="modal-card" style="max-width: 620px; text-align: left">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:10px;">
+            <h3>🏆 Yakuniy Test</h3>
+            <span onclick="cancelFinalTest()" style="cursor:pointer; font-size:1.6rem; color:var(--text-muted); flex-shrink:0;">✕</span>
+          </div>
+          <div id="final-test-questions-box" style="max-height: 55vh; overflow-y: auto;"></div>
+          <button class="btn-primary" style="margin-top: 10px;" onclick="submitFinalTest()">✅ Testni Yakunlash</button>
+        </div>
+      </div>
+
+      <div id="final-test-result-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+          <div id="final-test-result-box"></div>
+        </div>
+      </div>
+
+      <div id="cert-view-modal" class="modal-overlay hidden">
+        <div class="modal-card" style="max-width: 780px; background: transparent; box-shadow: none; padding: 0; border: none;">
+          <div style="text-align:right; margin-bottom:8px;">
+            <span onclick="closeCertificateView()" style="cursor:pointer; font-size:1.6rem; color:#fff; background: rgba(0,0,0,0.5); border-radius:50%; width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center;">✕</span>
+          </div>
+          <div id="cert-view-box"></div>
+          <div style="text-align:center; margin-top: 16px;">
+            <button class="btn-primary" style="width:auto; padding:12px 28px;" onclick="downloadCertificatePdf()">⬇️ PDF yuklab olish</button>
+          </div>
+        </div>
+      </div>
+
       <div id="tab-analytics" class="main-tab-content hidden">
         <!-- Umumiy sinf statistikasi (faqat Ustoz uchun) -->
         <div id="teacher-class-stats" class="card hidden">
@@ -7052,7 +7431,59 @@ pen — ruchka 🖊"
           if (!currentUser || !["admin","teacher","student"].includes(currentUser.role)) return;
           document.getElementById("tab-operations").classList.remove("hidden");
           loadEmeraldOperations();
+        } else if (tab === "certificates") {
+          if (!currentUser || !["teacher", "student"].includes(currentUser.role)) return;
+          document.getElementById("tab-certificates").classList.remove("hidden");
+          renderCertificatesTab();
         }
+      }
+
+      function renderCertificatesTab() {
+        if (!currentUser) return;
+        const teacherView = document.getElementById("cert-teacher-view");
+        const studentView = document.getElementById("cert-student-view");
+        if (currentUser.role === "teacher") {
+          teacherView.classList.remove("hidden");
+          studentView.classList.add("hidden");
+          populateFinalTestLevelDropdown();
+          renderFinalTestsAdminList();
+        } else {
+          teacherView.classList.add("hidden");
+          studentView.classList.remove("hidden");
+          renderFinalTestGateCard();
+          renderStudentCertificates();
+        }
+      }
+
+      function renderFinalTestGateCard() {
+        const box = document.getElementById("cert-current-level-gate");
+        if (!box || !currentUser) return;
+        const course = courseCatalog(currentUser.level);
+        const percent = getLevelLessonPercent(currentUser, currentUser.level);
+        const test = getFinalTestForLevel(currentUser.level);
+        const lastResult = (currentUser.finalTestResults || {})[currentUser.level];
+
+        box.innerHTML = `
+          <div class="final-test-gate-card">
+            <div class="card-title" style="margin-bottom:6px;">
+              <span>${course ? course.icon : "🎯"}</span>
+              <span>Joriy bosqich: ${course ? course.title : currentUser.level}</span>
+            </div>
+            <div class="final-test-progress-bar"><div class="final-test-progress-fill" style="width:${percent}%;"></div></div>
+            <p style="font-size:0.82rem; color: var(--text-muted);">Vazifalar bajarilishi: <strong style="color: var(--text-main);">${percent}%</strong></p>
+            ${
+              percent < 100
+                ? `<p style="font-size:0.8rem; color: var(--text-muted); margin-top:8px;">Yakuniy testga chiqish uchun avval shu bosqichdagi barcha vazifalarni yakunlang.</p>`
+                : !test
+                ? `<p style="font-size:0.8rem; color: var(--text-muted); margin-top:8px;">✅ Vazifalar tugadi! Ustozingiz hali yakuniy testni joylamagan.</p>`
+                : `
+                  <p style="font-size:0.8rem; color: var(--text-muted); margin-top:8px;">🏆 Yakuniy testga tayyorsiz! O'tish balli: <strong style="color: var(--gold);">${test.passScore || FINAL_TEST_PASS_SCORE}%</strong></p>
+                  ${lastResult ? `<p style="font-size:0.76rem; color:${lastResult.passed ? "var(--emerald-light)" : "var(--danger)"}; margin-top:4px;">Oxirgi urinish: ${lastResult.score}%</p>` : ""}
+                  <button class="btn-primary" style="margin-top:10px;" onclick="openFinalTestGate('${currentUser.level}')">Yakuniy testni ochish</button>
+                `
+            }
+          </div>
+        `;
       }
 
       function changeLang(lang) {
@@ -7314,35 +7745,62 @@ pen — ruchka 🖊"
         if (!box) return;
 
         const currentIndex = EMERALD_LEVEL_ORDER.indexOf(user.level);
+        const currentLevelPercent = getLevelLessonPercent(user, user.level);
+        const finalTestExists = !!getFinalTestForLevel(user.level);
 
         // Bosqichlarni modul bo'yicha guruhlash (tartibni saqlagan holda)
         const groups = [];
         EMERALD_LEVEL_ORDER.forEach((key, i) => {
           const c = courseCatalog(key);
           if (!c) return;
-          const state = i < currentIndex ? "done" : i === currentIndex ? "current" : "upcoming";
+          let state = i < currentIndex ? "done" : i === currentIndex ? "current" : "upcoming";
+          let percent = i < currentIndex ? 100 : i === currentIndex ? currentLevelPercent : 0;
+          // Joriy bosqichda barcha vazifalar 100% bo'lsa va yakuniy test mavjud bo'lsa,
+          // bosqich "final test kutilmoqda" holatiga o'tadi (oltin rang, bosilanadigan).
+          if (i === currentIndex && percent >= 100 && finalTestExists) {
+            state = "locked-final";
+          }
           let group = groups.find((g) => g.module === c.module);
           if (!group) {
             group = { module: c.module, icon: c.icon, items: [] };
             groups.push(group);
           }
-          group.items.push({ ...c, state });
+          group.items.push({ ...c, state, percent, idx: i });
         });
 
         box.innerHTML = groups
-          .map(
-            (g) => `
+          .map((g) => {
+            const doneCount = g.items.filter((it) => it.state === "done").length;
+            return `
           <div class="roadmap-module">
-            <div class="roadmap-module-head">${g.icon} ${g.module}</div>
+            <div class="roadmap-module-head">
+              <span>${g.icon} ${g.module}</span>
+              <span class="roadmap-module-progress">${doneCount}/${g.items.length} bosqich</span>
+            </div>
             <div class="roadmap-row">
               ${g.items
                 .map(
                   (it, idx) => `
-                <div class="roadmap-step ${it.state}" title="${it.title}">
+                <div class="roadmap-step ${it.state}" title="${it.title}" ${
+                    it.state === "current" || it.state === "locked-final"
+                      ? `onclick="openFinalTestGate('${it.key}')" style="cursor:pointer;"`
+                      : ""
+                  }>
                   <div class="roadmap-dot">${
-                    it.state === "done" ? "✅" : it.state === "current" ? "📍" : "🔒"
+                    it.state === "done"
+                      ? "✅"
+                      : it.state === "locked-final"
+                      ? "🏆"
+                      : it.state === "current"
+                      ? "📍"
+                      : "🔒"
                   }</div>
                   <div class="roadmap-step-title">${it.title}</div>
+                  ${
+                    it.state === "current" || it.state === "locked-final"
+                      ? `<div class="roadmap-step-percent">${it.percent}%</div>`
+                      : ""
+                  }
                 </div>
                 ${
                   idx < g.items.length - 1
@@ -7352,8 +7810,8 @@ pen — ruchka 🖊"
                 )
                 .join("")}
             </div>
-          </div>`
-          )
+          </div>`;
+          })
           .join("");
       }
 
@@ -8387,6 +8845,9 @@ pen — ruchka 🖊"
           financeNav.classList.toggle("hidden", !canSeePayment);
         }
 
+        const certNav = document.getElementById("nav-certificates");
+        if (certNav) certNav.classList.toggle("hidden", user.role === "admin");
+
         const adminTab = document.getElementById("tab-command-center");
         const teacherDash = document.getElementById("teacher-dashboard");
         const studentDash = document.getElementById("student-dashboard");
@@ -8414,6 +8875,8 @@ pen — ruchka 🖊"
           renderReadingSubmissionsAdmin();
           renderListeningTasksAdminList();
           renderListeningSubmissionsAdmin();
+          populateFinalTestLevelDropdown();
+          renderFinalTestsAdminList();
         } else {
           document
             .getElementById("student-dashboard")
@@ -8453,6 +8916,8 @@ pen — ruchka 🖊"
 
           renderStudentLessons();
           renderLeaderboard();
+          ensureCompletionStateData(user);
+          renderStudentCertificates();
         }
         populateCalendarStudentFilters();
         loadCalendarEvents();
@@ -9351,7 +9816,495 @@ pen — ruchka 🖊"
         }
         if (!Array.isArray(user.completedHomeworks)) user.completedHomeworks = [];
         if (!Array.isArray(user.completedLessons)) user.completedLessons = [];
+        if (!Array.isArray(user.studentCertificates)) user.studentCertificates = [];
+        if (!user.finalTestResults || typeof user.finalTestResults !== "object") {
+          user.finalTestResults = {};
+        }
         return user;
+      }
+
+      /* ============================================================
+         🏆 YAKUNIY TEST (FINAL TEST) VA SERTIFIKAT TIZIMI
+         Har bir daraja (masalan "pre-beginner") uchun ustoz bitta
+         yakuniy test yarata oladi (lessons jadvalida type:"finaltest").
+         O'quvchi shu darajadagi barcha darslarni 100% tugatgandan so'ng
+         testni topshiradi. 80% va undan yuqori natija — keyingi
+         bosqichga o'tish va sertifikat olish demakdir.
+      ============================================================ */
+      const FINAL_TEST_PASS_SCORE = 80;
+
+      function getLevelLessonPercent(user, levelKey) {
+        ensureCompletionStateData(user);
+        const filteredLessons = lessons.filter(
+          (l) => studentMatchesTargetLevel(l.target_level, levelKey) && l.type !== "writing" && l.type !== "finaltest"
+        );
+        if (!filteredLessons.length) return 0;
+        const completed = user.completedLessons || [];
+        const doneCount = filteredLessons.filter((l) => completed.includes(l.id)).length;
+        return Math.round((doneCount / filteredLessons.length) * 100);
+      }
+
+      function getFinalTestForLevel(levelKey) {
+        return lessons.find((l) => l.type === "finaltest" && l.target_level === levelKey) || null;
+      }
+
+      let currentFinalTestGateLevel = null;
+      let currentFinalTestAnswers = {};
+
+      function openFinalTestGate(levelKey) {
+        if (!currentUser || currentUser.role !== "student") return;
+        currentFinalTestGateLevel = levelKey;
+        const course = courseCatalog(levelKey);
+        const test = getFinalTestForLevel(levelKey);
+        const percent = getLevelLessonPercent(currentUser, levelKey);
+
+        document.getElementById("final-test-gate-level-title").innerText =
+          `${course ? course.icon + " " + course.title : levelKey} — Yakuniy Test`;
+
+        const body = document.getElementById("final-test-gate-body");
+
+        if (levelKey !== currentUser.level) {
+          body.innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem;">Bu bosqich hali sizning joriy darajangiz emas.</p>`;
+        } else if (percent < 100) {
+          body.innerHTML = `
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px;">
+              Yakuniy testga chiqish uchun avval shu bosqichdagi barcha vazifalarni 100% yakunlang.
+            </p>
+            <div class="final-test-progress-bar"><div class="final-test-progress-fill" style="width:${percent}%;"></div></div>
+            <p style="font-size: 0.8rem; color: var(--text-main); font-weight:700;">${percent}% bajarildi</p>
+          `;
+        } else if (!test) {
+          body.innerHTML = `<p style="font-size: 0.85rem; color: var(--text-muted);">✅ Siz barcha vazifalarni yakunladingiz! Ustozingiz hali bu bosqich uchun yakuniy testni tayyorlamadi — tez orada e'lon qilinadi.</p>`;
+        } else {
+          const lastResult = (currentUser.finalTestResults || {})[levelKey];
+          body.innerHTML = `
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
+              🎉 Siz shu bosqichdagi barcha vazifalarni yakunladingiz! Endi yakuniy testni topshiring.
+              O'tish balli: <strong style="color: var(--gold);">${test.passScore || FINAL_TEST_PASS_SCORE}%</strong>,
+              savollar soni: <strong>${test.questions.length}</strong>.
+            </p>
+            ${
+              lastResult
+                ? `<p style="font-size: 0.78rem; color: ${lastResult.passed ? "var(--emerald-light)" : "var(--danger)"};">Oxirgi urinish: ${lastResult.score}% ${lastResult.passed ? "(o'tdingiz ✅)" : "(o'tmadingiz, qayta urining)"}</p>`
+                : ""
+            }
+            <button class="btn-primary" style="margin-top:10px;" onclick="startFinalTest()">🏆 Yakuniy testni boshlash</button>
+          `;
+        }
+
+        document.getElementById("final-test-gate-modal").classList.remove("hidden");
+      }
+
+      function closeFinalTestGate() {
+        document.getElementById("final-test-gate-modal").classList.add("hidden");
+      }
+
+      function startFinalTest() {
+        const test = getFinalTestForLevel(currentFinalTestGateLevel);
+        if (!test) return;
+        currentFinalTestAnswers = {};
+
+        const box = document.getElementById("final-test-questions-box");
+        box.innerHTML = test.questions
+          .map(
+            (q, qi) => `
+          <div class="final-test-question-card">
+            <div style="font-weight:700; font-size:0.9rem; margin-bottom:4px;">${qi + 1}. ${q.question}</div>
+            ${q.options
+              .map(
+                (opt, oi) => `
+              <div class="final-test-option" id="ft-opt-${qi}-${oi}" onclick="selectFinalTestOption(${qi}, ${oi})">
+                ${String.fromCharCode(65 + oi)}) ${opt}
+              </div>`
+              )
+              .join("")}
+          </div>`
+          )
+          .join("");
+
+        document.getElementById("final-test-gate-modal").classList.add("hidden");
+        document.getElementById("final-test-take-modal").classList.remove("hidden");
+      }
+
+      function selectFinalTestOption(qi, oi) {
+        currentFinalTestAnswers[qi] = oi;
+        document
+          .querySelectorAll(`[id^="ft-opt-${qi}-"]`)
+          .forEach((el) => el.classList.remove("selected"));
+        document.getElementById(`ft-opt-${qi}-${oi}`).classList.add("selected");
+      }
+
+      function cancelFinalTest() {
+        document.getElementById("final-test-take-modal").classList.add("hidden");
+      }
+
+      async function submitFinalTest() {
+        const test = getFinalTestForLevel(currentFinalTestGateLevel);
+        if (!test) return;
+
+        const total = test.questions.length;
+        let correct = 0;
+        test.questions.forEach((q, qi) => {
+          if (currentFinalTestAnswers[qi] === q.correct) correct++;
+        });
+        const score = Math.round((correct / total) * 100);
+        const passScore = test.passScore || FINAL_TEST_PASS_SCORE;
+        const passed = score >= passScore;
+
+        ensureCompletionStateData(currentUser);
+        currentUser.finalTestResults[currentFinalTestGateLevel] = {
+          score,
+          passed,
+          date: new Date().toLocaleDateString("uz-UZ"),
+        };
+
+        let certificate = null;
+        if (passed) {
+          certificate = awardLevelCertificate(currentUser, currentFinalTestGateLevel, score);
+          const idx = EMERALD_LEVEL_ORDER.indexOf(currentFinalTestGateLevel);
+          const nextLevel = EMERALD_LEVEL_ORDER[idx + 1];
+          if (nextLevel) currentUser.level = nextLevel;
+        }
+
+        await saveUserData(currentUser);
+
+        document.getElementById("final-test-take-modal").classList.add("hidden");
+
+        const resultBox = document.getElementById("final-test-result-box");
+        resultBox.innerHTML = `
+          <div style="text-align:center;">
+            <div style="font-size:2.6rem;">${passed ? "🎉" : "😕"}</div>
+            <h3 style="margin:10px 0 4px; color:${passed ? "var(--emerald-light)" : "var(--danger)"};">
+              ${passed ? "Tabriklaymiz! Siz testdan o'tdingiz!" : "Afsuski, o'ta olmadingiz"}
+            </h3>
+            <p style="color: var(--text-muted); font-size:0.85rem;">Natijangiz: <strong style="color:var(--text-main);">${score}%</strong> (${correct}/${total} to'g'ri javob). O'tish balli: ${passScore}%.</p>
+            ${
+              passed
+                ? `<p style="color: var(--gold); font-size:0.85rem; margin-top:6px;">🏆 Sertifikatingiz "Sertifikatlarim" bo'limiga qo'shildi va keyingi bosqich ochildi!</p>`
+                : `<p style="color: var(--text-muted); font-size:0.8rem; margin-top:6px;">Vazifalarni qayta ko'rib chiqib, testni yana urinib ko'rishingiz mumkin.</p>`
+            }
+            <button class="btn-primary" style="margin-top:14px;" onclick="closeFinalTestResult()">Yopish</button>
+          </div>
+        `;
+        document.getElementById("final-test-result-modal").classList.remove("hidden");
+
+        renderLevelRoadmap(currentUser);
+        renderStudentLessons();
+        renderStudentCertificates();
+        if (typeof loadDashboard === "function") {
+          document.getElementById("student-level-badge").innerText = emeraldLevelLabel(currentUser.level).toUpperCase();
+        }
+      }
+
+      function closeFinalTestResult() {
+        document.getElementById("final-test-result-modal").classList.add("hidden");
+      }
+
+      function generateCertificateId() {
+        const year = new Date().getFullYear();
+        const rand = String(Math.floor(Math.random() * 900000) + 100000);
+        return `EL-${year}-${rand}`;
+      }
+
+      function awardLevelCertificate(user, levelKey, score) {
+        ensureCompletionStateData(user);
+        const course = courseCatalog(levelKey);
+        const cert = {
+          id: generateCertificateId(),
+          studentName: user.full_name,
+          levelKey,
+          levelTitle: course ? course.title : levelKey,
+          score,
+          duration: course ? course.duration || "—" : "—",
+          date: new Date().toLocaleDateString("uz-UZ", { day: "2-digit", month: "long", year: "numeric" }),
+          issuedAt: Date.now(),
+        };
+        user.studentCertificates.push(cert);
+        return cert;
+      }
+
+      function renderStudentCertificates() {
+        const box = document.getElementById("student-certificates-grid");
+        if (!box || !currentUser) return;
+        ensureCompletionStateData(currentUser);
+        const certs = currentUser.studentCertificates || [];
+
+        if (!certs.length) {
+          box.innerHTML = `<p style="color: var(--text-muted); font-size:0.85rem;">Hozircha sertifikatlaringiz yo'q. Har bir bosqichni 80%+ ball bilan yakunlab, yangi sertifikat qo'lga kiriting!</p>`;
+          return;
+        }
+
+        box.innerHTML = certs
+          .slice()
+          .reverse()
+          .map(
+            (c, i) => `
+          <div class="cert-mini-card" onclick="viewStudentCertificate('${c.id}')">
+            <div class="cert-mini-icon">🏆</div>
+            <div class="cert-mini-title">${c.levelTitle}</div>
+            <div class="cert-mini-sub">Natija: ${c.score}% • ${c.date}</div>
+          </div>`
+          )
+          .join("");
+      }
+
+      function certificateHtml(cert) {
+        return `
+          <div class="cert-paper" id="cert-paper-render">
+            <div class="cert-emblem">🎓</div>
+            <div class="cert-brand">Emerald Lab — English Online Learning Center</div>
+            <div class="cert-title">CERTIFICATE OF COMPLETION</div>
+            <div class="cert-sub">This certificate is proudly presented to</div>
+            <div class="cert-name">${cert.studentName}</div>
+            <div class="cert-desc">for successfully completing the <strong>${cert.levelTitle}</strong> course and demonstrating satisfactory progress in English language skills.</div>
+            <div class="cert-meta-row">
+              <div class="cert-meta-item">Final Result<strong>${cert.score}%</strong></div>
+              <div class="cert-meta-item">Level<strong>${cert.levelTitle}</strong></div>
+              <div class="cert-meta-item">Course Duration<strong>${cert.duration}</strong></div>
+              <div class="cert-meta-item">Date of Issue<strong>${cert.date}</strong></div>
+            </div>
+            <div class="cert-signatures">
+              <div class="cert-sign-line">Director</div>
+              <div class="cert-sign-line">Instructor</div>
+            </div>
+            <div class="cert-id">Certificate ID: ${cert.id} — This certificate confirms successful completion of the stated course at EMERALD LAB.</div>
+          </div>
+        `;
+      }
+
+      let currentViewedCertificate = null;
+
+      function viewStudentCertificate(certId) {
+        const certs = (currentUser && currentUser.studentCertificates) || [];
+        const cert = certs.find((c) => c.id === certId);
+        if (!cert) return;
+        currentViewedCertificate = cert;
+        document.getElementById("cert-view-box").innerHTML = certificateHtml(cert);
+        document.getElementById("cert-view-modal").classList.remove("hidden");
+      }
+
+      function closeCertificateView() {
+        document.getElementById("cert-view-modal").classList.add("hidden");
+      }
+
+      function downloadCertificatePdf() {
+        const cert = currentViewedCertificate;
+        if (!cert) return;
+        if (!window.jspdf) {
+          return alert("PDF kutubxonasi hali yuklanmadi. Sahifani yangilab, qayta urinib ko'ring.");
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+        const W = 297, H = 210;
+
+        // Fon
+        doc.setFillColor(248, 253, 249);
+        doc.rect(0, 0, W, H);
+
+        // Tashqi va ichki bezakli ramka
+        doc.setDrawColor(11, 61, 46);
+        doc.setLineWidth(3);
+        doc.rect(8, 8, W - 16, H - 16);
+        doc.setDrawColor(245, 158, 11);
+        doc.setLineWidth(0.8);
+        doc.rect(13, 13, W - 26, H - 26);
+
+        doc.setTextColor(4, 120, 87);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(13);
+        doc.text("EMERALD LAB", W / 2, 32, { align: "center" });
+        doc.setFontSize(9);
+        doc.setFont("helvetica", "normal");
+        doc.text("English Online Learning Center", W / 2, 38, { align: "center" });
+
+        doc.setTextColor(6, 78, 59);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(26);
+        doc.text("CERTIFICATE OF COMPLETION", W / 2, 56, { align: "center" });
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        doc.setTextColor(5, 150, 105);
+        doc.text("This certificate is proudly presented to", W / 2, 68, { align: "center" });
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(24);
+        doc.setTextColor(11, 61, 46);
+        doc.text(cert.studentName, W / 2, 82, { align: "center" });
+        doc.setDrawColor(245, 158, 11);
+        doc.setLineWidth(0.6);
+        const nameWidth = doc.getTextWidth(cert.studentName);
+        doc.line(W / 2 - nameWidth / 2 - 4, 85, W / 2 + nameWidth / 2 + 4, 85);
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10.5);
+        doc.setTextColor(6, 95, 70);
+        const desc = `for successfully completing the ${cert.levelTitle} course and demonstrating`;
+        const desc2 = `satisfactory progress in English language skills.`;
+        doc.text(desc, W / 2, 96, { align: "center" });
+        doc.text(desc2, W / 2, 102, { align: "center" });
+
+        const metaY = 118;
+        const cols = [
+          { label: "Final Result", value: cert.score + "%", x: W / 2 - 105 },
+          { label: "Level", value: cert.levelTitle, x: W / 2 - 35 },
+          { label: "Course Duration", value: cert.duration, x: W / 2 + 40 },
+          { label: "Date of Issue", value: cert.date, x: W / 2 + 95 },
+        ];
+        cols.forEach((c) => {
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(8);
+          doc.setTextColor(5, 150, 105);
+          doc.text(c.label, c.x, metaY, { align: "center" });
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(10.5);
+          doc.setTextColor(11, 61, 46);
+          doc.text(String(c.value), c.x, metaY + 6, { align: "center" });
+        });
+
+        // Muhr / gerb (oltin doira)
+        doc.setDrawColor(245, 158, 11);
+        doc.setFillColor(255, 251, 235);
+        doc.setLineWidth(1.2);
+        doc.circle(W / 2, 140, 12, "FD");
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(9);
+        doc.setTextColor(180, 120, 10);
+        doc.text("EL", W / 2, 143, { align: "center" });
+
+        // Imzolar
+        doc.setDrawColor(11, 61, 46);
+        doc.setLineWidth(0.4);
+        doc.line(W / 2 - 95, 168, W / 2 - 35, 168);
+        doc.line(W / 2 + 35, 168, W / 2 + 95, 168);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(9);
+        doc.setTextColor(6, 95, 70);
+        doc.text("Director", W / 2 - 65, 174, { align: "center" });
+        doc.text("Instructor", W / 2 + 65, 174, { align: "center" });
+
+        doc.setFontSize(8);
+        doc.setTextColor(5, 150, 105);
+        doc.text(`Certificate ID: ${cert.id}`, W / 2, 188, { align: "center" });
+        doc.text(
+          "This certificate confirms successful completion of the stated course at EMERALD LAB.",
+          W / 2,
+          193,
+          { align: "center" }
+        );
+
+        doc.save(`EmeraldLab_Certificate_${cert.id}.pdf`);
+      }
+
+      /* ---------- USTOZ: Yakuniy test yaratish / boshqarish ---------- */
+
+      let finalTestBuilderQuestions = [];
+
+      function populateFinalTestLevelDropdown() {
+        const sel = document.getElementById("ft-level-select");
+        if (!sel) return;
+        sel.innerHTML = EMERALD_LEVEL_ORDER.map((key) => {
+          const c = courseCatalog(key);
+          return `<option value="${key}">${c ? c.icon + " " + c.title : key}</option>`;
+        }).join("");
+      }
+
+      function addFinalTestQuestionRow() {
+        const qBox = document.getElementById("ft-questions-builder");
+        const qi = finalTestBuilderQuestions.length;
+        finalTestBuilderQuestions.push({ question: "", options: ["", "", "", ""], correct: 0 });
+
+        const row = document.createElement("div");
+        row.className = "final-test-question-card";
+        row.id = `ft-builder-q-${qi}`;
+        row.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <strong style="font-size:0.85rem;">${qi + 1}-savol</strong>
+            <button type="button" class="btn-danger" style="padding:4px 10px; font-size:0.72rem;" onclick="removeFinalTestQuestionRow(${qi})">O'chirish</button>
+          </div>
+          <input type="text" placeholder="Savol matnini kiriting" oninput="finalTestBuilderQuestions[${qi}].question=this.value" style="margin-bottom:8px;" />
+          ${[0, 1, 2, 3]
+            .map(
+              (oi) => `
+            <div style="display:flex; align-items:center; gap:8px; margin-top:6px;">
+              <input type="radio" name="ft-correct-${qi}" ${oi === 0 ? "checked" : ""} onchange="finalTestBuilderQuestions[${qi}].correct=${oi}" />
+              <input type="text" placeholder="${String.fromCharCode(65 + oi)} variant" oninput="finalTestBuilderQuestions[${qi}].options[${oi}]=this.value" style="flex:1;" />
+            </div>`
+            )
+            .join("")}
+        `;
+        qBox.appendChild(row);
+      }
+
+      function removeFinalTestQuestionRow(qi) {
+        finalTestBuilderQuestions[qi] = null;
+        const row = document.getElementById(`ft-builder-q-${qi}`);
+        if (row) row.remove();
+      }
+
+      async function saveFinalTest(e) {
+        e.preventDefault();
+        const levelKey = document.getElementById("ft-level-select").value;
+        const passScore = Number(document.getElementById("ft-passscore").value) || FINAL_TEST_PASS_SCORE;
+        const questions = finalTestBuilderQuestions.filter(
+          (q) => q && q.question.trim() && q.options.every((o) => o.trim())
+        );
+
+        if (!questions.length) {
+          return alert("Kamida bitta to'liq savol qo'shing (savol va barcha 4 ta variant to'ldirilishi kerak).");
+        }
+
+        const existing = getFinalTestForLevel(levelKey);
+        if (existing) {
+          if (!confirm("Bu bosqich uchun yakuniy test allaqachon mavjud. Uni yangi test bilan almashtirasizmi?")) return;
+          await dbDeleteLesson(existing.id);
+          lessons = lessons.filter((l) => l.id !== existing.id);
+        }
+
+        const newTest = {
+          id: Date.now(),
+          type: "finaltest",
+          target_level: levelKey,
+          title: `${emeraldLevelLabel(levelKey)} — Yakuniy Test`,
+          passScore,
+          questions,
+          created_at: new Date().toLocaleDateString(),
+        };
+
+        lessons.push(newTest);
+        await dbInsertLesson(newTest);
+
+        alert("✅ Yakuniy test muvaffaqiyatli saqlandi!");
+        e.target.reset();
+        finalTestBuilderQuestions = [];
+        document.getElementById("ft-questions-builder").innerHTML = "";
+        renderFinalTestsAdminList();
+      }
+
+      function renderFinalTestsAdminList() {
+        const tbody = document.getElementById("final-tests-admin-body");
+        if (!tbody) return;
+        const tests = lessons.filter((l) => l.type === "finaltest");
+
+        if (!tests.length) {
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color: var(--text-muted); padding: 1.5rem;">Hozircha yakuniy test yaratilmagan.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = tests
+          .map(
+            (t) => `
+          <tr>
+            <td><strong>${emeraldLevelLabel(t.target_level)}</strong></td>
+            <td>${t.questions.length} savol</td>
+            <td>${t.passScore || FINAL_TEST_PASS_SCORE}%</td>
+            <td style="text-align:right;">
+              <button class="btn-danger" onclick="deleteLesson(${t.id}); lessons = lessons.filter(l=>l.id!==${t.id}); renderFinalTestsAdminList();">O'chirish</button>
+            </td>
+          </tr>`
+          )
+          .join("");
       }
 
       function getLessonCompletionState(lessonId) {
