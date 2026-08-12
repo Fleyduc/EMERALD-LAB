@@ -5105,6 +5105,20 @@ pen — ruchka 🖊"
             <div class="roadmap-wrap" id="level-roadmap-track"></div>
           </div>
 
+          <!-- KEYINGI BOSQICH NOTIFICATION / PAYMENT GATE -->
+          <div id="next-stage-notification-card" class="card hidden" style="margin-top:14px; border:1px solid rgba(245,158,11,.38); background:linear-gradient(135deg,rgba(245,158,11,.10),rgba(16,185,129,.06)); cursor:pointer;" onclick="openNextStageNotification()">
+            <div style="display:flex;align-items:center;gap:14px;justify-content:space-between;flex-wrap:wrap;">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div style="width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:rgba(245,158,11,.15);font-size:1.45rem;">🚀</div>
+                <div>
+                  <div style="font-weight:900;font-size:1rem;">Keyingi bosqichga o'tish</div>
+                  <div id="next-stage-notification-text" style="font-size:.78rem;color:var(--text-muted);margin-top:3px;">Final testdan o'tdingiz. Keyingi modul uchun to'lovni amalga oshiring.</div>
+                </div>
+              </div>
+              <div style="font-weight:900;color:var(--gold);font-size:.82rem;">To'lov va chek →</div>
+            </div>
+          </div>
+
           <!-- BEGINNER O'QUVCHILAR UCHUN KATTA KITOB SECTION -->
           <div id="beginner-book-section" class="card hidden">
             <div class="card-title">
@@ -7456,6 +7470,89 @@ pen — ruchka 🖊"
         }
       }
 
+      function getNextLevelAfter(levelKey) {
+        const idx = EMERALD_LEVEL_ORDER.indexOf(levelKey);
+        return idx >= 0 ? (EMERALD_LEVEL_ORDER[idx + 1] || null) : null;
+      }
+
+      async function ensureNextStageNotification(levelKey, score) {
+        if (!currentUser || currentUser.role !== "student") return;
+        const nextLevel = getNextLevelAfter(levelKey);
+        if (!nextLevel) return;
+
+        ensureCompletionStateData(currentUser);
+        if (!Array.isArray(currentUser.notifications)) currentUser.notifications = [];
+
+        const existing = currentUser.notifications.find(
+          (n) => n.type === "next_stage_payment" && String(n.levelKey) === String(levelKey)
+        );
+
+        if (!existing) {
+          const nextCourse = courseCatalog(nextLevel);
+          currentUser.notifications.unshift({
+            id: `next-stage-${levelKey}-${Date.now()}`,
+            type: "next_stage_payment",
+            levelKey,
+            nextLevel,
+            action: "open_next_stage_payment",
+            text: `🎉 Final testdan ${score}% bilan o'tdingiz. ${nextCourse?.title || nextLevel} bosqichiga o'tish uchun to'lovni amalga oshiring va chekni yuboring.`,
+            date: new Date().toLocaleString("uz-UZ", { dateStyle: "short", timeStyle: "short" }),
+            read: false,
+          });
+          if (currentUser.notifications.length > 30) currentUser.notifications = currentUser.notifications.slice(0, 30);
+          await saveUserData(currentUser);
+        }
+
+        renderNextStageNotificationCard();
+        renderNotificationBell();
+      }
+
+      function getNextStageNotification() {
+        if (!currentUser) return null;
+        const list = Array.isArray(currentUser.notifications) ? currentUser.notifications : [];
+        return list.find((n) => n.type === "next_stage_payment" && n.action === "open_next_stage_payment") || null;
+      }
+
+      function renderNextStageNotificationCard() {
+        const card = document.getElementById("next-stage-notification-card");
+        const text = document.getElementById("next-stage-notification-text");
+        if (!card || !currentUser || currentUser.role !== "student") return;
+
+        const note = getNextStageNotification();
+        if (!note) {
+          card.classList.add("hidden");
+          return;
+        }
+
+        const order = (studentCourseOrders || []).find(
+          (o) => String(o.course_key) === String(note.nextLevel) && ["pending", "overdue", "paid"].includes(String(o.status))
+        );
+        const nextCourse = courseCatalog(note.nextLevel);
+        if (text) {
+          text.textContent = order?.status === "paid"
+            ? `✅ ${nextCourse?.title || note.nextLevel} uchun to'lov tasdiqlangan.`
+            : `Final testdan o'tdingiz. ${nextCourse?.title || note.nextLevel} uchun to'lov va chek yuborishni yakunlang.`;
+        }
+        card.classList.remove("hidden");
+      }
+
+      async function openNextStageNotification() {
+        const note = getNextStageNotification();
+        if (!note) return;
+
+        // Notification is read, but remains visible as a dashboard action card.
+        note.read = true;
+        await saveUserData(currentUser);
+        renderNotificationBell();
+
+        if (note.nextLevel) {
+          selectedPurchaseCourse = note.nextLevel;
+          await loadStudentCourseOrders();
+          await renderCoursePurchaseGate();
+          return;
+        }
+      }
+
       function renderFinalTestGateCard() {
         const box = document.getElementById("cert-current-level-gate");
         if (!box || !currentUser) return;
@@ -8908,6 +9005,7 @@ pen — ruchka 🖊"
           } XP`;
 
           renderLevelRoadmap(user);
+          renderNextStageNotificationCard();
 
           const bookSec = document.getElementById("beginner-book-section");
           if (emeraldLevelFamily(user.level) === "beginner") {
@@ -10022,7 +10120,19 @@ pen — ruchka 🖊"
           body.innerHTML = `<p style="font-size: 0.85rem; color: var(--text-muted);">✅ Siz barcha vazifalarni yakunladingiz! Ustozingiz hali bu bosqich uchun yakuniy testni tayyorlamadi — tez orada e'lon qilinadi.</p>`;
         } else {
           const lastResult = (currentUser.finalTestResults || {})[levelKey];
-          body.innerHTML = `
+          if (lastResult?.passed === true) {
+            const nextLevel = getNextLevelAfter(levelKey);
+            const nextCourse = nextLevel ? courseCatalog(nextLevel) : null;
+            body.innerHTML = `
+              <div style="text-align:center;padding:8px 0;">
+                <div style="font-size:2rem;">🏆</div>
+                <h3 style="margin:8px 0;color:var(--emerald-light);">Final testdan o'tgansiz</h3>
+                <p style="font-size:.82rem;color:var(--text-muted);">Natija: <strong style="color:var(--text-main);">${lastResult.score}%</strong>. Siz bu final testni qayta topshira olmaysiz.</p>
+                ${nextLevel ? `<p style="font-size:.82rem;color:var(--gold);margin-top:8px;">🚀 Keyingi bosqich: ${nextCourse?.title || nextLevel}</p><button class="btn-primary" style="margin-top:12px;" onclick="closeFinalTestGate(); openNextStageNotification();">💳 Keyingi bosqichga o'tish</button>` : `<p style="font-size:.82rem;color:var(--gold);margin-top:8px;">🎓 Barcha mavjud bosqichlarni yakunladingiz.</p>`}
+              </div>
+            `;
+          } else {
+            body.innerHTML = `
             <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
               🎉 Siz shu bosqichdagi barcha vazifalarni yakunladingiz! Endi yakuniy testni topshiring.
               O'tish balli: <strong style="color: var(--gold);">${test.passScore || FINAL_TEST_PASS_SCORE}%</strong>,
@@ -10035,6 +10145,7 @@ pen — ruchka 🖊"
             }
             <button class="btn-primary" style="margin-top:10px;" onclick="startFinalTest()">🏆 Yakuniy testni boshlash</button>
           `;
+          }
         }
 
         document.getElementById("final-test-gate-modal").classList.remove("hidden");
@@ -10047,6 +10158,11 @@ pen — ruchka 🖊"
       function startFinalTest() {
         const test = getFinalTestForLevel(currentFinalTestGateLevel);
         if (!test) return;
+        const previous = (currentUser?.finalTestResults || {})[currentFinalTestGateLevel];
+        if (previous?.passed === true) {
+          alert("🏆 Siz bu final testdan allaqachon o'tgansiz. Uni qayta topshirish mumkin emas.");
+          return;
+        }
         currentFinalTestAnswers = {};
 
         const box = document.getElementById("final-test-questions-box");
@@ -10217,6 +10333,7 @@ pen — ruchka 🖊"
             nextInvoice = await createNextLevelInvoiceAfterFinalTest(
               currentFinalTestGateLevel
             );
+            await ensureNextStageNotification(currentFinalTestGateLevel, score);
           }
         }
 
@@ -10249,8 +10366,8 @@ pen — ruchka 🖊"
                            : "."
                        }
                      </p>
-                     <button class="btn-primary" style="margin-top:14px;" onclick="openNextLevelPayment('${currentFinalTestGateLevel}')">
-                       💳 Keyingi modul uchun to'lov
+                     <button class="btn-primary" style="margin-top:14px;" onclick="closeFinalTestResult(); openNextStageNotification();">
+                       🚀 Keyingi bosqichga o'tish
                      </button>`
                   : `<p style="color: var(--gold); font-size:0.85rem; margin-top:6px;">
                        🏆 Siz barcha mavjud bosqichlarni muvaffaqiyatli yakunladingiz!
@@ -13107,6 +13224,7 @@ pen — ruchka 🖊"
               }">
                 <p style="font-size: 0.85rem;">${n.text}</p>
                 <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">${n.date}</div>
+                ${n.type === "next_stage_payment" ? `<button class="btn-primary" style="margin-top:9px;width:100%;" onclick="closeNotifications(); openNextStageNotification();">💳 To'lov va chek yuborish</button>` : ""}
               </div>
             `
             )
@@ -16117,6 +16235,9 @@ pen — ruchka 🖊"
             if(currentUser?.email === buyerEmail){
               currentUser = activatedUser;
               users[users.findIndex(u => u.email === buyerEmail)] = activatedUser;
+              if (Array.isArray(currentUser.notifications)) {
+                currentUser.notifications = currentUser.notifications.filter(n => String(n.nextLevel) !== String(orderRes.data.course_key));
+              }
             }
           }
         }
@@ -16161,10 +16282,34 @@ pen — ruchka 🖊"
 
       async function markPaymentOrderPaid(id){
         if(currentUser?.role!=="admin"){alert("❌ Faqat admin to‘lovni tasdiqlashi mumkin.");return;}
-        const {data,error}=await supabaseClient.from("payment_orders").update({status:"paid",paid_at:new Date().toISOString()}).eq("id",id).select().single();
+        const paidAt = new Date().toISOString();
+        const {data,error}=await supabaseClient.from("payment_orders").update({status:"paid",paid_at:paidAt}).eq("id",id).select().single();
         if(error){alert("❌ To‘lov tasdiqlanmadi: "+error.message);return;}
         const idx=emeraldPaymentOrders.findIndex(x=>Number(x.id)===Number(id));if(idx>=0)emeraldPaymentOrders[idx]=data;
+
+        // Admin paymentni bevosita Paid qilgan bo'lsa ham keyingi modulni faollashtiramiz.
+        if(data?.course_key){
+          const buyer = users.find(u=>u.email===data.student_email);
+          const course = courseCatalog(data.course_key);
+          if(buyer && course){
+            const activatedUser={...buyer,level:course.role,course_key:course.key,course_title:course.title,course_price:course.price,course_status:"active",course_purchased_at:paidAt,course_invoice_no:data.invoice_no};
+            await dbSaveUser(activatedUser);
+            if(currentUser?.email===data.student_email){
+              currentUser=activatedUser;
+              users[users.findIndex(u=>u.email===data.student_email)]=activatedUser;
+            }
+          }
+        }
+        await loadPaymentOrders();
+        await loadManualPaymentData();
         renderPaymentFinanceKpis();renderPaymentOrders();renderStudentPaymentOrders();
+        if(currentUser?.email===data.student_email && data?.course_key){
+          hideCoursePurchaseGate();
+          loadDashboard(currentUser);
+          renderStudentLessons();
+          renderLevelRoadmap(currentUser);
+          alert(`🎉 To‘lov tasdiqlandi! ${courseCatalog(data.course_key)?.title || "Kurs"} faollashtirildi.`);
+        }
       }
 
 
