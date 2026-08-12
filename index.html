@@ -13189,13 +13189,30 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         );
         if (!q) return;
         const maxLen = q.word.length;
-        // Harflar, apostrof va bo'sh joy (ko'p so'zli iboralar uchun) ruxsat etiladi.
-        let val = e.target.value.toUpperCase().replace(/[^A-Z' ]/g, "");
-        val = val.replace(/ {2,}/g, " "); // ketma-ket 2+ bo'shliqqa yo'l qo'yilmaydi
-        if (val.length > maxLen) val = val.slice(0, maxLen);
-        e.target.value = val;
+        const spaceCount = (q.word.match(/ /g) || []).length;
+        const lettersNeeded = maxLen - spaceCount;
+
+        // Foydalanuvchi faqat harf/raqam/belgilarni kiritadi — bo'sh joyni
+        // o'zi bosishi SHART EMAS. Bo'shliqlar so'z ichidagi to'g'ri o'rniga
+        // avtomatik qo'yiladi, shuning uchun ko'p so'zli iboralarda
+        // (masalan "give up") kursor "oldinga sakrab ketish" xatosi endi
+        // yuzaga kelmaydi. Harflardan tashqari raqam, apostrof, defis,
+        // "+", "#", "&", "." kabi belgilar ham endi ishlaydi.
+        let raw = e.target.value.toUpperCase().replace(/[^A-Z0-9'+#&.\-]/g, "");
+        if (raw.length > lettersNeeded) raw = raw.slice(0, lettersNeeded);
+
+        let val = "";
+        let ri = 0;
+        for (let i = 0; i < maxLen && ri < raw.length; i++) {
+          if (q.word[i] === " ") {
+            val += " ";
+          } else {
+            val += raw[ri++];
+          }
+        }
+        e.target.value = val.replace(/ /g, "");
         renderVocabWriteTiles(val);
-        if (val.length === maxLen) {
+        if (raw.length === lettersNeeded) {
           checkVocabWriteAnswer(val);
         }
       }
