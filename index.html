@@ -1,3 +1,122 @@
+
+/* EMERALD_TASK_GATE_V2 */
+function emeraldCanOpenTask(user, taskIndex, completedIndexes) {
+  return isTaskAvailableForStudent(
+    user,
+    Number(taskIndex),
+    Array.isArray(completedIndexes) ? completedIndexes : []
+  );
+}
+
+
+/* EMERALD_SCHEDULE_V2
+   1-vazifa: student ro'yxatdan o'tgan kundan ochiladi.
+   Keyingi vazifalar: M/W/F 08:00 Uzbekistan time, ketma-ket.
+*/
+const EMERALD_TZ = "Asia/Tashkent";
+
+function getStudentStartDate(user) {
+  const raw =
+    user?.registeredAt ||
+    user?.registrationDate ||
+    user?.createdAt ||
+    user?.created_at ||
+    user?.signupAt ||
+    user?.signup_at ||
+    null;
+
+  if (!raw) return new Date();
+
+  const d = new Date(raw);
+  return Number.isNaN(d.getTime()) ? new Date() : d;
+}
+
+function getTashkentParts(date = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: EMERALD_TZ,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23"
+  }).formatToParts(date);
+
+  const out = {};
+  for (const p of parts) if (p.type !== "literal") out[p.type] = Number(p.value);
+  return out;
+}
+
+function getTashkentDateKey(date = new Date()) {
+  const p = getTashkentParts(date);
+  return `${p.year}-${String(p.month).padStart(2,"0")}-${String(p.day).padStart(2,"0")}`;
+}
+
+function taskIsOpenedBySchedule(user, taskIndex, now = new Date()) {
+  // First task opens immediately from registration.
+  if (taskIndex === 0) {
+    return now.getTime() >= getStudentStartDate(user).getTime();
+  }
+
+  const start = getStudentStartDate(user);
+
+  // Count scheduled M/W/F 08:00 Asia/Tashkent slots after registration.
+  // We use calendar days in Tashkent, not the browser's local timezone.
+  const startParts = getTashkentParts(start);
+  const nowParts = getTashkentParts(now);
+
+  // Build the registration calendar date in UTC-like arithmetic only for
+  // comparing calendar days; actual opening is always evaluated in Tashkent.
+  const startDay = new Date(Date.UTC(startParts.year, startParts.month - 1, startParts.day));
+  const nowDay = new Date(Date.UTC(nowParts.year, nowParts.month - 1, nowParts.day));
+
+  if (nowDay < startDay) return false;
+
+  let slots = 0;
+  const cursor = new Date(startDay);
+
+  while (cursor <= nowDay) {
+    const weekday = cursor.getUTCDay(); // 0 Sun ... 1 Mon ... 3 Wed ... 5 Fri
+
+    if (weekday === 1 || weekday === 3 || weekday === 5) {
+      const sameRegistrationDay =
+        cursor.getTime() === startDay.getTime();
+
+      // On registration day, first task is already available. Additional
+      // tasks require a future scheduled slot at 08:00 Tashkent.
+      if (!sameRegistrationDay || startParts.hour >= 8) {
+        const slotDate = cursor.getTime();
+        const currentDate = nowDay.getTime();
+
+        if (slotDate < currentDate) {
+          slots++;
+        } else if (slotDate === currentDate && nowParts.hour >= 8) {
+          slots++;
+        }
+      }
+    }
+
+    cursor.setUTCDate(cursor.getUTCDate() + 1);
+  }
+
+  // taskIndex 1 = first scheduled task after task #1, etc.
+  return slots >= taskIndex;
+}
+
+function isTaskAvailableForStudent(user, taskIndex, completedIndexes = []) {
+  if (!taskIsOpenedBySchedule(user, taskIndex)) return false;
+
+  // Strict sequence: every previous task must be completed.
+  for (let i = 0; i < taskIndex; i++) {
+    if (!completedIndexes.includes(i)) return false;
+  }
+
+  return true;
+}
+
+/* EMERALD_SCHEDULE_V2 */
+
 <!DOCTYPE html>
 <html lang="uz">
   <head>
