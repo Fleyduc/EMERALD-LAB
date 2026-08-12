@@ -13222,6 +13222,17 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
             val += raw[ri++];
           }
         }
+        // Agar kerakli barcha harflar allaqachon yozilgan bo'lsa, so'z
+        // oxirida qolgan maxsus belgi(lar)ni ham ("how are you?" kabi)
+        // avtomatik qo'shib qo'yamiz — aks holda oxiri harfdan boshqa
+        // belgi bilan tugagan so'zlar solishtirishda noto'g'ri chiqardi.
+        if (ri >= raw.length) {
+          let i = val.length;
+          while (i < maxLen && isVocabWriteSkipChar(word[i])) {
+            val += word[i];
+            i++;
+          }
+        }
         e.target.value = raw;
         renderVocabWriteTiles(val);
         if (raw.length === lettersNeeded) {
