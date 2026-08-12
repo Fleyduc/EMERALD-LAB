@@ -905,6 +905,113 @@
         margin-top: 12px;
       }
 
+      /* ===== DARAJALAR YO'L XARITASI (ROADMAP) ===== */
+      .roadmap-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .roadmap-module {
+        border: 1px solid var(--card-border);
+        border-radius: 14px;
+        padding: 12px 14px;
+        background: rgba(0, 0, 0, 0.14);
+      }
+
+      .roadmap-module-head {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--emerald-light);
+        margin-bottom: 10px;
+        letter-spacing: 0.01em;
+      }
+
+      .roadmap-row {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0;
+      }
+
+      .roadmap-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 92px;
+        text-align: center;
+        gap: 6px;
+      }
+
+      .roadmap-dot {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        border: 2px solid var(--card-border);
+        background: rgba(0, 0, 0, 0.25);
+        flex-shrink: 0;
+      }
+
+      .roadmap-step-title {
+        font-size: 0.66rem;
+        line-height: 1.25;
+        color: var(--text-muted);
+      }
+
+      .roadmap-step.done .roadmap-dot {
+        border-color: var(--emerald-primary);
+        background: rgba(16, 185, 129, 0.18);
+      }
+
+      .roadmap-step.done .roadmap-step-title {
+        color: var(--emerald-light);
+      }
+
+      .roadmap-step.current .roadmap-dot {
+        border-color: var(--emerald-light);
+        background: rgba(16, 185, 129, 0.28);
+        box-shadow: 0 0 16px var(--emerald-glow-strong);
+        transform: scale(1.12);
+      }
+
+      .roadmap-step.current .roadmap-step-title {
+        color: var(--text-main);
+        font-weight: 800;
+      }
+
+      .roadmap-step.upcoming .roadmap-dot {
+        opacity: 0.55;
+      }
+
+      .roadmap-step.upcoming .roadmap-step-title {
+        opacity: 0.55;
+      }
+
+      .roadmap-connector {
+        height: 2px;
+        width: 22px;
+        background: var(--card-border);
+        flex-shrink: 0;
+        margin: 0 -2px 18px;
+      }
+
+      .roadmap-connector.done {
+        background: var(--emerald-primary);
+      }
+
+      @media (max-width: 680px) {
+        .roadmap-step {
+          width: 78px;
+        }
+        .roadmap-connector {
+          width: 12px;
+        }
+      }
+
       @media (max-width: 680px) {
         .course-module-grid {
           grid-template-columns: 1fr;
@@ -4720,6 +4827,15 @@ pen — ruchka 🖊"
             </div>
           </div>
 
+          <!-- DARAJALAR YO'L XARITASI (ROADMAP) -->
+          <div class="card" id="level-roadmap-card">
+            <div class="card-title">
+              <span>🗺️</span>
+              <span>Sizning yo'l xaritangiz</span>
+            </div>
+            <div class="roadmap-wrap" id="level-roadmap-track"></div>
+          </div>
+
           <!-- BEGINNER O'QUVCHILAR UCHUN KATTA KITOB SECTION -->
           <div id="beginner-book-section" class="card hidden">
             <div class="card-title">
@@ -7185,6 +7301,62 @@ pen — ruchka 🖊"
         return emeraldLevelFamily(studentLevel) === targetLevel;
       }
 
+      // Talabaning 12 bosqichli yo'l xaritasi uchun to'g'ri tartib
+      const EMERALD_LEVEL_ORDER = [
+        "pre-beginner", "beginner-middle", "beginner-expert",
+        "pre-elementary", "elementary-middle", "elementary-expert",
+        "pre-intermediate", "intermediate-middle", "intermediate-expert",
+        "pre-ielts", "ielts-mid", "ielts-adv",
+      ];
+
+      function renderLevelRoadmap(user) {
+        const box = document.getElementById("level-roadmap-track");
+        if (!box) return;
+
+        const currentIndex = EMERALD_LEVEL_ORDER.indexOf(user.level);
+
+        // Bosqichlarni modul bo'yicha guruhlash (tartibni saqlagan holda)
+        const groups = [];
+        EMERALD_LEVEL_ORDER.forEach((key, i) => {
+          const c = courseCatalog(key);
+          if (!c) return;
+          const state = i < currentIndex ? "done" : i === currentIndex ? "current" : "upcoming";
+          let group = groups.find((g) => g.module === c.module);
+          if (!group) {
+            group = { module: c.module, icon: c.icon, items: [] };
+            groups.push(group);
+          }
+          group.items.push({ ...c, state });
+        });
+
+        box.innerHTML = groups
+          .map(
+            (g) => `
+          <div class="roadmap-module">
+            <div class="roadmap-module-head">${g.icon} ${g.module}</div>
+            <div class="roadmap-row">
+              ${g.items
+                .map(
+                  (it, idx) => `
+                <div class="roadmap-step ${it.state}" title="${it.title}">
+                  <div class="roadmap-dot">${
+                    it.state === "done" ? "✅" : it.state === "current" ? "📍" : "🔒"
+                  }</div>
+                  <div class="roadmap-step-title">${it.title}</div>
+                </div>
+                ${
+                  idx < g.items.length - 1
+                    ? `<div class="roadmap-connector ${it.state === "done" ? "done" : ""}"></div>`
+                    : ""
+                }`
+                )
+                .join("")}
+            </div>
+          </div>`
+          )
+          .join("");
+      }
+
       function renderCoursePurchaseGrid() {
         const grid = document.getElementById("course-purchase-grid");
         if (!grid) return;
@@ -8262,6 +8434,8 @@ pen — ruchka 🖊"
           document.getElementById("student-xp").innerText = `${
             user.xp || 0
           } XP`;
+
+          renderLevelRoadmap(user);
 
           const bookSec = document.getElementById("beginner-book-section");
           if (emeraldLevelFamily(user.level) === "beginner") {
