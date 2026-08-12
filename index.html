@@ -737,7 +737,7 @@
       }
 
       .course-gate-card {
-        max-width: 760px;
+        max-width: 900px;
         padding: 2rem;
       }
 
@@ -770,16 +770,51 @@
       }
 
       .course-purchase-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
         margin: 18px 0;
+      }
+
+      .course-module-group {
+        border: 1px solid var(--card-border);
+        border-radius: 18px;
+        padding: 14px;
+        background: rgba(0, 0, 0, 0.14);
+      }
+
+      .course-module-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px dashed var(--card-border);
+      }
+
+      .course-module-head h4 {
+        font-size: 0.92rem;
+        letter-spacing: 0.02em;
+        color: var(--emerald-light);
+      }
+
+      .course-module-head span {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+      }
+
+      .course-module-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
       }
 
       .course-purchase-card {
         position: relative;
-        padding: 18px;
-        border-radius: 18px;
+        padding: 14px;
+        border-radius: 16px;
         border: 1px solid var(--card-border);
         background: rgba(0, 0, 0, 0.22);
         cursor: pointer;
@@ -794,17 +829,22 @@
         transform: translateY(-2px);
       }
 
+      .course-purchase-card h3 {
+        font-size: 0.92rem;
+        line-height: 1.3;
+      }
+
       .course-purchase-card .course-price {
         color: var(--emerald-light);
-        font-size: 1.35rem;
+        font-size: 1.05rem;
         font-weight: 800;
-        margin: 10px 0 4px;
+        margin: 8px 0 3px;
       }
 
       .course-purchase-card .course-description {
         color: var(--text-muted);
-        font-size: 0.78rem;
-        line-height: 1.55;
+        font-size: 0.72rem;
+        line-height: 1.5;
       }
 
       .course-purchase-badge {
@@ -866,7 +906,7 @@
       }
 
       @media (max-width: 680px) {
-        .course-purchase-grid {
+        .course-module-grid {
           grid-template-columns: 1fr;
         }
         .course-gate-card {
@@ -3249,13 +3289,32 @@
             <div class="input-group hidden" id="level-group">
               <label>Kurs tanlovi</label>
               <div class="course-gate-note" style="text-align:left;margin:0;padding:12px;border:1px solid var(--card-border);border-radius:12px;background:rgba(16,185,129,.06)">
-                🎓 Akkaunt ochilgach kurs sotib olish kerak:
-                <strong>Beginner — 300 000 UZS</strong> yoki
-                <strong>IELTS — 700 000 UZS</strong>.
+                🎓 Akkaunt ochilgach kurs sotib olish kerak: <strong>Beginner (300 000/oy)</strong>,
+                <strong>Elementary (350 000/oy)</strong>, <strong>Intermediate (500 000/oy)</strong>,
+                <strong>Pre-IELTS (600 000/oy)</strong>, <strong>IELTS 5.5-6.5 (650 000/oy)</strong> yoki
+                <strong>IELTS 7+ (700 000/oy)</strong>.
               </div>
               <select id="student-level" aria-hidden="true">
-                <option value="beginner">beginner</option>
-                <option value="ielts">ielts</option>
+                <optgroup label="1) Beginner">
+                  <option value="pre-beginner">Pre-Beginner</option>
+                  <option value="beginner-middle">Beginner Middle</option>
+                  <option value="beginner-expert">Beginner Expert</option>
+                </optgroup>
+                <optgroup label="2) Elementary">
+                  <option value="pre-elementary">Pre-Elementary</option>
+                  <option value="elementary-middle">Elementary Middle</option>
+                  <option value="elementary-expert">Elementary Expert</option>
+                </optgroup>
+                <optgroup label="3) Intermediate">
+                  <option value="pre-intermediate">Pre-Intermediate</option>
+                  <option value="intermediate-middle">Intermediate Middle</option>
+                  <option value="intermediate-expert">Intermediate Expert</option>
+                </optgroup>
+                <optgroup label="4) IELTS">
+                  <option value="pre-ielts">Pre-IELTS</option>
+                  <option value="ielts-mid">IELTS 5.5-6.5</option>
+                  <option value="ielts-adv">IELTS 7+</option>
+                </optgroup>
               </select>
             </div>
 
@@ -3386,23 +3445,7 @@
           </p>
         </div>
 
-        <div class="course-purchase-grid">
-          <button type="button" class="course-purchase-card" id="purchase-course-beginner" onclick="selectPurchaseCourse('beginner')">
-            <span class="course-purchase-badge">A1</span>
-            <div style="font-size:1.5rem">📘</div>
-            <h3>Beginner</h3>
-            <div class="course-price">300 000 UZS</div>
-            <div class="course-description">Ingliz tilini noldan boshlash. Grammar, Vocabulary, Speaking, Listening va asosiy Writing.</div>
-          </button>
-
-          <button type="button" class="course-purchase-card" id="purchase-course-ielts" onclick="selectPurchaseCourse('ielts')">
-            <span class="course-purchase-badge">IELTS</span>
-            <div style="font-size:1.5rem">🎯</div>
-            <h3>IELTS Preparation</h3>
-            <div class="course-price">700 000 UZS</div>
-            <div class="course-description">IELTS Reading, Listening, Writing va Speaking bo'yicha to'liq tayyorgarlik tizimi.</div>
-          </button>
-        </div>
+        <div class="course-purchase-grid" id="course-purchase-grid"></div>
 
         <div id="course-purchase-content"></div>
 
@@ -3994,8 +4037,26 @@
                 <div class="input-group">
                   <label data-i18n="targetLevelLabel">Maqsadli Daraja</label>
                   <select id="lesson-level">
-                    <option value="beginner">Beginner (Boshlang'ich)</option>
-                    <option value="ielts">IELTS Preparation</option>
+                    <optgroup label="1) Beginner">
+                      <option value="pre-beginner">Pre-Beginner</option>
+                      <option value="beginner-middle">Beginner Middle</option>
+                      <option value="beginner-expert">Beginner Expert</option>
+                    </optgroup>
+                    <optgroup label="2) Elementary">
+                      <option value="pre-elementary">Pre-Elementary</option>
+                      <option value="elementary-middle">Elementary Middle</option>
+                      <option value="elementary-expert">Elementary Expert</option>
+                    </optgroup>
+                    <optgroup label="3) Intermediate">
+                      <option value="pre-intermediate">Pre-Intermediate</option>
+                      <option value="intermediate-middle">Intermediate Middle</option>
+                      <option value="intermediate-expert">Intermediate Expert</option>
+                    </optgroup>
+                    <optgroup label="4) IELTS">
+                      <option value="pre-ielts">Pre-IELTS</option>
+                      <option value="ielts-mid">IELTS 5.5-6.5</option>
+                      <option value="ielts-adv">IELTS 7+</option>
+                    </optgroup>
                   </select>
                 </div>
               </div>
@@ -7005,22 +7066,93 @@ pen — ruchka 🖊"
          Student must purchase Beginner or IELTS before dashboard access.
          Paid course automatically becomes the student's active level.
       ============================================================ */
+      /* ============================================================
+         🎓 EMERALD LAB — DARAJALAR TIZIMI (4 modul, 12 daraja)
+         1) BEGINNER moduli   (2 oy, 300 000 UZS/oy): Pre-Beginner, Beginner Middle, Beginner Expert
+         2) ELEMENTARY moduli (3 oy, 350 000 UZS/oy): Pre-Elementary, Elementary Middle, Elementary Expert
+         3) INTERMEDIATE moduli (3 oy, 500 000 UZS/oy): Pre-Intermediate, Intermediate Middle, Intermediate Expert
+         4) IELTS yo'nalishi: Pre-IELTS (3 oy, 600 000), IELTS 5.5-6.5 (3 oy, 650 000), IELTS 7+ (4 oy, 700 000)
+         Har bir daraja mustaqil sotib olinadigan kurs (course_key = role).
+      ============================================================ */
+      const EMERALD_MODULE_GROUPS = [
+        { key: "beginner", order: 1, title: "1) BEGINNER MODULI", duration: "2 oy", icon: "📗" },
+        { key: "elementary", order: 2, title: "2) ELEMENTARY MODULI", duration: "3 oy", icon: "📘" },
+        { key: "intermediate", order: 3, title: "3) INTERMEDIATE MODULI", duration: "3 oy", icon: "📙" },
+        { key: "ielts", order: 4, title: "4) IELTS YO'NALISHI", duration: null, icon: "🎯" },
+      ];
+
       const EMERALD_COURSE_CATALOG = {
-        beginner: {
-          key: "beginner",
-          title: "Beginner",
-          role: "beginner",
-          price: 300000,
-          icon: "📘",
-          description: "Ingliz tilini noldan boshlash uchun to'liq Beginner kursi.",
+        "pre-beginner": {
+          key: "pre-beginner", title: "Pre-Beginner", role: "pre-beginner",
+          family: "beginner", module: "Beginner Moduli", stage: 1,
+          duration: "2 oy", price: 300000, icon: "📗",
+          description: "Ingliz tilini noldan boshlash: alifbo, asosiy grammatika va lug'at.",
         },
-        ielts: {
-          key: "ielts",
-          title: "IELTS Preparation",
-          role: "ielts",
-          price: 700000,
-          icon: "🎯",
-          description: "IELTS Reading, Listening, Writing va Speaking tayyorgarligi.",
+        "beginner-middle": {
+          key: "beginner-middle", title: "Beginner Middle", role: "beginner-middle",
+          family: "beginner", module: "Beginner Moduli", stage: 2,
+          duration: "2 oy", price: 300000, icon: "📗",
+          description: "Beginner bosqichining o'rta darajasi: grammatika va suhbat ko'nikmalari.",
+        },
+        "beginner-expert": {
+          key: "beginner-expert", title: "Beginner Expert", role: "beginner-expert",
+          family: "beginner", module: "Beginner Moduli", stage: 3,
+          duration: "2 oy", price: 300000, icon: "📗",
+          description: "Beginner darajasini mustahkamlash va Elementary'ga tayyorgarlik.",
+        },
+        "pre-elementary": {
+          key: "pre-elementary", title: "Pre-Elementary", role: "pre-elementary",
+          family: "elementary", module: "Elementary Moduli", stage: 1,
+          duration: "3 oy", price: 350000, icon: "📘",
+          description: "Elementary bosqichiga kirish: kengaytirilgan grammatika va lug'at.",
+        },
+        "elementary-middle": {
+          key: "elementary-middle", title: "Elementary Middle", role: "elementary-middle",
+          family: "elementary", module: "Elementary Moduli", stage: 2,
+          duration: "3 oy", price: 350000, icon: "📘",
+          description: "Elementary bosqichining o'rta darajasi: Reading va Listening rivoji.",
+        },
+        "elementary-expert": {
+          key: "elementary-expert", title: "Elementary Expert", role: "elementary-expert",
+          family: "elementary", module: "Elementary Moduli", stage: 3,
+          duration: "3 oy", price: 350000, icon: "📘",
+          description: "Elementary darajasini mustahkamlash va Intermediate'ga tayyorgarlik.",
+        },
+        "pre-intermediate": {
+          key: "pre-intermediate", title: "Pre-Intermediate", role: "pre-intermediate",
+          family: "intermediate", module: "Intermediate Moduli", stage: 1,
+          duration: "3 oy", price: 500000, icon: "📙",
+          description: "Intermediate bosqichiga kirish: erkin muloqot va murakkabroq grammatika.",
+        },
+        "intermediate-middle": {
+          key: "intermediate-middle", title: "Intermediate Middle", role: "intermediate-middle",
+          family: "intermediate", module: "Intermediate Moduli", stage: 2,
+          duration: "3 oy", price: 500000, icon: "📙",
+          description: "Intermediate bosqichining o'rta darajasi: Writing va Speaking chuqurlashtirish.",
+        },
+        "intermediate-expert": {
+          key: "intermediate-expert", title: "Intermediate Expert", role: "intermediate-expert",
+          family: "intermediate", module: "Intermediate Moduli", stage: 3,
+          duration: "3 oy", price: 500000, icon: "📙",
+          description: "Intermediate darajasini mustahkamlash va IELTS yo'nalishiga tayyorgarlik.",
+        },
+        "pre-ielts": {
+          key: "pre-ielts", title: "Pre-IELTS", role: "pre-ielts",
+          family: "ielts", module: "Pre-IELTS", stage: 1,
+          duration: "3 oy", price: 600000, icon: "🎯",
+          description: "IELTS formatiga kirish: Reading, Listening, Writing va Speaking asoslari.",
+        },
+        "ielts-mid": {
+          key: "ielts-mid", title: "IELTS 5.5-6.5", role: "ielts-mid",
+          family: "ielts", module: "IELTS 5.5-6.5", stage: 2,
+          duration: "3 oy", price: 650000, icon: "🎯",
+          description: "IELTS 5.5-6.5 band uchun to'liq tayyorgarlik: barcha 4 ta modul.",
+        },
+        "ielts-adv": {
+          key: "ielts-adv", title: "IELTS 7+", role: "ielts-adv",
+          family: "ielts", module: "IELTS 7+", stage: 3,
+          duration: "4 oy", price: 700000, icon: "🎯",
+          description: "Yuqori band (7+) uchun ilg'or IELTS tayyorgarlik dasturi.",
         },
       };
 
@@ -7035,12 +7167,68 @@ pen — ruchka 🖊"
         return EMERALD_COURSE_CATALOG[key] || null;
       }
 
+      function emeraldLevelLabel(key) {
+        const c = courseCatalog(key);
+        return c ? c.title : String(key || "—").toUpperCase();
+      }
+
+      function emeraldLevelFamily(key) {
+        const c = courseCatalog(key);
+        return c ? c.family : null;
+      }
+
+      // Oddiy darslar aniq daraja bo'yicha (target_level === level), IELTS
+      // moduli mashqlari esa butun IELTS oilasiga (pre-ielts/ielts-mid/ielts-adv) tegishli bo'ladi.
+      function studentMatchesTargetLevel(targetLevel, studentLevel) {
+        if (!targetLevel) return true;
+        if (targetLevel === studentLevel) return true;
+        return emeraldLevelFamily(studentLevel) === targetLevel;
+      }
+
+      function renderCoursePurchaseGrid() {
+        const grid = document.getElementById("course-purchase-grid");
+        if (!grid) return;
+        grid.innerHTML = EMERALD_MODULE_GROUPS.map((mod) => {
+          const levels = Object.values(EMERALD_COURSE_CATALOG)
+            .filter((c) => c.family === mod.key)
+            .sort((a, b) => a.stage - b.stage);
+          const priceLine =
+            mod.key === "ielts"
+              ? "Har bosqich uchun narx va davomiylik alohida"
+              : `${coursePurchaseMoney(levels[0]?.price)} / oy • ${mod.duration}`;
+          const cards = levels
+            .map(
+              (c) => `
+            <button type="button" class="course-purchase-card" id="purchase-course-${c.key}" onclick="selectPurchaseCourse('${c.key}')">
+              <span class="course-purchase-badge">${c.stage}-bosqich</span>
+              <div style="font-size:1.4rem">${c.icon}</div>
+              <h3>${c.title}</h3>
+              <div class="course-price">${coursePurchaseMoney(c.price)} / oy</div>
+              <div class="course-description">${c.duration} • ${c.description}</div>
+            </button>`
+            )
+            .join("");
+          return `
+            <div class="course-module-group">
+              <div class="course-module-head">
+                <h4>${mod.icon} ${mod.title}</h4>
+                <span>${priceLine}</span>
+              </div>
+              <div class="course-module-grid">${cards}</div>
+            </div>`;
+        }).join("");
+      }
+
       function courseOrderForUser(key) {
-        return studentCourseOrders.find(
+        const matches = studentCourseOrders.filter(
           (o) =>
             String(o.course_key || "") === String(key) &&
             ["pending", "overdue"].includes(String(o.status || ""))
         );
+        if (!matches.length) return undefined;
+        return matches.sort(
+          (a, b) => new Date(a.due_date || 0) - new Date(b.due_date || 0)
+        )[0];
       }
 
       async function loadStudentCourseOrders() {
@@ -7079,7 +7267,9 @@ pen — ruchka 🖊"
         await loadStudentCourseOrders();
         await loadManualPaymentData();
 
-        ["beginner", "ielts"].forEach((key) => {
+        renderCoursePurchaseGrid();
+
+        Object.keys(EMERALD_COURSE_CATALOG).forEach((key) => {
           document
             .getElementById("purchase-course-" + key)
             ?.classList.toggle("selected", selectedPurchaseCourse === key);
@@ -7104,7 +7294,7 @@ pen — ruchka 🖊"
           box.innerHTML = `
             <div class="course-payment-panel">
               <div class="course-payment-status" style="background:rgba(16,185,129,.10);border-color:rgba(16,185,129,.3);color:#86efac">
-                ✅ ${paymentSafe(course.title)} kursi faol. Sizning yo'nalishingiz: <strong>${paymentSafe(course.role.toUpperCase())}</strong>.
+                ✅ ${paymentSafe(course.title)} kursi faol. Sizning yo'nalishingiz: <strong>${paymentSafe(course.title.toUpperCase())}</strong>.
               </div>
               <button class="btn-primary" type="button" onclick="enterActiveCourse()">🚀 Kursga kirish</button>
             </div>`;
@@ -7113,11 +7303,13 @@ pen — ruchka 🖊"
 
         const order = courseOrderForUser(course.key);
         if (!order) {
+          const totalMonths = emeraldCourseMonths(course);
           box.innerHTML = `
             <div class="course-payment-panel">
               <div class="course-payment-status">
                 ${course.icon} <strong>${paymentSafe(course.title)}</strong> tanlandi.
-                Narx: <strong>${coursePurchaseMoney(course.price)}</strong>.
+                Narx: <strong>${coursePurchaseMoney(course.price)} / oy</strong> × ${totalMonths} oy
+                ${totalMonths > 1 ? `(jami ${coursePurchaseMoney(course.price * totalMonths)})` : ""}.
               </div>
               <div class="course-gate-actions">
                 <button class="btn-primary" type="button" onclick="createStudentCourseOrder('${course.key}')">
@@ -7167,6 +7359,12 @@ pen — ruchka 🖊"
         renderCoursePurchaseGate();
       }
 
+      // "2 oy", "3 oy", "4 oy +-" kabi matnlardan oylar sonini ajratib olish
+      function emeraldCourseMonths(course) {
+        const m = String(course?.duration || "").match(/\d+/);
+        return m ? Math.max(1, parseInt(m[0], 10)) : 1;
+      }
+
       async function createStudentCourseOrder(key) {
         if (!currentUser || currentUser.role !== "student") return;
         const course = courseCatalog(key);
@@ -7189,41 +7387,58 @@ pen — ruchka 🖊"
           return;
         }
 
-        const due = new Date();
-        due.setDate(due.getDate() + 3);
+        // Kurs necha oylik bo'lsa, shuncha oylik invoice avtomatik yaratiladi.
+        // 1-oy hozir to'lanadi va kursni faollashtiradi; qolgan oylar
+        // "To'lovlar" bo'limida navbat bilan chiqib turadi (har 30 kunda bittadan).
+        const totalMonths = emeraldCourseMonths(course);
+        const firstDue = new Date();
+        firstDue.setDate(firstDue.getDate() + 3);
 
-        const payload = {
-          invoice_no: paymentInvoice(),
-          student_email: currentUser.email,
-          course_key: course.key,
-          course_title: course.title,
-          amount: course.price,
-          currency: "UZS",
-          due_date: due.toISOString().slice(0, 10),
-          status: "pending",
-          payment_method: "manual_card",
-          notes: `Course purchase: ${course.title}`,
-          created_by: "student-course-purchase",
-        };
+        const payloads = [];
+        for (let m = 1; m <= totalMonths; m++) {
+          const due = new Date(firstDue);
+          due.setDate(due.getDate() + (m - 1) * 30);
+          payloads.push({
+            invoice_no: paymentInvoice(),
+            student_email: currentUser.email,
+            course_key: course.key,
+            course_title:
+              totalMonths > 1
+                ? `${course.title} (Oy ${m}/${totalMonths})`
+                : course.title,
+            amount: course.price,
+            currency: "UZS",
+            due_date: due.toISOString().slice(0, 10),
+            status: "pending",
+            payment_method: "manual_card",
+            notes: `Course purchase: ${course.title} — oylik to'lov ${m}/${totalMonths}`,
+            created_by: "student-course-purchase",
+          });
+        }
 
         const { data, error } = await supabaseClient
           .from("payment_orders")
-          .insert(payload)
-          .select()
-          .single();
+          .insert(payloads)
+          .select();
 
         if (error) {
           alert("❌ Kurs uchun invoice yaratilmadi: " + error.message);
           return;
         }
 
-        studentCourseOrders.unshift(data);
-        emeraldPaymentOrders.unshift(data);
+        studentCourseOrders = [...data, ...studentCourseOrders];
+        emeraldPaymentOrders = [...data, ...emeraldPaymentOrders];
         paymentOrdersLoaded = true;
         selectedPurchaseCourse = key;
 
+        const first = data
+          .slice()
+          .sort((a, b) => new Date(a.due_date) - new Date(b.due_date))[0];
+
         alert(
-          `✅ ${course.title} uchun invoice yaratildi: ${data.invoice_no}\n\nEndi karta orqali to'lov qiling va chekni yuboring.`
+          totalMonths > 1
+            ? `✅ ${course.title} uchun ${totalMonths} oylik invoice yaratildi.\n\n1-oy invoice: ${first.invoice_no}\n\nEndi karta orqali 1-oy to'lovini qiling va chekni yuboring. Qolgan oylar "To'lovlar" bo'limida har 30 kunda navbat bilan chiqadi.`
+            : `✅ ${course.title} uchun invoice yaratildi: ${first.invoice_no}\n\nEndi karta orqali to'lov qiling va chekni yuboring.`
         );
         renderCoursePurchaseGate();
       }
@@ -7494,7 +7709,7 @@ pen — ruchka 🖊"
             // trigger (supabase_security.sql) ko'taradi.
             role: "student",
             signup_code: extra.signup_code || metadata.signup_code || null,
-            level: (extra.level || metadata.level || "beginner"),
+            level: (extra.level || metadata.level || "pre-beginner"),
             avatar: extra.avatar || metadata.avatar_url || DEFAULT_AVATAR,
             xp: 0, coins: 20, streak: 0, equippedTitle: "",
             certificates: [], completedLessons: [], completedVocabQuizzes: [],
@@ -7850,7 +8065,7 @@ pen — ruchka 🖊"
               phone,
               full_name: name,
               signup_code: phoneSelectedRole === "teacher" ? phoneAdminCodeInput : null,
-              level: "beginner",
+              level: "pre-beginner",
               provider: "phone"
             });
           } else {
@@ -8037,7 +8252,7 @@ pen — ruchka 🖊"
           document.getElementById("student-equipped-title").innerText =
             user.equippedTitle || "";
           document.getElementById("student-level-badge").innerText =
-            user.level.toUpperCase();
+            emeraldLevelLabel(user.level).toUpperCase();
           document.getElementById("student-streak").innerText = `${
             user.streak || 0
           } kun`;
@@ -8049,14 +8264,14 @@ pen — ruchka 🖊"
           } XP`;
 
           const bookSec = document.getElementById("beginner-book-section");
-          if (user.level === "beginner") {
+          if (emeraldLevelFamily(user.level) === "beginner") {
             bookSec.classList.remove("hidden");
           } else {
             bookSec.classList.add("hidden");
           }
 
           const ieltsBookSec = document.getElementById("ielts-book-section");
-          if (user.level === "ielts") {
+          if (emeraldLevelFamily(user.level) === "ielts") {
             ieltsBookSec.classList.remove("hidden");
           } else {
             ieltsBookSec.classList.add("hidden");
@@ -8220,7 +8435,7 @@ pen — ruchka 🖊"
         document.getElementById("pop-role-title").innerText = `${
           targetUser.role === "teacher"
             ? "👨‍🏫 Ustoz"
-            : "🎓 O'quvchi (" + (targetUser.level || "").toUpperCase() + ")"
+            : "🎓 O'quvchi (" + emeraldLevelLabel(targetUser.level).toUpperCase() + ")"
         } ${targetUser.equippedTitle ? "| " + targetUser.equippedTitle : ""}`;
         document.getElementById(
           "pop-last-seen"
@@ -8852,7 +9067,7 @@ pen — ruchka 🖊"
         container.innerHTML = "";
 
         const filteredLessons = lessons.filter(
-          (l) => l.target_level === currentUser.level && l.type !== "writing"
+          (l) => studentMatchesTargetLevel(l.target_level, currentUser.level) && l.type !== "writing"
         );
 
         const completed = currentUser.completedLessons || [];
@@ -10496,7 +10711,7 @@ pen — ruchka 🖊"
         y += 7;
         doc.text(`Email: ${student.email}`, 14, y);
         y += 7;
-        doc.text(`Daraja: ${(student.level || "-").toUpperCase()}`, 14, y);
+        doc.text(`Daraja: ${emeraldLevelLabel(student.level).toUpperCase()}`, 14, y);
         y += 7;
         doc.text(`Unvon: ${student.equippedTitle || "Yo'q"}`, 14, y);
         y += 10;
@@ -11809,7 +12024,7 @@ pen — ruchka 🖊"
         if (!container) return;
 
         const tasks = lessons.filter(
-          (l) => l.type === "writing" && l.target_level === currentUser.level
+          (l) => l.type === "writing" && studentMatchesTargetLevel(l.target_level, currentUser.level)
         );
 
         if (tasks.length === 0) {
@@ -12534,7 +12749,7 @@ pen — ruchka 🖊"
         if (!container) return;
 
         const tasks = lessons.filter(
-          (l) => l.type === "reading" && l.target_level === currentUser.level
+          (l) => l.type === "reading" && studentMatchesTargetLevel(l.target_level, currentUser.level)
         );
 
         if (tasks.length === 0) {
@@ -13642,7 +13857,7 @@ pen — ruchka 🖊"
         if (!container) return;
 
         const tasks = lessons.filter(
-          (l) => l.type === "listening" && l.target_level === currentUser.level
+          (l) => l.type === "listening" && studentMatchesTargetLevel(l.target_level, currentUser.level)
         );
 
         if (tasks.length === 0) {
@@ -14147,7 +14362,7 @@ pen — ruchka 🖊"
         });
         document.getElementById("cc-skill-overview").innerHTML=skillKeys.map(k=>`<div class="cc-progress-row"><span>${skillLabels[k]}</span><div class="cc-progress-track"><div class="cc-progress-fill" style="width:${skillAvg[k]}%"></div></div><strong>${skillAvg[k]}%</strong></div>`).join("");
 
-        document.getElementById("cc-students-table").innerHTML=students.length?students.sort((a,b)=>ccProgressForUser(b)-ccProgressForUser(a)).map(u=>`<tr><td><strong>${escapeHtml(u.full_name||u.email)}</strong><div style="font-size:.65rem;color:#6b8d81">${escapeHtml(u.email)}</div></td><td>${escapeHtml((u.level||"-").toUpperCase())}</td><td><strong>${ccProgressForUser(u)}%</strong></td><td>${Number(u.xp||0)}</td><td>${escapeHtml(u.lastSeen||"—")}</td></tr>`).join(""): `<tr><td colspan="5" class="calendar-empty">Hozircha o‘quvchilar yo‘q.</td></tr>`;
+        document.getElementById("cc-students-table").innerHTML=students.length?students.sort((a,b)=>ccProgressForUser(b)-ccProgressForUser(a)).map(u=>`<tr><td><strong>${escapeHtml(u.full_name||u.email)}</strong><div style="font-size:.65rem;color:#6b8d81">${escapeHtml(u.email)}</div></td><td>${escapeHtml(emeraldLevelLabel(u.level).toUpperCase())}</td><td><strong>${ccProgressForUser(u)}%</strong></td><td>${Number(u.xp||0)}</td><td>${escapeHtml(u.lastSeen||"—")}</td></tr>`).join(""): `<tr><td colspan="5" class="calendar-empty">Hozircha o‘quvchilar yo‘q.</td></tr>`;
 
         try{
           const {data,error}=await supabaseClient.from("student_payments").select("amount,currency,status");
