@@ -909,7 +909,18 @@
       .roadmap-wrap {
         display: flex;
         flex-direction: column;
-        gap: 18px;
+        gap: 20px;
+        position: relative;
+      }
+
+      .roadmap-wrap::before {
+        content: "YOUR LEARNING JOURNEY";
+        display: block;
+        font-size: .62rem;
+        font-weight: 900;
+        letter-spacing: .18em;
+        color: rgba(167,243,208,.72);
+        margin-bottom: -6px;
       }
 
       .roadmap-module {
@@ -965,6 +976,19 @@
         flex-wrap: wrap;
         gap: 0;
         position: relative;
+        padding: 8px 4px 4px;
+      }
+
+      .roadmap-row::before {
+        content: "";
+        position: absolute;
+        left: 26px;
+        right: 26px;
+        top: 30px;
+        height: 2px;
+        background: linear-gradient(90deg, rgba(52,211,153,.28), rgba(52,211,153,.06));
+        z-index: 0;
+        pointer-events: none;
       }
 
       .roadmap-step {
@@ -1337,6 +1361,18 @@
         border-color: var(--emerald-primary);
         box-shadow: 0 0 15px var(--emerald-glow);
         background: rgba(2, 20, 15, 0.9);
+      }
+
+      /* ===== 📅 VAZIFA JADVALI ===== */
+      .lesson-schedule-info {
+        margin-top: 10px;
+        padding: 9px 11px;
+        border: 1px solid rgba(245,158,11,.22);
+        border-radius: 12px;
+        background: rgba(245,158,11,.07);
+        color: #fde68a;
+        font-size: .72rem;
+        line-height: 1.45;
       }
 
       /* ===== IELTS READING: savol turlari uchun uslublar ===== */
@@ -5105,20 +5141,6 @@ pen — ruchka 🖊"
             <div class="roadmap-wrap" id="level-roadmap-track"></div>
           </div>
 
-          <!-- KEYINGI BOSQICH NOTIFICATION / PAYMENT GATE -->
-          <div id="next-stage-notification-card" class="card hidden" style="margin-top:14px; border:1px solid rgba(245,158,11,.38); background:linear-gradient(135deg,rgba(245,158,11,.10),rgba(16,185,129,.06)); cursor:pointer;" onclick="openNextStageNotification()">
-            <div style="display:flex;align-items:center;gap:14px;justify-content:space-between;flex-wrap:wrap;">
-              <div style="display:flex;align-items:center;gap:12px;">
-                <div style="width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:rgba(245,158,11,.15);font-size:1.45rem;">🚀</div>
-                <div>
-                  <div style="font-weight:900;font-size:1rem;">Keyingi bosqichga o'tish</div>
-                  <div id="next-stage-notification-text" style="font-size:.78rem;color:var(--text-muted);margin-top:3px;">Final testdan o'tdingiz. Keyingi modul uchun to'lovni amalga oshiring.</div>
-                </div>
-              </div>
-              <div style="font-weight:900;color:var(--gold);font-size:.82rem;">To'lov va chek →</div>
-            </div>
-          </div>
-
           <!-- BEGINNER O'QUVCHILAR UCHUN KATTA KITOB SECTION -->
           <div id="beginner-book-section" class="card hidden">
             <div class="card-title">
@@ -6803,7 +6825,6 @@ pen — ruchka 🖊"
     </main>
 
     <script>
-
       const translations = {
         UZB: {
           welcomeSubtitle: "Ingliz tili laboratoriyasiga xush kelibsiz!",
@@ -7467,113 +7488,6 @@ pen — ruchka 🖊"
           studentView.classList.remove("hidden");
           renderFinalTestGateCard();
           renderStudentCertificates();
-        }
-      }
-
-      function getNextLevelAfter(levelKey) {
-        const idx = EMERALD_LEVEL_ORDER.indexOf(levelKey);
-        return idx >= 0 ? (EMERALD_LEVEL_ORDER[idx + 1] || null) : null;
-      }
-
-      async function ensureNextStageNotification(levelKey, score) {
-        if (!currentUser || currentUser.role !== "student") return;
-        const nextLevel = getNextLevelAfter(levelKey);
-        if (!nextLevel) return;
-
-        ensureCompletionStateData(currentUser);
-        if (!Array.isArray(currentUser.notifications)) currentUser.notifications = [];
-
-        const existing = currentUser.notifications.find(
-          (n) => n.type === "next_stage_payment" && String(n.levelKey) === String(levelKey)
-        );
-
-        if (!existing) {
-          const nextCourse = courseCatalog(nextLevel);
-          currentUser.notifications.unshift({
-            id: `next-stage-${levelKey}-${Date.now()}`,
-            type: "next_stage_payment",
-            levelKey,
-            nextLevel,
-            action: "open_next_stage_payment",
-            text: `🎉 Final testdan ${score}% bilan o'tdingiz. ${nextCourse?.title || nextLevel} bosqichiga o'tish uchun to'lovni amalga oshiring va chekni yuboring.`,
-            date: new Date().toLocaleString("uz-UZ", { dateStyle: "short", timeStyle: "short" }),
-            read: false,
-          });
-          if (currentUser.notifications.length > 30) currentUser.notifications = currentUser.notifications.slice(0, 30);
-          await saveUserData(currentUser);
-        }
-
-        renderNextStageNotificationCard();
-        renderNotificationBell();
-      }
-
-      function getNextStageNotification() {
-        if (!currentUser || currentUser.role !== "student") return null;
-        const list = Array.isArray(currentUser.notifications) ? currentUser.notifications : [];
-        const saved = list.find((n) => n.type === "next_stage_payment" && n.action === "open_next_stage_payment");
-        if (saved) return saved;
-
-        // Fallback: if the notification record was not loaded/saved correctly,
-        // derive the dashboard action directly from the trusted final-test result.
-        const result = (currentUser.finalTestResults || {})[currentUser.level];
-        if (result?.passed === true) {
-          const nextLevel = getNextLevelAfter(currentUser.level);
-          if (!nextLevel) return null;
-          return {
-            id: `next-stage-fallback-${currentUser.level}`,
-            type: "next_stage_payment",
-            levelKey: currentUser.level,
-            nextLevel,
-            action: "open_next_stage_payment",
-            text: `Final testdan ${result.score || 0}% bilan o'tdingiz. Keyingi bosqich uchun to'lov va chek yuboring.`,
-            read: false,
-          };
-        }
-        return null;
-      }
-
-      function renderNextStageNotificationCard() {
-        const card = document.getElementById("next-stage-notification-card");
-        const text = document.getElementById("next-stage-notification-text");
-        if (!card || !currentUser || currentUser.role !== "student") return;
-
-        const note = getNextStageNotification();
-        if (!note) {
-          card.classList.add("hidden");
-          return;
-        }
-
-        const order = (studentCourseOrders || []).find(
-          (o) => String(o.course_key) === String(note.nextLevel) && ["pending", "overdue", "paid"].includes(String(o.status))
-        );
-        const nextCourse = courseCatalog(note.nextLevel);
-        if (text) {
-          text.textContent = order?.status === "paid"
-            ? `✅ ${nextCourse?.title || note.nextLevel} uchun to'lov tasdiqlangan.`
-            : `Final testdan o'tdingiz. ${nextCourse?.title || note.nextLevel} uchun to'lov va chek yuborishni yakunlang.`;
-        }
-        card.classList.remove("hidden");
-      }
-
-      async function openNextStageNotification() {
-        const note = getNextStageNotification();
-        if (!note) {
-          alert("❌ Keyingi bosqich mavjud emas yoki final test natijasi topilmadi.");
-          return;
-        }
-
-        // Notification is read, but remains visible as a dashboard action card.
-        if (!String(note.id).startsWith("next-stage-fallback-")) {
-          note.read = true;
-          await saveUserData(currentUser);
-        }
-        renderNotificationBell();
-
-        if (note.nextLevel) {
-          selectedPurchaseCourse = note.nextLevel;
-          await loadStudentCourseOrders();
-          await renderCoursePurchaseGate();
-          return;
         }
       }
 
@@ -8462,8 +8376,6 @@ pen — ruchka 🖊"
             role: "student",
             signup_code: extra.signup_code || metadata.signup_code || null,
             level: (extra.level || metadata.level || "pre-beginner"),
-            // Darslar jadvali uchun haqiqiy Supabase Auth ro'yxatdan o'tgan vaqti.
-            registeredAt: authUser.created_at || new Date().toISOString(),
             avatar: extra.avatar || metadata.avatar_url || DEFAULT_AVATAR,
             xp: 0, coins: 20, streak: 0, equippedTitle: "",
             certificates: [], completedLessons: [], completedVocabQuizzes: [],
@@ -8474,17 +8386,12 @@ pen — ruchka 🖊"
             weakPoints: {}, notifications: [], telegramChatId: null, badges: [],
             weeklyXpSnapshot: null, dailyXpSnapshot: null,
             lastWeeklyBonusWeek: null, lastDailyBonusDay: null,
+            registered_at: authUser.created_at || new Date().toISOString(),
             lastSeen: new Date().toLocaleString("uz-UZ", {dateStyle:"short", timeStyle:"short"})
           };
         } else {
           user.auth_user_id = authUser.id;
           user.auth_provider = provider;
-          // Eski profillarda maydon bo'lmasa, Auth created_at dan bir marta
-          // boshlanish sanasini tiklaymiz.
-          if (!user.registeredAt) {
-            user.registeredAt =
-              authUser.created_at || new Date().toISOString();
-          }
           user.phone = authUser.phone || user.phone || extra.phone || null;
           if (extra.full_name && !user.full_name) user.full_name = extra.full_name;
           if (extra.avatar) user.avatar = extra.avatar;
@@ -8495,6 +8402,9 @@ pen — ruchka 🖊"
           if (!user.weakPoints) user.weakPoints = {};
           if (!user.notifications) user.notifications = [];
           if (!user.badges) user.badges = [];
+          if (!user.registered_at) {
+            user.registered_at = authUser.created_at || new Date().toISOString();
+          }
         }
 
         await saveUserData(user);
@@ -9029,7 +8939,6 @@ pen — ruchka 🖊"
           } XP`;
 
           renderLevelRoadmap(user);
-          renderNextStageNotificationCard();
 
           const bookSec = document.getElementById("beginner-book-section");
           if (emeraldLevelFamily(user.level) === "beginner") {
@@ -9803,167 +9712,141 @@ pen — ruchka 🖊"
 
       const LESSON_ICONS = ["📘", "📗", "📙", "📕", "📓", "📔", "📒", "🗂️"];
 
-      // ============================================================
-      // EMERALD LESSON SCHEDULE — REAL UNLOCK LOGIC
-      //
-      // 1-vazifa:
-      //   O'quvchi ro'yxatdan o'tgan (account created) kundan boshlab
-      //   darhol ochiladi.
-      //
-      // 2-vazifa va keyingilari:
-      //   Dushanba / Chorshanba / Juma 08:00 (Asia/Tashkent).
-      //   Har bir keyingi vazifa oldingi vazifa tugagan bo'lsa ham,
-      //   o'z vaqt-slotidan oldin ochilmaydi.
-      //
-      // Misol:
-      //   Wed 10:00 signup -> #1 darhol, #2 Fri 08:00, #3 Mon 08:00
-      //   Wed 07:00 signup -> #1 darhol, #2 Wed 08:00, #3 Fri 08:00
-      // ============================================================
+      /* ============================================================
+         📅 EMERALD LAB — VAZIFALAR JADVALI
+         Dushanba / Chorshanba / Juma, 08:00 Asia/Tashkent.
+         Jadval o'quvchining ro'yxatdan o'tgan vaqtiga bog'langan.
+         ============================================================ */
+      const EMERALD_TASK_OPEN_DAYS = [1, 3, 5]; // Mon, Wed, Fri
+      const EMERALD_TASK_OPEN_HOUR = 8;
 
-      const EMERALD_TIMEZONE = "Asia/Tashkent";
-
-      function getStudentRegistrationDate(user) {
-        const raw =
-          user?.registeredAt ||
-          user?.registrationDate ||
-          user?.createdAt ||
-          user?.created_at ||
-          user?.signupAt ||
-          user?.signup_at ||
-          null;
-
-        if (!raw) {
-          console.warn("EMERALD: registeredAt topilmadi; hozirgi vaqt fallback sifatida ishlatilmoqda.");
-          return new Date();
-        }
-
-        const date = new Date(raw);
-        return Number.isNaN(date.getTime()) ? new Date() : date;
-      }
-
-      function getTashkentParts(date = new Date()) {
-        const parts = new Intl.DateTimeFormat("en-US", {
-          timeZone: EMERALD_TIMEZONE,
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
+      function uzParts(value = new Date()) {
+        const parts = new Intl.DateTimeFormat("en-CA", {
+          timeZone: "Asia/Tashkent",
+          year: "numeric", month: "2-digit", day: "2-digit",
+          hour: "2-digit", minute: "2-digit", second: "2-digit",
           hourCycle: "h23"
-        }).formatToParts(date);
+        }).formatToParts(value instanceof Date ? value : new Date(value));
+        const out = {};
+        parts.forEach(p => { if (p.type !== "literal") out[p.type] = p.value; });
+        return {
+          year: Number(out.year), month: Number(out.month), day: Number(out.day),
+          hour: Number(out.hour), minute: Number(out.minute), second: Number(out.second)
+        };
+      }
 
-        const result = {};
-        for (const part of parts) {
-          if (part.type !== "literal") result[part.type] = Number(part.value);
+      function calendarDayNumber(y, m, d) {
+        return Math.floor(Date.UTC(y, m - 1, d) / 86400000);
+      }
+
+      function calendarFromDayNumber(n) {
+        const d = new Date(n * 86400000);
+        return {
+          year: d.getUTCFullYear(), month: d.getUTCMonth() + 1,
+          day: d.getUTCDate(), weekday: d.getUTCDay() || 7
+        };
+      }
+
+      function getEmeraldTaskSchedule(user = currentUser, now = new Date()) {
+        if (!user) return { availableCount: 0, nextOpen: null };
+
+        const registeredAt = user.registered_at || user.created_at || now.toISOString();
+        const reg = uzParts(registeredAt);
+        const cur = uzParts(now);
+        const regDay = calendarDayNumber(reg.year, reg.month, reg.day);
+        const today = calendarDayNumber(cur.year, cur.month, cur.day);
+
+        let availableCount = 0;
+        for (let dayNo = regDay; dayNo <= today; dayNo++) {
+          const day = calendarFromDayNumber(dayNo);
+          if (!EMERALD_TASK_OPEN_DAYS.includes(day.weekday)) continue;
+
+          const isToday = dayNo === today;
+          const slotOpen = !isToday || cur.hour >= EMERALD_TASK_OPEN_HOUR;
+          const registrationAfterOpen =
+            dayNo === regDay &&
+            (reg.hour > EMERALD_TASK_OPEN_HOUR ||
+             (reg.hour === EMERALD_TASK_OPEN_HOUR && (reg.minute > 0 || reg.second > 0)));
+
+          if (slotOpen && !registrationAfterOpen) availableCount++;
         }
-        return result;
+
+        let nextOpen = null;
+        for (let i = 0; i < 14; i++) {
+          const day = calendarFromDayNumber(today + i);
+          if (!EMERALD_TASK_OPEN_DAYS.includes(day.weekday)) continue;
+          if (i === 0 && cur.hour >= EMERALD_TASK_OPEN_HOUR) continue;
+
+          const registrationAfterOpen =
+            today + i === regDay &&
+            (reg.hour > EMERALD_TASK_OPEN_HOUR ||
+             (reg.hour === EMERALD_TASK_OPEN_HOUR && (reg.minute > 0 || reg.second > 0)));
+          if (today + i === regDay && registrationAfterOpen) continue;
+
+          nextOpen = {
+            date: `${day.year}-${String(day.month).padStart(2,"0")}-${String(day.day).padStart(2,"0")}`,
+            label: new Date(Date.UTC(day.year, day.month - 1, day.day)).toLocaleDateString(
+              "uz-UZ", { weekday: "long", day: "2-digit", month: "long" }
+            )
+          };
+          break;
+        }
+
+        return { availableCount, nextOpen };
       }
 
-      function isMWF(dayOfWeek) {
-        return dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 5;
-      }
+      function scheduledLessonIndex(lessonId) {
+        const lesson = lessons.find(x => x.id === lessonId);
+        if (!lesson || lesson.type === "writing" || lesson.type === "finaltest") return -1;
 
-      // Shu o'quvchi ro'yxatdan o'tganidan keyin kelgan M/W/F 08:00
-      // slotlari sonini hisoblaydi.
-      function countAvailableMWFSlotsFromRegistration(user, now = new Date()) {
-        const registration = getStudentRegistrationDate(user);
-        const reg = getTashkentParts(registration);
-        const cur = getTashkentParts(now);
-
-        const registrationDay = new Date(
-          Date.UTC(reg.year, reg.month - 1, reg.day)
+        const list = lessons.filter(
+          x => x.target_level === lesson.target_level &&
+               x.type !== "writing" && x.type !== "finaltest"
         );
-        const currentDay = new Date(
-          Date.UTC(cur.year, cur.month - 1, cur.day)
-        );
-
-        if (currentDay < registrationDay) return 0;
-
-        let slots = 0;
-
-        for (
-          let day = new Date(registrationDay);
-          day <= currentDay;
-          day.setUTCDate(day.getUTCDate() + 1)
-        ) {
-          if (!isMWF(day.getUTCDay())) continue;
-
-          const isRegistrationDay =
-            day.getTime() === registrationDay.getTime();
-
-          // Registration M/W/F kunida:
-          // - 08:00 dan OLDIN signup -> shu kun 08:00 sloti hisoblanadi.
-          // - 08:00 yoki undan KEYIN signup -> shu kun sloti o'tib ketgan,
-          //   keyingi M/W/F slotidan boshlanadi.
-          if (isRegistrationDay && reg.hour >= 8) continue;
-
-          // Pastdagi kunlarning 08:00 sloti allaqachon o'tgan.
-          // Bugungi kun bo'lsa, faqat 08:00 dan keyin slot ochiladi.
-          const isToday =
-            day.getTime() === currentDay.getTime();
-
-          if (!isToday || cur.hour >= 8) {
-            slots++;
-          }
-        }
-
-        return slots;
+        return list.findIndex(x => x.id === lessonId);
       }
 
-      function isLessonScheduleOpen(lessonIndex, user, now = new Date()) {
-        // #1 — registration kunidan darhol.
-        if (lessonIndex === 0) {
-          return now.getTime() >= getStudentRegistrationDate(user).getTime();
-        }
+      function getLessonScheduleInfo(lessonId) {
+        const index = scheduledLessonIndex(lessonId);
+        if (index < 0) return { index: -1, unlockedByDate: true, nextOpen: null };
 
-        // #2 => 1 ta M/W/F slot o'tgan bo'lishi kerak.
-        // #3 => 2 ta slot o'tgan bo'lishi kerak.
-        return countAvailableMWFSlotsFromRegistration(user, now) >= lessonIndex;
+        const schedule = getEmeraldTaskSchedule(currentUser);
+        return {
+          index,
+          unlockedByDate: index < schedule.availableCount,
+          nextOpen: schedule.nextOpen
+        };
       }
 
       function isLessonUnlocked(lessonId) {
         const l = lessons.find((x) => x.id === lessonId);
-        if (!l) return false;
+        if (!l || l.type === "finaltest") return false;
+
+        const schedule = getLessonScheduleInfo(lessonId);
+        if (!schedule.unlockedByDate) return false;
 
         const levelLessons = lessons.filter(
-          (x) => x.target_level === l.target_level && x.type !== "writing"
+          (x) => x.target_level === l.target_level &&
+                 x.type !== "writing" && x.type !== "finaltest"
         );
         const idx = levelLessons.findIndex((x) => x.id === lessonId);
-        if (idx < 0) return false;
+        if (idx <= 0) return true;
 
-        // Vaqt bo'yicha ochilish.
-        if (!isLessonScheduleOpen(idx, currentUser)) return false;
+        return (currentUser.completedLessons || []).includes(levelLessons[idx - 1].id);
+      }
 
-        // 1-dars uchun boshqa dars sharti yo'q.
-        if (idx === 0) return true;
-
-        // Keyingi dars faqat oldingi dars TO'LIQ tugagandan keyin ochiladi.
-        const prevLesson = levelLessons[idx - 1];
-        const completed = currentUser.completedLessons || [];
-        return completed.includes(prevLesson.id);
+      function getLessonLockReason(lessonId) {
+        const info = getLessonScheduleInfo(lessonId);
+        if (!info.unlockedByDate) {
+          return info.nextOpen
+            ? `⏳ Bu vazifa hali ochilmagan. ${info.nextOpen.label}, 08:00 (O'zbekiston vaqti) da ochiladi.`
+            : "⏳ Bu vazifa jadval bo'yicha keyinroq ochiladi.";
+        }
+        return "🔒 Avvalgi vazifani to'liq yakunlang.";
       }
 
       function handleLessonCardClick(lessonId) {
-        if (!isLessonUnlocked(lessonId)) {
-          const l = lessons.find((x) => x.id === lessonId);
-          const levelLessons = l
-            ? lessons.filter(
-                (x) => x.target_level === l.target_level && x.type !== "writing"
-              )
-            : [];
-          const idx = l ? levelLessons.findIndex((x) => x.id === lessonId) : -1;
-
-          if (idx > 0 && !isLessonScheduleOpen(idx, currentUser)) {
-            return alert(
-              "🕐 Bu vazifa hali ochilmagan. Vazifalar Dushanba, Chorshanba va Juma kunlari 08:00 (O'zbekiston vaqti) da navbat bilan ochiladi."
-            );
-          }
-
-          return alert(
-            "🔒 Bu dars hali qulflangan. Avval oldingi darsni to'liq yakunlang: Lug'at testi (100%), Grammatika testi va Uy vazifasi."
-          );
-        }
+        if (!isLessonUnlocked(lessonId)) return alert(getLessonLockReason(lessonId));
         openLessonDetail(lessonId);
       }
 
@@ -10004,6 +9887,7 @@ pen — ruchka 🖊"
           .map((l, i) => {
             const isDone = completed.includes(l.id);
             const unlocked = isDone || isLessonUnlocked(l.id);
+            const scheduleInfo = getLessonScheduleInfo(l.id);
             const icon = LESSON_ICONS[(startIdx + i) % LESSON_ICONS.length];
             const excerpt = (l.content_text || "").slice(0, 90);
             const vocabCount = l.vocabulary ? l.vocabulary.length : 0;
@@ -10032,10 +9916,17 @@ pen — ruchka 🖊"
                 <span>🔤 ${vocabCount} ta so'z</span>
                 <span class="badge">${l.target_level}</span>
               </div>
+              ${
+                !unlocked && !scheduleInfo.unlockedByDate
+                  ? `<div class="lesson-schedule-info">⏰ ${scheduleInfo.nextOpen ? `${scheduleInfo.nextOpen.label}, 08:00 da ochiladi` : "Keyingi jadval sloti kutilmoqda"}</div>`
+                  : ""
+              }
               <div class="lesson-card-open-btn">${
                 unlocked
                   ? "Darsni ochish →"
-                  : "🔒 Oldingi darsni yakunlang"
+                  : (scheduleInfo.unlockedByDate
+                      ? "🔒 Oldingi vazifani yakunlang"
+                      : "⏳ Dushanba / Chorshanba / Juma — 08:00")
               }</div>
             </div>
           `;
@@ -10144,19 +10035,7 @@ pen — ruchka 🖊"
           body.innerHTML = `<p style="font-size: 0.85rem; color: var(--text-muted);">✅ Siz barcha vazifalarni yakunladingiz! Ustozingiz hali bu bosqich uchun yakuniy testni tayyorlamadi — tez orada e'lon qilinadi.</p>`;
         } else {
           const lastResult = (currentUser.finalTestResults || {})[levelKey];
-          if (lastResult?.passed === true) {
-            const nextLevel = getNextLevelAfter(levelKey);
-            const nextCourse = nextLevel ? courseCatalog(nextLevel) : null;
-            body.innerHTML = `
-              <div style="text-align:center;padding:8px 0;">
-                <div style="font-size:2rem;">🏆</div>
-                <h3 style="margin:8px 0;color:var(--emerald-light);">Final testdan o'tgansiz</h3>
-                <p style="font-size:.82rem;color:var(--text-muted);">Natija: <strong style="color:var(--text-main);">${lastResult.score}%</strong>. Siz bu final testni qayta topshira olmaysiz.</p>
-                ${nextLevel ? `<p style="font-size:.82rem;color:var(--gold);margin-top:8px;">🚀 Keyingi bosqich: ${nextCourse?.title || nextLevel}</p><button class="btn-primary" style="margin-top:12px;" onclick="closeFinalTestGate(); openNextStageNotification();">💳 Keyingi bosqichga o'tish</button>` : `<p style="font-size:.82rem;color:var(--gold);margin-top:8px;">🎓 Barcha mavjud bosqichlarni yakunladingiz.</p>`}
-              </div>
-            `;
-          } else {
-            body.innerHTML = `
+          body.innerHTML = `
             <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
               🎉 Siz shu bosqichdagi barcha vazifalarni yakunladingiz! Endi yakuniy testni topshiring.
               O'tish balli: <strong style="color: var(--gold);">${test.passScore || FINAL_TEST_PASS_SCORE}%</strong>,
@@ -10169,7 +10048,6 @@ pen — ruchka 🖊"
             }
             <button class="btn-primary" style="margin-top:10px;" onclick="startFinalTest()">🏆 Yakuniy testni boshlash</button>
           `;
-          }
         }
 
         document.getElementById("final-test-gate-modal").classList.remove("hidden");
@@ -10182,11 +10060,6 @@ pen — ruchka 🖊"
       function startFinalTest() {
         const test = getFinalTestForLevel(currentFinalTestGateLevel);
         if (!test) return;
-        const previous = (currentUser?.finalTestResults || {})[currentFinalTestGateLevel];
-        if (previous?.passed === true) {
-          alert("🏆 Siz bu final testdan allaqachon o'tgansiz. Uni qayta topshirish mumkin emas.");
-          return;
-        }
         currentFinalTestAnswers = {};
 
         const box = document.getElementById("final-test-questions-box");
@@ -10234,16 +10107,10 @@ pen — ruchka 🖊"
         if (!nextCourse) return null;
 
         await loadStudentCourseOrders();
-
         const existing = studentCourseOrders
-          .filter((o) =>
-            String(o.course_key) === String(nextLevel) &&
-            ["pending", "overdue", "paid"].includes(String(o.status))
-          )
-          .sort(
-            (a, b) =>
-              new Date(b.created_at || 0) - new Date(a.created_at || 0)
-          )[0];
+          .filter(o => String(o.course_key) === String(nextLevel) &&
+            ["pending", "overdue", "paid"].includes(String(o.status)))
+          .sort((a,b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))[0];
 
         if (existing) return existing;
 
@@ -10261,14 +10128,11 @@ pen — ruchka 🖊"
           status: "pending",
           payment_method: "manual_card",
           notes: `Final test passed: ${courseCatalog(levelKey)?.title || levelKey} -> ${nextCourse.title}`,
-          created_by: "final-test-next-level",
+          created_by: "final-test-next-level"
         };
 
         const { data, error } = await supabaseClient
-          .from("payment_orders")
-          .insert(payload)
-          .select()
-          .single();
+          .from("payment_orders").insert(payload).select().single();
 
         if (error) {
           console.error("Next level invoice error:", error);
@@ -10282,52 +10146,45 @@ pen — ruchka 🖊"
       }
 
       async function openNextLevelPayment(levelKey) {
+        if (!currentUser || currentUser.role !== "student") {
+          alert("❌ Bu amal faqat o'quvchi uchun.");
+          return;
+        }
+
         const idx = EMERALD_LEVEL_ORDER.indexOf(levelKey);
         const nextLevel = EMERALD_LEVEL_ORDER[idx + 1];
-        if (!nextLevel) return;
+        if (!nextLevel) {
+          alert("Bu oxirgi bosqich.");
+          return;
+        }
 
-        const invoice = await createNextLevelInvoiceAfterFinalTest(levelKey);
-        if (!invoice) {
-          alert("❌ Keyingi modul uchun invoice yaratilmadi. Iltimos, qayta urinib ko'ring.");
+        // Avval invoice mavjudligini yaratish/olish.
+        const order = await createNextLevelInvoiceAfterFinalTest(levelKey);
+        if (!order) {
+          alert("❌ Keyingi bosqich invoice'ini yaratib bo'lmadi.");
           return;
         }
 
         selectedPurchaseCourse = nextLevel;
         document.getElementById("final-test-result-modal")?.classList.add("hidden");
-        await renderCoursePurchaseGate();
+
+        // Invoice tayyor bo'lsa, to'g'ridan-to'g'ri karta + chek modalini ochamiz.
+        // Bu notification ichidagi tugmani ham aniq ishlatadi.
+        await openCoursePaymentProof(order.id);
       }
 
       async function submitFinalTest() {
         const test = getFinalTestForLevel(currentFinalTestGateLevel);
-        if (!test || !currentUser) return;
+        if (!test) return;
 
-        const answers = {};
-        Object.keys(currentFinalTestAnswers || {}).forEach((key) => {
-          answers[String(key)] = Number(currentFinalTestAnswers[key]);
+        const total = test.questions.length;
+        let correct = 0;
+        test.questions.forEach((q, qi) => {
+          if (currentFinalTestAnswers[qi] === q.correct) correct++;
         });
-
-        // Score is calculated by Supabase, not by the browser.
-        const { data: result, error } = await supabaseClient.rpc(
-          "submit_emerald_final_test",
-          {
-            p_level_key: currentFinalTestGateLevel,
-            p_answers: answers,
-          }
-        );
-
-        if (error) {
-          console.error("Secure final test error:", error);
-          alert("❌ Final test natijasi saqlanmadi: " + error.message);
-          return;
-        }
-
-        const score = Number(result?.score || 0);
-        const correct = Number(result?.correct || 0);
-        const total = Number(result?.total || test.questions.length);
-        const passScore = Number(
-          result?.pass_score || test.passScore || FINAL_TEST_PASS_SCORE
-        );
-        const passed = result?.passed === true;
+        const score = Math.round((correct / total) * 100);
+        const passScore = test.passScore || FINAL_TEST_PASS_SCORE;
+        const passed = score >= passScore;
 
         ensureCompletionStateData(currentUser);
         currentUser.finalTestResults[currentFinalTestGateLevel] = {
@@ -10339,33 +10196,36 @@ pen — ruchka 🖊"
         let certificate = null;
         let nextLevel = null;
         let nextInvoice = null;
-
         if (passed) {
-          certificate = awardLevelCertificate(
-            currentUser,
-            currentFinalTestGateLevel,
-            score
-          );
-
+          certificate = awardLevelCertificate(currentUser, currentFinalTestGateLevel, score);
           const idx = EMERALD_LEVEL_ORDER.indexOf(currentFinalTestGateLevel);
           nextLevel = EMERALD_LEVEL_ORDER[idx + 1] || null;
-
-          // IMPORTANT: currentUser.level is NOT changed here.
-          // The next level becomes active only after the invoice is paid
-          // and the admin approves the payment.
           if (nextLevel) {
-            nextInvoice = await createNextLevelInvoiceAfterFinalTest(
-              currentFinalTestGateLevel
-            );
-            await ensureNextStageNotification(currentFinalTestGateLevel, score);
+            nextInvoice = await createNextLevelInvoiceAfterFinalTest(currentFinalTestGateLevel);
           }
         }
 
-        await saveUserData(currentUser);
+        // Final testdan o'tganda dashboard uchun maxsus, bosiladigan payment notification.
+        if (passed && nextLevel) {
+          currentUser.notifications = (currentUser.notifications || []).filter(
+            n => !(n.type === "next_level_payment" && String(n.levelKey) === String(currentFinalTestGateLevel))
+          );
+          currentUser.notifications.unshift({
+            id: "next-level-" + currentFinalTestGateLevel + "-" + Date.now(),
+            type: "next_level_payment",
+            levelKey: currentFinalTestGateLevel,
+            nextLevelKey: nextLevel,
+            invoiceId: nextInvoice?.id || null,
+            text: `🚀 Keyingi bosqichga o'tish: ${paymentSafe(courseCatalog(nextLevel)?.title || nextLevel)} uchun to'lov va chekni yuboring.`,
+            date: new Date().toLocaleString("uz-UZ", {dateStyle:"short", timeStyle:"short"}),
+            read: false
+          });
+        }
 
-        document
-          .getElementById("final-test-take-modal")
-          .classList.add("hidden");
+        await saveUserData(currentUser);
+        renderNotificationBell();
+
+        document.getElementById("final-test-take-modal").classList.add("hidden");
 
         const resultBox = document.getElementById("final-test-result-box");
         resultBox.innerHTML = `
@@ -10374,50 +10234,30 @@ pen — ruchka 🖊"
             <h3 style="margin:10px 0 4px; color:${passed ? "var(--emerald-light)" : "var(--danger)"};">
               ${passed ? "Tabriklaymiz! Siz testdan o'tdingiz!" : "Afsuski, o'ta olmadingiz"}
             </h3>
-            <p style="color: var(--text-muted); font-size:0.85rem;">
-              Natijangiz: <strong style="color:var(--text-main);">${score}%</strong>
-              (${correct}/${total} to'g'ri javob). O'tish balli: ${passScore}%.
-            </p>
+            <p style="color: var(--text-muted); font-size:0.85rem;">Natijangiz: <strong style="color:var(--text-main);">${score}%</strong> (${correct}/${total} to'g'ri javob). O'tish balli: ${passScore}%.</p>
             ${
               passed
-                ? nextLevel
-                  ? `<p style="color: var(--gold); font-size:0.85rem; margin-top:6px;">
-                       🏆 Sertifikatingiz saqlandi.<br>
-                       🔒 ${emeraldLevelLabel(nextLevel)} hozircha yopiq.<br>
-                       🧾 Keyingi modul uchun invoice yaratildi${
-                         nextInvoice?.invoice_no
-                           ? `: <strong>${paymentSafe(nextInvoice.invoice_no)}</strong>`
-                           : "."
-                       }
-                     </p>
-                     <button class="btn-primary" style="margin-top:14px;" onclick="closeFinalTestResult(); openNextStageNotification();">
-                       🚀 Keyingi bosqichga o'tish
-                     </button>`
-                  : `<p style="color: var(--gold); font-size:0.85rem; margin-top:6px;">
-                       🏆 Siz barcha mavjud bosqichlarni muvaffaqiyatli yakunladingiz!
-                     </p>`
-                : `<p style="color: var(--text-muted); font-size:0.8rem; margin-top:6px;">
-                     Vazifalarni qayta ko'rib chiqib, testni yana urinib ko'rishingiz mumkin.
-                   </p>`
+                ? (nextLevel
+                    ? `<p style="color: var(--gold); font-size:0.85rem; margin-top:6px;">🏆 Sertifikatingiz saqlandi. Keyingi bosqich: <strong>${paymentSafe(courseCatalog(nextLevel)?.title || nextLevel)}</strong>.</p>
+                       <p style="color:var(--text-muted);font-size:0.8rem;margin-top:6px;">🧾 Keyingi bosqich uchun invoice yaratildi. To'lov tasdiqlangandan keyin yangi bosqich ochiladi.</p>`
+                    : `<p style="color: var(--gold); font-size:0.85rem; margin-top:6px;">🏆 Sertifikatingiz saqlandi. Siz oxirgi bosqichni muvaffaqiyatli tugatdingiz!</p>`)
+                : `<p style="color: var(--text-muted); font-size:0.8rem; margin-top:6px;">Vazifalarni qayta ko'rib chiqib, testni yana urinib ko'rishingiz mumkin.</p>`
+            }
+            ${
+              passed && nextLevel
+                ? `<button class="btn-primary" style="margin-top:14px;" onclick="openNextLevelPayment('${currentFinalTestGateLevel}')">🧾 Keyingi bosqich to'lovini ko'rish</button>`
+                : ""
             }
             <button class="btn-primary" style="margin-top:14px;" onclick="closeFinalTestResult()">Yopish</button>
           </div>
         `;
-        document
-          .getElementById("final-test-result-modal")
-          .classList.remove("hidden");
+        document.getElementById("final-test-result-modal").classList.remove("hidden");
 
         renderLevelRoadmap(currentUser);
         renderStudentLessons();
         renderStudentCertificates();
-
-        // Immediately refresh the dashboard action card after a successful final test.
-        // The student stays on the current level until payment is approved.
         if (typeof loadDashboard === "function") {
-          loadDashboard(currentUser);
-        } else {
-          renderNextStageNotificationCard();
-          renderNotificationBell();
+          document.getElementById("student-level-badge").innerText = emeraldLevelLabel(currentUser.level).toUpperCase();
         }
       }
 
@@ -10811,9 +10651,7 @@ pen — ruchka 🖊"
           lessonId
         );
         if (!alreadyDone && !isLessonUnlocked(lessonId)) {
-          return alert(
-            "🔒 Bu dars hali qulflangan. Avval oldingi darsni to'liq yakunlang: Lug'at testi (100%), Grammatika testi va Uy vazifasi."
-          );
+          return alert(getLessonLockReason(lessonId));
         }
 
         const completion = getLessonCompletionState(l.id);
@@ -13242,23 +13080,39 @@ pen — ruchka 🖊"
         if (!currentUser) return;
         const list = currentUser.notifications || [];
         const container = document.getElementById("notifications-list");
+
         if (list.length === 0) {
           container.innerHTML = `<p style="color: var(--text-muted); font-size: 0.9rem;">Hozircha bildirishnomalar yo'q.</p>`;
         } else {
-          container.innerHTML = list
-            .map(
-              (n) => `
-              <div class="feedback-box" style="margin-bottom: 10px; ${
-                n.read ? "" : "border-color: var(--emerald-primary);"
-              }">
-                <p style="font-size: 0.85rem;">${n.text}</p>
-                <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">${n.date}</div>
-                ${n.type === "next_stage_payment" ? `<button class="btn-primary" style="margin-top:9px;width:100%;" onclick="closeNotifications(); openNextStageNotification();">💳 To'lov va chek yuborish</button>` : ""}
-              </div>
-            `
-            )
-            .join("");
+          container.innerHTML = list.map((n) => {
+            const isPayment = n.type === "next_level_payment";
+            const action = isPayment
+              ? `<button type="button" class="btn-primary"
+                    style="margin-top:10px;width:100%;"
+                    data-notification-payment="${String(n.levelKey || "").replace(/"/g,'&quot;')}">
+                    💳 To'lov va chek yuborish
+                 </button>`
+              : "";
+
+            return `
+              <div class="feedback-box" style="margin-bottom:10px;${n.read ? "" : "border-color:var(--emerald-primary);"}">
+                <p style="font-size:0.85rem;">${n.text || ""}</p>
+                <div style="font-size:0.7rem;color:var(--text-muted);margin-top:4px;">${n.date || ""}</div>
+                ${action}
+              </div>`;
+          }).join("");
+
+          container.querySelectorAll("[data-notification-payment]").forEach(btn => {
+            btn.addEventListener("click", async (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              const levelKey = btn.getAttribute("data-notification-payment");
+              closeNotifications();
+              await openNextLevelPayment(levelKey);
+            });
+          });
         }
+
         list.forEach((n) => (n.read = true));
         saveUserData(currentUser);
         renderNotificationBell();
@@ -16264,9 +16118,6 @@ pen — ruchka 🖊"
             if(currentUser?.email === buyerEmail){
               currentUser = activatedUser;
               users[users.findIndex(u => u.email === buyerEmail)] = activatedUser;
-              if (Array.isArray(currentUser.notifications)) {
-                currentUser.notifications = currentUser.notifications.filter(n => String(n.nextLevel) !== String(orderRes.data.course_key));
-              }
             }
           }
         }
@@ -16311,34 +16162,10 @@ pen — ruchka 🖊"
 
       async function markPaymentOrderPaid(id){
         if(currentUser?.role!=="admin"){alert("❌ Faqat admin to‘lovni tasdiqlashi mumkin.");return;}
-        const paidAt = new Date().toISOString();
-        const {data,error}=await supabaseClient.from("payment_orders").update({status:"paid",paid_at:paidAt}).eq("id",id).select().single();
+        const {data,error}=await supabaseClient.from("payment_orders").update({status:"paid",paid_at:new Date().toISOString()}).eq("id",id).select().single();
         if(error){alert("❌ To‘lov tasdiqlanmadi: "+error.message);return;}
         const idx=emeraldPaymentOrders.findIndex(x=>Number(x.id)===Number(id));if(idx>=0)emeraldPaymentOrders[idx]=data;
-
-        // Admin paymentni bevosita Paid qilgan bo'lsa ham keyingi modulni faollashtiramiz.
-        if(data?.course_key){
-          const buyer = users.find(u=>u.email===data.student_email);
-          const course = courseCatalog(data.course_key);
-          if(buyer && course){
-            const activatedUser={...buyer,level:course.role,course_key:course.key,course_title:course.title,course_price:course.price,course_status:"active",course_purchased_at:paidAt,course_invoice_no:data.invoice_no};
-            await dbSaveUser(activatedUser);
-            if(currentUser?.email===data.student_email){
-              currentUser=activatedUser;
-              users[users.findIndex(u=>u.email===data.student_email)]=activatedUser;
-            }
-          }
-        }
-        await loadPaymentOrders();
-        await loadManualPaymentData();
         renderPaymentFinanceKpis();renderPaymentOrders();renderStudentPaymentOrders();
-        if(currentUser?.email===data.student_email && data?.course_key){
-          hideCoursePurchaseGate();
-          loadDashboard(currentUser);
-          renderStudentLessons();
-          renderLevelRoadmap(currentUser);
-          alert(`🎉 To‘lov tasdiqlandi! ${courseCatalog(data.course_key)?.title || "Kurs"} faollashtirildi.`);
-        }
       }
 
 
