@@ -2957,6 +2957,11 @@
         background: rgba(239, 68, 68, 0.18);
         color: var(--danger);
       }
+      .vocab-write-tile-space {
+        width: 16px;
+        height: 50px;
+        flex: 0 0 auto;
+      }
 
       .shop-card {
         background: rgba(2, 20, 15, 0.6);
@@ -12905,7 +12910,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
 
         // Har bir savol uchun 4 ta variant tayyorlaymiz (1 to'g'ri + 3 xato)
         const allTranslations = lesson.vocabulary.map((v) => v.trans);
-        const questions = shuffleArray(lesson.vocabulary).map((v) => {
+        const questions = shuffleArray(lesson.vocabulary).map((v, i) => {
           const distractorPool = allTranslations.filter((t) => t !== v.trans);
           let distractors = shuffleArray(distractorPool).slice(0, 3);
 
@@ -12928,10 +12933,12 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
 
           const options = shuffleArray([v.trans, ...distractors]);
           return {
+            id: i,
             word: v.word,
             phonetic: v.phonetic || "",
             correct: v.trans,
             options,
+            mastered: false,
           };
         });
 
@@ -12939,12 +12946,16 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           lessonId,
           lessonTitle,
           questions,
-          index: 0,
-          correctCount: 0,
+          queue: questions.map((q) => q.id),
+          currentId: null,
+          total: questions.length,
+          masteredCount: 0,
+          mistakes: 0,
           locked: false,
           writeQuestions: [],
-          writeIndex: 0,
-          writeCorrectCount: 0,
+          writeQueue: [],
+          writeCurrentId: null,
+          writeMasteredCount: 0,
           writeLocked: false,
         };
 
@@ -12965,24 +12976,29 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
 
       function renderVocabQuizQuestion() {
         const state = vocabQuizState;
-        const q = state.questions[state.index];
+        const qId = state.queue[0];
+        const q = state.questions.find((x) => x.id === qId);
+        state.currentId = qId;
         state.locked = false;
 
         document.getElementById("vocab-quiz-word").innerText = q.word;
         document.getElementById("vocab-quiz-phonetic").innerText = q.phonetic;
-        const totalSteps = state.questions.length * 2;
+        const totalSteps = state.total * 2;
         document.getElementById(
           "vocab-quiz-progress-text"
-        ).innerText = `${state.index + 1} / ${totalSteps}`;
+        ).innerText = `${state.masteredCount} / ${state.total} (1-bosqich)`;
         document.getElementById("vocab-quiz-progress-fill").style.width =
-          `${(state.index / totalSteps) * 100}%`;
+          `${(state.masteredCount / totalSteps) * 100}%`;
 
         const dotsBox = document.getElementById("vocab-quiz-dots");
         if (dotsBox) {
           dotsBox.innerHTML = state.questions
-            .map((_, i) => {
-              const cls =
-                i < state.index ? "done" : i === state.index ? "active" : "";
+            .map((item) => {
+              const cls = item.mastered
+                ? "done"
+                : item.id === qId
+                ? "active"
+                : "";
               return `<span class="vocab-quiz-dot ${cls}"></span>`;
             })
             .join("");
@@ -13009,7 +13025,10 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
 
       function playVocabQuizAudio() {
         if (!vocabQuizState) return;
-        const q = vocabQuizState.questions[vocabQuizState.index];
+        const q = vocabQuizState.questions.find(
+          (x) => x.id === vocabQuizState.currentId
+        );
+        if (!q) return;
         if ("speechSynthesis" in window) {
           window.speechSynthesis.cancel();
           const utterance = new SpeechSynthesisUtterance(q.word);
@@ -13023,7 +13042,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         if (!state || state.locked) return;
         state.locked = true;
 
-        const q = state.questions[state.index];
+        const q = state.questions.find((x) => x.id === state.currentId);
         const chosen = q.options[idx];
         const allOptions = document.querySelectorAll(
           "#vocab-quiz-options .vocab-quiz-option"
@@ -13040,13 +13059,20 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           }
         });
 
-        if (chosen === q.correct) {
-          state.correctCount++;
+        const isCorrect = chosen === q.correct;
+        state.queue.shift();
+        if (isCorrect) {
+          q.mastered = true;
+          state.masteredCount++;
+        } else {
+          state.mistakes++;
+          // Xato qilingan so'z navbatning oxiriga qaytariladi —
+          // talaba to'g'ri o'zlashtirmaguncha shu so'z qayta-qayta chiqadi.
+          state.queue.push(q.id);
         }
 
         setTimeout(() => {
-          state.index++;
-          if (state.index < state.questions.length) {
+          if (state.queue.length > 0) {
             renderVocabQuizQuestion();
           } else {
             startVocabWriteRound();
@@ -13063,13 +13089,16 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         // yangi tartibda tayyorlaymiz.
         state.writeQuestions = shuffleArray(
           state.questions.map((q) => ({
+            id: q.id,
             word: q.word,
             phonetic: q.phonetic,
             trans: q.correct,
+            mastered: false,
           }))
         );
-        state.writeIndex = 0;
-        state.writeCorrectCount = 0;
+        state.writeQueue = state.writeQuestions.map((q) => q.id);
+        state.writeCurrentId = null;
+        state.writeMasteredCount = 0;
         state.writeLocked = false;
 
         document
@@ -13088,30 +13117,30 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
       function renderVocabWriteQuestion() {
         const state = vocabQuizState;
         if (!state) return;
-        const q = state.writeQuestions[state.writeIndex];
+        const qId = state.writeQueue[0];
+        const q = state.writeQuestions.find((x) => x.id === qId);
+        state.writeCurrentId = qId;
         state.writeLocked = false;
 
         document.getElementById("vocab-quiz-write-trans").innerText = q.trans;
 
-        const totalSteps = state.questions.length * 2;
-        const stepNow = state.questions.length + state.writeIndex + 1;
+        const totalSteps = state.total * 2;
+        const stepNow = state.total + state.writeMasteredCount;
         document.getElementById(
           "vocab-quiz-progress-text"
-        ).innerText = `${stepNow} / ${totalSteps}`;
+        ).innerText = `${state.writeMasteredCount} / ${state.total} (2-bosqich)`;
         document.getElementById("vocab-quiz-progress-fill").style.width =
-          `${((stepNow - 1) / totalSteps) * 100}%`;
+          `${(stepNow / totalSteps) * 100}%`;
 
         const dotsBox = document.getElementById("vocab-quiz-dots");
         if (dotsBox) {
-          dotsBox.innerHTML = state.questions
-            .map((_, i) => {
-              const idx = state.questions.length + i;
-              const cls =
-                i < state.writeIndex
-                  ? "done"
-                  : i === state.writeIndex
-                  ? "active"
-                  : "";
+          dotsBox.innerHTML = state.writeQuestions
+            .map((item) => {
+              const cls = item.mastered
+                ? "done"
+                : item.id === qId
+                ? "active"
+                : "";
               return `<span class="vocab-quiz-dot ${cls}"></span>`;
             })
             .join("");
@@ -13129,18 +13158,21 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
       function renderVocabWriteTiles(val, statusClass) {
         const state = vocabQuizState;
         if (!state) return;
-        const q = state.writeQuestions[state.writeIndex];
+        const q = state.writeQuestions.find(
+          (x) => x.id === state.writeCurrentId
+        );
         const tilesBox = document.getElementById("vocab-quiz-write-tiles");
-        if (!tilesBox) return;
+        if (!tilesBox || !q) return;
         tilesBox.innerHTML = q.word
           .split("")
           .map((ch, i) => {
+            // So'z ichida bo'sh joy (ko'p so'zli iboralar, masalan "give up")
+            // bo'lsa, uni yozib bo'lmaydigan kichik bo'shliq sifatida ko'rsatamiz.
+            if (ch === " ") {
+              return `<div class="vocab-write-tile-space"></div>`;
+            }
             const letter = val[i] || "";
-            const cls = statusClass
-              ? statusClass
-              : letter
-              ? "filled"
-              : "";
+            const cls = statusClass ? statusClass : letter ? "filled" : "";
             return `<div class="vocab-write-tile ${cls}">${letter}</div>`;
           })
           .join("");
@@ -13152,9 +13184,14 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           e.target.value = "";
           return;
         }
-        const q = state.writeQuestions[state.writeIndex];
+        const q = state.writeQuestions.find(
+          (x) => x.id === state.writeCurrentId
+        );
+        if (!q) return;
         const maxLen = q.word.length;
-        let val = e.target.value.toUpperCase().replace(/[^A-Z']/g, "");
+        // Harflar, apostrof va bo'sh joy (ko'p so'zli iboralar uchun) ruxsat etiladi.
+        let val = e.target.value.toUpperCase().replace(/[^A-Z' ]/g, "");
+        val = val.replace(/ {2,}/g, " "); // ketma-ket 2+ bo'shliqqa yo'l qo'yilmaydi
         if (val.length > maxLen) val = val.slice(0, maxLen);
         e.target.value = val;
         renderVocabWriteTiles(val);
@@ -13165,7 +13202,9 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
 
       function checkVocabWriteAnswer(val) {
         const state = vocabQuizState;
-        const q = state.writeQuestions[state.writeIndex];
+        const q = state.writeQuestions.find(
+          (x) => x.id === state.writeCurrentId
+        );
         state.writeLocked = true;
 
         const isCorrect = val.toUpperCase() === q.word.toUpperCase();
@@ -13174,30 +13213,40 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           isCorrect ? "correct" : "wrong"
         );
 
+        state.writeQueue.shift();
         if (isCorrect) {
-          state.writeCorrectCount++;
-        } else if ("speechSynthesis" in window) {
-          // Xato bo'lsa, to'g'ri talaffuzni eshittiramiz
-          window.speechSynthesis.cancel();
-          const utterance = new SpeechSynthesisUtterance(q.word);
-          utterance.lang = "en-US";
-          window.speechSynthesis.speak(utterance);
+          q.mastered = true;
+          state.writeMasteredCount++;
+        } else {
+          state.mistakes++;
+          // Xato yozilgan so'z ham navbatning oxiriga qaytariladi —
+          // to'g'ri yoza olmaguncha talaba shu so'zni qayta-qayta yozadi.
+          state.writeQueue.push(q.id);
+          if ("speechSynthesis" in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(q.word);
+            utterance.lang = "en-US";
+            window.speechSynthesis.speak(utterance);
+          }
         }
 
         setTimeout(() => {
-          state.writeIndex++;
-          if (state.writeIndex < state.writeQuestions.length) {
+          if (state.writeQueue.length > 0) {
             renderVocabWriteQuestion();
           } else {
             finishVocabQuiz();
           }
-        }, isCorrect ? 900 : 1400);
+        }, isCorrect ? 900 : 1600);
       }
 
       function finishVocabQuiz() {
         const state = vocabQuizState;
-        const total = state.questions.length + state.writeQuestions.length;
-        const correct = state.correctCount + state.writeCorrectCount;
+        const total = state.total * 2;
+        const correct = state.masteredCount + state.writeMasteredCount;
+        const mistakes = state.mistakes || 0;
+        // Retry-navbat tizimi tufayli talaba har doim barcha so'zlarni
+        // to'g'ri o'zlashtirib chiqadi (100%) — lekin qancha xato qilgani
+        // "mistakes" orqali kuzatiladi va yulduzcha/mukofotga ta'sir qiladi.
         const percent = Math.round((correct / total) * 100);
         const passed = percent === 100;
 
@@ -13222,14 +13271,12 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
             .join("");
         }
 
-        // Lug'at testi FAQAT 100% xatosiz topshirilganda "yakunlangan"
-        // deb hisoblanadi. Aks holda talaba qaytadan urinishi shart -
-        // shu sabab pastda hech qanday qulflash yoki mukofot berilmaydi.
-        const title = passed
-          ? "Mukammal natija!"
-          : "Xatolar bor — qaytadan urining!";
+        const title =
+          mistakes === 0
+            ? "Mukammal natija! Birorta ham xato yo'q!"
+            : "Barcha so'zlar o'zlashtirildi!";
 
-        const ringColor = passed ? "var(--emerald-primary)" : "var(--danger)";
+        const ringColor = "var(--emerald-primary)";
 
         const ringEl = document.getElementById("vocab-quiz-score-ring");
         if (ringEl) {
@@ -13242,11 +13289,14 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         document.getElementById("vocab-quiz-result-title").innerText = title;
         document.getElementById(
           "vocab-quiz-result-score"
-        ).innerText = `${correct} / ${total} to'g'ri`;
+        ).innerText =
+          mistakes === 0
+            ? `${correct} / ${total} to'g'ri`
+            : `${correct} / ${total} to'g'ri • ${mistakes} marta xato qilindi`;
 
         const starsEl = document.getElementById("vocab-quiz-result-stars");
         if (starsEl) {
-          const starCount = passed ? 3 : percent >= 60 ? 2 : 1;
+          const starCount = mistakes === 0 ? 3 : mistakes <= 3 ? 2 : 1;
           starsEl.innerHTML = ["⭐", "⭐", "⭐"]
             .map((s, i) => `<span class="${i < starCount ? "" : "star-dim"}">⭐</span>`)
             .join("");
@@ -13258,10 +13308,14 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
 
         const rewardRow = document.getElementById("vocab-quiz-reward-row");
 
-        if (passed) {
-          // Har bir to'g'ri javob uchun mukofot + 100% bonus
-          const xp = correct * 2 + 5;
-          const coins = correct * 1 + 5;
+        {
+          // Har bir to'g'ri javob uchun mukofot + bonus, xatolar uchun
+          // ozgina kamaytirish (lekin har doim ijobiy bo'lishi ta'minlanadi).
+          const xp = Math.max(correct + 5, correct * 2 + 5 - mistakes);
+          const coins = Math.max(
+            Math.ceil(correct / 2) + 3,
+            correct * 1 + 5 - Math.floor(mistakes / 2)
+          );
 
           if (rewardRow) {
             rewardRow.innerHTML = `
@@ -13286,16 +13340,6 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
               );
             }, 300);
           }
-        } else {
-          if (rewardRow) {
-            rewardRow.innerHTML = `
-              <span class="vocab-quiz-reward-chip" style="background: rgba(239,68,68,0.15); border-color: var(--danger); color: var(--danger);">
-                🔁 Xato javoblar bor. Mukofot olish va darsni yakunlash uchun testni 100% to'g'ri topshirishingiz kerak.
-              </span>
-            `;
-          }
-          saveUserData(currentUser);
-          loadDashboard(currentUser);
         }
 
         renderStudentLessons();
