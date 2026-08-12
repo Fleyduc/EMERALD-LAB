@@ -13155,6 +13155,14 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         renderVocabWriteTiles("");
       }
 
+      // Bu belgilar so'z ichida uchrasa, foydalanuvchi ularni o'zi yozishi
+      // SHART EMAS — to'g'ri o'rniga avtomatik qo'yib yuboriladi (bo'shliq
+      // bilan bir xil mantiqda). Kerak bo'lsa shu qatorga yana belgi qo'shsa bo'ladi.
+      const VOCAB_WRITE_SKIP_CHARS = [" ", "?", "/"];
+      function isVocabWriteSkipChar(ch) {
+        return VOCAB_WRITE_SKIP_CHARS.includes(ch);
+      }
+
       function renderVocabWriteTiles(val, statusClass) {
         const state = vocabQuizState;
         if (!state) return;
@@ -13166,9 +13174,10 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         tilesBox.innerHTML = q.word
           .split("")
           .map((ch, i) => {
-            // So'z ichida bo'sh joy (ko'p so'zli iboralar, masalan "give up")
-            // bo'lsa, uni yozib bo'lmaydigan kichik bo'shliq sifatida ko'rsatamiz.
-            if (ch === " ") {
+            // So'z ichida bo'sh joy yoki ?/ kabi belgi bo'lsa (ko'p so'zli
+            // iboralar yoki maxsus belgili so'zlar uchun), uni yozib
+            // bo'lmaydigan kichik bo'shliq sifatida ko'rsatamiz.
+            if (isVocabWriteSkipChar(ch)) {
               return `<div class="vocab-write-tile-space"></div>`;
             }
             const letter = val[i] || "";
@@ -13189,28 +13198,33 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         );
         if (!q) return;
         const maxLen = q.word.length;
-        const spaceCount = (q.word.match(/ /g) || []).length;
-        const lettersNeeded = maxLen - spaceCount;
+        let skipCount = 0;
+        for (const ch of q.word) if (isVocabWriteSkipChar(ch)) skipCount++;
+        const lettersNeeded = maxLen - skipCount;
 
-        // Foydalanuvchi faqat harf/raqam/belgilarni kiritadi — bo'sh joyni
-        // o'zi bosishi SHART EMAS. Bo'shliqlar so'z ichidagi to'g'ri o'rniga
-        // avtomatik qo'yiladi, shuning uchun ko'p so'zli iboralarda
-        // (masalan "give up") kursor "oldinga sakrab ketish" xatosi endi
-        // yuzaga kelmaydi. Harflardan tashqari raqam, apostrof, defis,
-        // "+", "#", "&", "." kabi belgilar ham endi ishlaydi.
+        // Foydalanuvchi faqat harf/raqam/belgilarni kiritadi — bo'shliq,
+        // "?" yoki "/" kabi skip-belgilarni o'zi bosishi SHART EMAS. Ular
+        // so'z ichidagi to'g'ri o'rniga avtomatik qo'yiladi, shuning uchun
+        // ko'p so'zli iboralarda yoki maxsus belgili so'zlarda kursor
+        // "oldinga sakrab ketish" xatosi yuzaga kelmaydi. Harflardan
+        // tashqari raqam, apostrof, defis, "+", "#", "&", "." kabi
+        // belgilar ham yozish uchun ishlatilishi mumkin.
         let raw = e.target.value.toUpperCase().replace(/[^A-Z0-9'+#&.\-]/g, "");
         if (raw.length > lettersNeeded) raw = raw.slice(0, lettersNeeded);
 
         let val = "";
         let ri = 0;
         for (let i = 0; i < maxLen && ri < raw.length; i++) {
-          if (q.word[i] === " ") {
-            val += " ";
+          if (isVocabWriteSkipChar(q.word[i])) {
+            val += q.word[i];
           } else {
             val += raw[ri++];
           }
         }
-        e.target.value = val.replace(/ /g, "");
+        e.target.value = val
+          .split("")
+          .filter((ch) => !isVocabWriteSkipChar(ch))
+          .join("");
         renderVocabWriteTiles(val);
         if (raw.length === lettersNeeded) {
           checkVocabWriteAnswer(val);
