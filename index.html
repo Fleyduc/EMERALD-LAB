@@ -11893,7 +11893,8 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
             <td><strong>${lesson.title}</strong></td>
             <td><span class="badge">${lesson.target_level}</span></td>
             <td>${lesson.created_at}</td>
-            <td style="text-align: right;">
+            <td style="text-align: right; display:flex; gap:6px; justify-content:flex-end; flex-wrap:wrap;">
+              <button class="btn-secondary" onclick="openMainLessonEditor(${lesson.id})">✏️ Tahrirlash</button>
               <button class="btn-danger" onclick="deleteLesson(${lesson.id})">
                 ${translations[currentLang].deleteBtnText}
               </button>
@@ -11901,6 +11902,196 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           </tr>
         `;
         });
+      }
+
+      /* ============================================================
+         ✨ EMERALD LAB — ASOSIY DARSNI TAHRIRLASH
+         Bu Writing/Reading/Listening emas.
+         Aynan "Yangi Dars va Vocabulary Qo'shish" orqali yaratilgan
+         oddiy darslarni keyin ham tahrirlash uchun.
+         - Sarlavha / level / video URL
+         - content_text HTML
+         - asosiy rasm
+         - vocabulary
+         - grammar quiz
+         - ichki rasm/audio/video bloklarini ⬆️⬇️ va 🗑️ boshqarish
+         - yangi rasm/audio/video qo'shish
+      ============================================================ */
+      let activeMainLessonEditorId = null;
+      let mainLessonEditorMedia = [];
+
+      function mainLessonMediaNodes(root) {
+        if (!root) return [];
+        return [...root.children].filter(el => {
+          const tag = el.tagName;
+          return tag === 'IMG' || el.classList?.contains('lesson-editor-media') || tag === 'VIDEO' || tag === 'AUDIO';
+        });
+      }
+
+      function collectMainLessonMedia() {
+        const editor = document.getElementById('main-lesson-edit-editor');
+        if (!editor) return [];
+        return mainLessonMediaNodes(editor).map((el, index) => ({
+          index,
+          type: el.dataset?.mediaType || (el.tagName === 'IMG' ? 'image' : el.tagName === 'VIDEO' ? 'video' : 'audio'),
+          name: el.dataset?.mediaTitle || el.getAttribute('alt') || `${el.dataset?.mediaType || el.tagName.toLowerCase()} ${index + 1}`,
+          node: el
+        }));
+      }
+
+      function renderMainLessonMediaManager() {
+        const box = document.getElementById('main-lesson-edit-media-list');
+        const editor = document.getElementById('main-lesson-edit-editor');
+        if (!box || !editor) return;
+        const nodes = mainLessonMediaNodes(editor);
+        if (!nodes.length) {
+          box.innerHTML = `<div class="task-media-empty">Qo'shimcha rasm/audio/video yo'q.</div>`;
+          return;
+        }
+        box.innerHTML = nodes.map((el, i) => {
+          const type = el.dataset?.mediaType || (el.tagName === 'IMG' ? 'image' : el.tagName === 'VIDEO' ? 'video' : 'audio');
+          const name = escapeHtml(el.dataset?.mediaTitle || el.getAttribute('alt') || `${type} ${i+1}`);
+          let preview = '';
+          if (type === 'image') preview = `<img src="${escapeHtml(el.getAttribute('src') || '')}" style="width:86px;height:58px;object-fit:cover;border-radius:8px;">`;
+          else if (type === 'video') preview = `<video src="${escapeHtml(el.dataset?.mediaSrc || el.getAttribute('src') || '')}" muted preload="metadata" style="width:86px;height:58px;object-fit:cover;border-radius:8px;"></video>`;
+          else preview = `<div style="width:86px;height:58px;display:flex;align-items:center;justify-content:center;font-size:28px;background:rgba(16,185,129,.08);border-radius:8px;">🎧</div>`;
+          return `<div class="task-media-builder-item" data-main-media-index="${i}">
+            <div class="task-media-builder-preview">${preview}</div>
+            <div class="task-media-builder-meta"><strong>${taskMediaIcon(type)} ${name}</strong>
+              <div class="task-media-builder-actions">
+                <button type="button" class="lesson-editor-btn" ${i===0?'disabled':''} onclick="moveMainLessonMedia(${i},-1)">⬆️</button>
+                <button type="button" class="lesson-editor-btn" ${i===nodes.length-1?'disabled':''} onclick="moveMainLessonMedia(${i},1)">⬇️</button>
+                <button type="button" class="lesson-editor-btn" onclick="deleteMainLessonMedia(${i})">🗑️ O'chirish</button>
+              </div>
+            </div>
+          </div>`;
+        }).join('');
+      }
+
+      function moveMainLessonMedia(index, direction) {
+        const editor = document.getElementById('main-lesson-edit-editor');
+        if (!editor) return;
+        const nodes = mainLessonMediaNodes(editor);
+        const node = nodes[index];
+        const target = nodes[index + direction];
+        if (!node || !target) return;
+        if (direction < 0) target.parentNode.insertBefore(node, target);
+        else target.parentNode.insertBefore(node, target.nextSibling);
+        renderMainLessonMediaManager();
+      }
+
+      function deleteMainLessonMedia(index) {
+        const editor = document.getElementById('main-lesson-edit-editor');
+        if (!editor) return;
+        const nodes = mainLessonMediaNodes(editor);
+        if (!nodes[index]) return;
+        if (!confirm('Bu rasm/audio/video ni darsdan o\'chirasizmi?')) return;
+        nodes[index].remove();
+        renderMainLessonMediaManager();
+      }
+
+      async function addMainLessonEditFiles(input) {
+        const editor = document.getElementById('main-lesson-edit-editor');
+        const task = lessons.find(x => String(x.id) === String(activeMainLessonEditorId));
+        if (!editor || !task) return;
+        const files = [...(input.files || [])];
+        input.value = '';
+        for (const file of files) {
+          const type = taskMediaKind(file);
+          if (!['image','audio','video'].includes(type)) continue;
+          const dataUrl = await new Promise((resolve, reject) => {
+            const r = new FileReader(); r.onload = () => resolve(r.result); r.onerror = reject; r.readAsDataURL(file);
+          });
+          const html = type === 'image'
+            ? `<img class="lesson-editor-image" src="${escapeHtml(dataUrl)}" alt="${escapeHtml(file.name)}" style="max-width:100%;height:auto;border-radius:12px;margin:12px 0;display:block;">`
+            : buildLessonMediaHtml(type, dataUrl, file.name.replace(/\.[^.]+$/, ''));
+          editor.insertAdjacentHTML('beforeend', html);
+        }
+        renderMainLessonMediaManager();
+      }
+
+      function addMainLessonEditUrl() {
+        const editor = document.getElementById('main-lesson-edit-editor');
+        if (!editor) return;
+        const url = prompt('Rasm / audio / video URL:');
+        if (!url) return;
+        const type = (prompt('Tur: image / audio / video', 'image') || '').toLowerCase().trim();
+        if (!['image','audio','video'].includes(type)) { alert('Tur noto\'g\'ri.'); return; }
+        const title = prompt('Nomi:', type) || type;
+        const html = type === 'image'
+          ? `<img class="lesson-editor-image" src="${escapeHtml(url.trim())}" alt="${escapeHtml(title)}" style="max-width:100%;height:auto;border-radius:12px;margin:12px 0;display:block;">`
+          : buildLessonMediaHtml(type, url.trim(), title);
+        editor.insertAdjacentHTML('beforeend', html);
+        renderMainLessonMediaManager();
+      }
+
+      function openMainLessonEditor(id) {
+        const lesson = lessons.find(x => String(x.id) === String(id));
+        if (!lesson) return;
+        activeMainLessonEditorId = lesson.id;
+        const modal = document.getElementById('main-lesson-editor-modal');
+        const body = document.getElementById('main-lesson-editor-body');
+        if (!modal || !body) return;
+        const vocabJson = JSON.stringify(lesson.vocabulary || [], null, 2);
+        const quizJson = JSON.stringify(lesson.quiz || null, null, 2);
+        body.innerHTML = `
+          <div class="grid-2">
+            <div class="input-group"><label>Dars sarlavhasi</label><input id="mle-title" value="${escapeHtml(lesson.title || '')}"></div>
+            <div class="input-group"><label>Maqsadli daraja</label><input id="mle-level" value="${escapeHtml(lesson.target_level || '')}"></div>
+          </div>
+          <div class="input-group"><label>Video havola</label><input id="mle-video" value="${escapeHtml(lesson.video_url || '')}" placeholder="https://..."></div>
+          <div class="input-group"><label>Asosiy rasm URL</label><input id="mle-image" value="${escapeHtml(lesson.image_url || '')}" placeholder="https://..."></div>
+          <div class="input-group">
+            <label>📝 Dars matni</label>
+            <div id="main-lesson-edit-editor" class="lesson-editor-canvas" contenteditable="true">${lesson.content_text || ''}</div>
+          </div>
+          <div class="input-group">
+            <label>🧩 Rasm / Audio / Video boshqaruvi</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+              <button type="button" class="lesson-editor-btn image-btn" onclick="document.getElementById('mle-media-files').click()">📎 Media qo'shish</button>
+              <button type="button" class="lesson-editor-btn image-btn" onclick="addMainLessonEditUrl()">🔗 URL orqali qo'shish</button>
+              <input id="mle-media-files" type="file" accept="image/*,audio/*,video/*" multiple hidden onchange="addMainLessonEditFiles(this)">
+            </div>
+            <div id="main-lesson-edit-media-list"></div>
+            <small style="color:var(--text-muted)">Har bir media uchun ⬆️ tepaga, ⬇️ pastga yoki 🗑️ o'chirishni bosing.</small>
+          </div>
+          <div class="grid-2">
+            <div class="input-group"><label>Vocabulary (JSON)</label><textarea id="mle-vocab" rows="10">${escapeHtml(vocabJson)}</textarea></div>
+            <div class="input-group"><label>Grammar quiz (JSON)</label><textarea id="mle-quiz" rows="10">${escapeHtml(quizJson)}</textarea></div>
+          </div>`;
+        modal.classList.add('open');
+        renderMainLessonMediaManager();
+      }
+
+      async function saveMainLessonEditor() {
+        const lesson = lessons.find(x => String(x.id) === String(activeMainLessonEditorId));
+        if (!lesson) return;
+        const editor = document.getElementById('main-lesson-edit-editor');
+        lesson.title = document.getElementById('mle-title')?.value.trim() || lesson.title;
+        lesson.target_level = document.getElementById('mle-level')?.value.trim() || lesson.target_level;
+        lesson.video_url = document.getElementById('mle-video')?.value.trim() || '';
+        lesson.image_url = document.getElementById('mle-image')?.value.trim() || '';
+        lesson.content_text = editor?.innerHTML.trim() || '';
+        try { lesson.vocabulary = JSON.parse(document.getElementById('mle-vocab')?.value || '[]'); }
+        catch(e) { alert('❌ Vocabulary JSON xato.'); return; }
+        try { lesson.quiz = JSON.parse(document.getElementById('mle-quiz')?.value || 'null'); }
+        catch(e) { alert('❌ Grammar quiz JSON xato.'); return; }
+        try {
+          const prepared = await prepareLessonEditorMediaForSave(lesson.content_text, lesson.id);
+          lesson.content_text = prepared.html;
+        } catch(e) { console.error(e); }
+        const ok = await dbUpdateLesson(lesson);
+        if (!ok) return;
+        closeMainLessonEditor();
+        renderTeacherLessonsList();
+        alert('✅ Asosiy dars muvaffaqiyatli yangilandi.');
+      }
+
+      function closeMainLessonEditor() {
+        const modal = document.getElementById('main-lesson-editor-modal');
+        if (modal) modal.classList.remove('open');
+        activeMainLessonEditorId = null;
+        mainLessonEditorMedia = [];
       }
 
       async function deleteLesson(id) {
@@ -19932,6 +20123,18 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
     </div>
     
   
+    <div id="main-lesson-editor-modal" class="task-editor-modal" onclick="if(event.target===this)closeMainLessonEditor()">
+      <div class="task-editor-modal-card" style="max-width:1100px;max-height:92vh;overflow:auto;">
+        <button class="task-editor-modal-close" type="button" onclick="closeMainLessonEditor()">✕</button>
+        <h2 style="margin:0 0 14px;color:var(--emerald-light);">✏️ Asosiy darsni tahrirlash</h2>
+        <div id="main-lesson-editor-body"></div>
+        <div class="task-editor-modal-actions" style="position:sticky;bottom:0;background:var(--card-bg);padding-top:12px;">
+          <button type="button" class="btn-secondary" onclick="closeMainLessonEditor()">Bekor qilish</button>
+          <button type="button" class="submit-btn" onclick="saveMainLessonEditor()">💾 O'zgarishlarni saqlash</button>
+        </div>
+      </div>
+    </div>
+
     <div id="task-media-viewer-modal" class="task-editor-modal" onclick="if(event.target===this)closeTaskMediaViewer()">
       <div class="task-editor-modal-card" style="max-width:1000px;">
         <button class="task-editor-modal-close" type="button" onclick="closeTaskMediaViewer()">✕</button>
