@@ -3682,6 +3682,85 @@
         border-radius: 10px;
         margin-top: 6px;
       }
+      .msg-media {
+        cursor: pointer;
+        display: block;
+        object-fit: cover;
+      }
+      .msg-media:hover { opacity: .92; }
+      .msg-audio {
+        width: 100%;
+        min-width: 240px;
+        margin-top: 8px;
+      }
+      .msg-file {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+        padding: 9px 12px;
+        border-radius: 12px;
+        background: rgba(16,185,129,.12);
+        border: 1px solid var(--card-border);
+        color: #d1fae5;
+        text-decoration: none;
+        max-width: 100%;
+      }
+      .msg-file:hover { background: rgba(16,185,129,.2); }
+      .msg-caption { margin-top: 6px; white-space: pre-wrap; word-break: break-word; }
+      .msg-reply {
+        margin: 5px 0 7px;
+        padding: 6px 9px;
+        border-left: 3px solid var(--emerald-primary);
+        background: rgba(16,185,129,.08);
+        border-radius: 7px;
+        font-size: .78rem;
+        cursor: pointer;
+      }
+      .msg-actions {
+        display:flex; gap:5px; margin-top:6px; opacity:0; transition:.2s;
+      }
+      .message:hover .msg-actions { opacity:1; }
+      .msg-actions button {
+        border:0; background:rgba(255,255,255,.06); color:#cbd5e1;
+        border-radius:7px; padding:4px 7px; cursor:pointer; font-size:.72rem;
+      }
+      .msg-actions button:hover { background:rgba(16,185,129,.18); color:#fff; }
+      .chat-reply-bar {
+        display:none; align-items:center; justify-content:space-between;
+        padding:7px 14px; background:rgba(16,185,129,.08);
+        border-top:1px solid var(--card-border); font-size:.8rem;
+      }
+      .chat-reply-bar.open { display:flex; }
+      .chat-media-modal {
+        position:fixed; inset:0; z-index:99999; display:none; align-items:center;
+        justify-content:center; background:rgba(0,0,0,.82); padding:20px;
+      }
+      .chat-media-modal.open { display:flex; }
+      .chat-media-panel {
+        position:relative; max-width:min(94vw,1100px); max-height:92vh;
+        display:flex; align-items:center; justify-content:center;
+      }
+      .chat-media-panel img, .chat-media-panel video {
+        max-width:92vw; max-height:86vh; border-radius:14px;
+        box-shadow:0 20px 70px rgba(0,0,0,.5);
+      }
+      .chat-media-close {
+        position:absolute; right:-12px; top:-12px; width:38px; height:38px;
+        border-radius:50%; border:1px solid rgba(255,255,255,.18);
+        background:#06261d; color:#fff; font-size:20px; cursor:pointer;
+      }
+      .chat-attachment-menu {
+        position:absolute; bottom:58px; left:12px; display:none; z-index:30;
+        padding:8px; border-radius:14px; background:#06261d;
+        border:1px solid var(--card-border); box-shadow:0 15px 40px rgba(0,0,0,.35);
+      }
+      .chat-attachment-menu.open { display:flex; gap:6px; }
+      .chat-attachment-menu button {
+        border:0; background:rgba(255,255,255,.06); color:#d1fae5;
+        padding:9px 11px; border-radius:10px; cursor:pointer;
+      }
+      .chat-attachment-menu button:hover { background:rgba(16,185,129,.2); }
 
       .chat-input-bar {
         padding: 12px 16px;
@@ -8052,48 +8131,45 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
             </div>
 
             <!-- Selected File Preview Bar -->
-            <div
-              class="file-preview"
-              id="file-preview-bar"
-              style="display: none"
-            >
-              <span
-                >📎 Biriktirildi:
-                <strong id="file-preview-name">file.jpg</strong></span
-              >
-              <span
-                style="cursor: pointer; color: #ef4444"
-                onclick="cancelFile()"
-                >✕ Bekor qilish</span
-              >
+            <div class="file-preview" id="file-preview-bar" style="display:none">
+              <span>📎 Biriktirildi: <strong id="file-preview-name">file</strong></span>
+              <span style="cursor:pointer;color:#ef4444" onclick="cancelFile()">✕ Bekor qilish</span>
+            </div>
+            <div class="chat-reply-bar" id="chat-reply-bar">
+              <span id="chat-reply-text">↩️ Javob</span>
+              <button type="button" onclick="cancelChatReply()" style="border:0;background:none;color:#ef4444;cursor:pointer">✕</button>
             </div>
 
             <!-- Input Bar -->
-            <div class="chat-input-bar">
-              <label class="attach-btn" title="Rasm yoki Video biriktirish">
-                📷
-                <input
-                  type="file"
-                  id="chat-file-input"
-                  accept="image/*,video/*"
-                  style="display: none"
-                  onchange="handleChatFileSelect(event)"
-                />
-              </label>
-              <input
-                type="text"
-                id="chat-input-text"
-                placeholder="Xabar yozing..."
-                onkeypress="if(event.key==='Enter') sendChatMessage()"
-              />
-              <button
-                class="btn-primary"
-                style="width: auto; padding: 10px 20px; margin-top: 0"
-                onclick="sendChatMessage()"
-              >
-                Jo'natish 🚀
-              </button>
+            <div class="chat-input-bar" style="position:relative">
+              <div class="chat-attachment-menu" id="chat-attachment-menu">
+                <button type="button" onclick="openChatFilePicker('all')">📎 Fayl</button>
+                <button type="button" onclick="openChatFilePicker('image')">🖼️ Rasm</button>
+                <button type="button" onclick="openChatFilePicker('audio')">🎧 Audio</button>
+                <button type="button" onclick="openChatFilePicker('video')">🎬 Video</button>
+              </div>
+              <button type="button" class="attach-btn" title="Fayl biriktirish"
+                onclick="toggleChatAttachmentMenu()">📎</button>
+              <input type="file" id="chat-file-input"
+                accept="image/*,audio/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar"
+                style="display:none" onchange="handleChatFileSelect(event)" />
+              <input type="text" id="chat-input-text" placeholder="Xabar yozing..."
+                onkeypress="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();sendChatMessage()}" />
+              <button class="btn-primary" style="width:auto;padding:10px 20px;margin-top:0"
+                onclick="sendChatMessage()">Jo'natish 🚀</button>
             </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Chat media viewer -->
+    <div class="chat-media-modal" id="chat-media-modal" onclick="if(event.target===this)closeChatMediaModal()">
+      <div class="chat-media-panel">
+        <button class="chat-media-close" type="button" onclick="closeChatMediaModal()">✕</button>
+        <div id="chat-media-modal-content"></div>
+      </div>
+    </div>
           </div>
         </div>
       </div>
@@ -8483,6 +8559,20 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           .from("chat-media")
           .getPublicUrl(path);
         return data.publicUrl;
+      }
+
+      async function dbUpdateChatMessage(msg) {
+        const { error } = await supabaseClient.from("chat_messages")
+          .update({ data: msg }).eq("id", msg.id);
+        if (error) console.error("Supabase (chat update) xatolik:", error);
+        return !error;
+      }
+
+      async function dbDeleteChatMessage(id) {
+        const { error } = await supabaseClient.from("chat_messages")
+          .delete().eq("id", id);
+        if (error) console.error("Supabase (chat delete) xatolik:", error);
+        return !error;
       }
 
       /* ============================================================
@@ -15840,45 +15930,93 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
       }
 
 
-      /* TELEGRAM CHAT FUNCTIONALITY */
+      /* TELEGRAM-STYLE INTERNAL CHAT — FULL MEDIA VERSION */
+      let chatReplyTo = null;
+
+      function toggleChatAttachmentMenu() {
+        document.getElementById("chat-attachment-menu")?.classList.toggle("open");
+      }
+
+      function openChatFilePicker(kind) {
+        const input = document.getElementById("chat-file-input");
+        const accept = {
+          image: "image/*",
+          audio: "audio/*",
+          video: "video/*",
+          all: "image/*,audio/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar"
+        }[kind] || "*/*";
+        input.accept = accept;
+        input.value = "";
+        input.click();
+        document.getElementById("chat-attachment-menu")?.classList.remove("open");
+      }
+
       function handleChatFileSelect(e) {
-        const file = e.target.files[0];
-        if (file) {
-          selectedChatFile = file;
-          document.getElementById("file-preview-name").innerText = file.name;
-          document.getElementById("file-preview-bar").style.display = "flex";
-        }
+        const file = e.target.files?.[0];
+        if (!file) return;
+        selectedChatFile = file;
+        document.getElementById("file-preview-name").textContent =
+          `${file.name} (${Math.round(file.size / 1024)} KB)`;
+        document.getElementById("file-preview-bar").style.display = "flex";
       }
 
       function cancelFile() {
         selectedChatFile = null;
-        document.getElementById("chat-file-input").value = "";
-        document.getElementById("file-preview-bar").style.display = "none";
+        const input = document.getElementById("chat-file-input");
+        if (input) input.value = "";
+        const bar = document.getElementById("file-preview-bar");
+        if (bar) bar.style.display = "none";
+      }
+
+      function setChatReply(id) {
+        const m = chatMessages.find(x => String(x.id) === String(id));
+        if (!m) return;
+        chatReplyTo = { id:m.id, sender:m.sender || "", text:m.text || "", mediaType:m.mediaType || "" };
+        const bar = document.getElementById("chat-reply-bar");
+        const label = document.getElementById("chat-reply-text");
+        if (label) label.textContent = `↩️ ${m.sender || "Xabar"}: ${m.text || (m.mediaType ? "Media" : "")}`;
+        if (bar) bar.classList.add("open");
+        document.getElementById("chat-input-text")?.focus();
+      }
+
+      function cancelChatReply() {
+        chatReplyTo = null;
+        document.getElementById("chat-reply-bar")?.classList.remove("open");
+      }
+
+      async function deleteChatMessage(id) {
+        const m = chatMessages.find(x => String(x.id) === String(id));
+        if (!m || !currentUser || m.senderEmail !== currentUser.email) return;
+        if (!confirm("Bu xabar o‘chirilsinmi?")) return;
+        if (await dbDeleteChatMessage(id)) {
+          chatMessages = chatMessages.filter(x => String(x.id) !== String(id));
+          renderChatMessages();
+        }
       }
 
       async function sendChatMessage() {
         const input = document.getElementById("chat-input-text");
         const text = input.value.trim();
-
         if (!text && !selectedChatFile) return;
 
-        const time = new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-
-        let mediaUrl = null;
-        let mediaType = null;
         const fileToUpload = selectedChatFile;
-
+        const time = new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
         input.value = "";
         cancelFile();
 
+        let mediaUrl = null, mediaType = null, fileName = null, fileSize = null;
         if (fileToUpload) {
-          mediaType = fileToUpload.type.startsWith("image/")
-            ? "image"
-            : "video";
+          fileName = fileToUpload.name;
+          fileSize = fileToUpload.size;
+          if (fileToUpload.type.startsWith("image/")) mediaType = "image";
+          else if (fileToUpload.type.startsWith("audio/")) mediaType = "audio";
+          else if (fileToUpload.type.startsWith("video/")) mediaType = "video";
+          else mediaType = "file";
           mediaUrl = await dbUploadChatFile(fileToUpload);
+          if (!mediaUrl) {
+            alert("❌ Faylni yuklab bo‘lmadi. Supabase Storage / RLS sozlamalarini tekshiring.");
+            return;
+          }
         }
 
         const msgObj = {
@@ -15888,62 +16026,116 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           text,
           mediaUrl,
           mediaType,
-          time,
+          fileName,
+          fileSize,
+          replyTo: chatReplyTo,
+          time
         };
 
+        cancelChatReply();
         const saved = await dbInsertChatMessage(msgObj);
-        if (!chatMessages.some((m) => m.id === saved.id)) {
-          chatMessages.push(saved);
-        }
+        if (!chatMessages.some(m => String(m.id) === String(saved.id))) chatMessages.push(saved);
         renderChatMessages();
+      }
+
+      function openChatMediaModal(url, type) {
+        if (!url) return;
+        const modal = document.getElementById("chat-media-modal");
+        const content = document.getElementById("chat-media-modal-content");
+        if (!modal || !content) return;
+        content.innerHTML = "";
+        if (type === "image") {
+          const img = document.createElement("img");
+          img.src = url; img.alt = "Chat rasmi"; content.appendChild(img);
+        } else if (type === "video") {
+          const video = document.createElement("video");
+          video.src = url; video.controls = true; video.autoplay = true; video.playsInline = true;
+          content.appendChild(video);
+        }
+        modal.classList.add("open");
+      }
+
+      function closeChatMediaModal() {
+        const modal = document.getElementById("chat-media-modal");
+        const content = document.getElementById("chat-media-modal-content");
+        if (content) content.innerHTML = "";
+        if (modal) modal.classList.remove("open");
+      }
+
+      function copyChatText(id) {
+        const m = chatMessages.find(x => String(x.id) === String(id));
+        if (!m?.text) return;
+        navigator.clipboard?.writeText(m.text);
+      }
+
+      function formatChatFileSize(bytes) {
+        if (!bytes) return "";
+        const units=["B","KB","MB","GB"]; let i=0,n=Number(bytes);
+        while(n>=1024 && i<units.length-1){n/=1024;i++;}
+        return `${n.toFixed(i?1:0)} ${units[i]}`;
       }
 
       function renderChatMessages() {
         const box = document.getElementById("chat-messages-box");
+        if (!box) return;
         box.innerHTML = `
-        <div class="message received">
-          <div class="msg-author">Ustoz (Emerald Admin)</div>
-          Assalomu alaykum! Savollaringiz, insholaringiz yoki media fayllaringizni shu yerga yuborishingiz mumkin! 🚀
-          <div class="msg-time">10:00</div>
-        </div>
-      `;
+          <div class="message received">
+            <div class="msg-author">Ustoz (Emerald Admin)</div>
+            Assalomu alaykum! Savollaringiz, insholaringiz yoki media fayllaringizni shu yerga yuborishingiz mumkin! 🚀
+            <div class="msg-time">10:00</div>
+          </div>`;
 
-        chatMessages.forEach((m) => {
+        chatMessages.forEach(m => {
           const isMe = currentUser && m.senderEmail === currentUser.email;
+          const safeUrl = typeof m.mediaUrl === "string" && /^https?:\/\//i.test(m.mediaUrl) ? m.mediaUrl : "";
           let mediaHtml = "";
 
-          // XAVFSIZLIK: mediaUrl faqat http(s) bo'lsa ishlatiladi va
-          // atribut ichiga escapeHtml orqali xavfsiz joylashtiriladi —
-          // aks holda "javascript:" yoki qo'shtirnoqdan chiqib ketuvchi
-          // (attribute-breakout) XSS bo'lishi mumkin edi.
-          const safeMediaUrl =
-            typeof m.mediaUrl === "string" && /^https?:\/\//i.test(m.mediaUrl)
-              ? escapeHtml(m.mediaUrl)
-              : "";
-          if (safeMediaUrl) {
-            if (m.mediaType === "image") {
-              mediaHtml = `<br><img src="${safeMediaUrl}" class="msg-media" />`;
-            } else if (m.mediaType === "video") {
-              mediaHtml = `<br><video src="${safeMediaUrl}" controls class="msg-media"></video>`;
-            }
+          if (m.replyTo) {
+            mediaHtml += `<div class="msg-reply" onclick="document.getElementById('chat-msg-${String(m.replyTo.id).replace(/[^a-zA-Z0-9_-]/g,'')}')?.scrollIntoView({behavior:'smooth',block:'center'})">
+              ↩️ <b>${escapeHtml(m.replyTo.sender || "")}</b>: ${escapeHtml(m.replyTo.text || (m.replyTo.mediaType ? "Media xabar" : ""))}
+            </div>`;
           }
 
-          box.innerHTML += `
-          <div class="message ${isMe ? "sent" : "received"}">
-            <div class="msg-author" onclick="openPublicProfile('${escapeHtml(
-              m.senderEmail || ""
-            )}')">${escapeHtml(m.sender || "")} (${
-            m.role === "teacher" ? "👨‍🏫 Ustoz" : "🎓 O'quvchi"
-          })</div>
-            ${m.text ? escapeHtml(m.text) : ""}
-            ${mediaHtml}
-            <div class="msg-time">${escapeHtml(m.time || "")}</div>
-          </div>
-        `;
-        });
+          if (safeUrl && m.mediaType === "image") {
+            mediaHtml += `<img src="${escapeHtml(safeUrl)}" class="msg-media" alt="Rasm"
+              onclick="openChatMediaModal('${escapeHtml(safeUrl)}','image')" loading="lazy" />`;
+          } else if (safeUrl && m.mediaType === "video") {
+            mediaHtml += `<video src="${escapeHtml(safeUrl)}" controls class="msg-media" preload="metadata"
+              onclick="event.stopPropagation()"></video>
+              <button class="msg-actions-btn" onclick="openChatMediaModal('${escapeHtml(safeUrl)}','video')">⛶ Katta ochish</button>`;
+          } else if (safeUrl && m.mediaType === "audio") {
+            mediaHtml += `<audio src="${escapeHtml(safeUrl)}" controls class="msg-audio"></audio>`;
+          } else if (safeUrl && m.mediaType === "file") {
+            mediaHtml += `<a class="msg-file" href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer">
+              📎 ${escapeHtml(m.fileName || "Fayl")} ${m.fileSize ? `(${formatChatFileSize(m.fileSize)})` : ""} ↗
+            </a>`;
+          }
 
+          const actions = `
+            <div class="msg-actions">
+              <button onclick="setChatReply('${String(m.id)}')">↩️ Reply</button>
+              ${m.text ? `<button onclick="copyChatText('${String(m.id)}')">📋 Copy</button>` : ""}
+              ${isMe ? `<button onclick="deleteChatMessage('${String(m.id)}')">🗑️ Delete</button>` : ""}
+            </div>`;
+
+          const domId = String(m.id).replace(/[^a-zA-Z0-9_-]/g,"");
+          box.innerHTML += `
+            <div class="message ${isMe ? "sent" : "received"}" id="chat-msg-${domId}">
+              <div class="msg-author" onclick="openPublicProfile('${escapeHtml(m.senderEmail || "")}')">
+                ${escapeHtml(m.sender || "")} (${m.role === "teacher" ? "👨‍🏫 Ustoz" : "🎓 O'quvchi"})
+              </div>
+              ${mediaHtml}
+              ${m.text ? `<div class="msg-caption">${escapeHtml(m.text)}</div>` : ""}
+              ${actions}
+              <div class="msg-time">${escapeHtml(m.time || "")}</div>
+            </div>`;
+        });
         box.scrollTop = box.scrollHeight;
       }
+
+      document.addEventListener("keydown", e => {
+        if (e.key === "Escape") closeChatMediaModal();
+      });
 
       async function logout() {
         try {
