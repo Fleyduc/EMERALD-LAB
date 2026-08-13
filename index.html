@@ -3682,85 +3682,6 @@
         border-radius: 10px;
         margin-top: 6px;
       }
-      .msg-media {
-        cursor: pointer;
-        display: block;
-        object-fit: cover;
-      }
-      .msg-media:hover { opacity: .92; }
-      .msg-audio {
-        width: 100%;
-        min-width: 240px;
-        margin-top: 8px;
-      }
-      .msg-file {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        margin-top: 8px;
-        padding: 9px 12px;
-        border-radius: 12px;
-        background: rgba(16,185,129,.12);
-        border: 1px solid var(--card-border);
-        color: #d1fae5;
-        text-decoration: none;
-        max-width: 100%;
-      }
-      .msg-file:hover { background: rgba(16,185,129,.2); }
-      .msg-caption { margin-top: 6px; white-space: pre-wrap; word-break: break-word; }
-      .msg-reply {
-        margin: 5px 0 7px;
-        padding: 6px 9px;
-        border-left: 3px solid var(--emerald-primary);
-        background: rgba(16,185,129,.08);
-        border-radius: 7px;
-        font-size: .78rem;
-        cursor: pointer;
-      }
-      .msg-actions {
-        display:flex; gap:5px; margin-top:6px; opacity:0; transition:.2s;
-      }
-      .message:hover .msg-actions { opacity:1; }
-      .msg-actions button {
-        border:0; background:rgba(255,255,255,.06); color:#cbd5e1;
-        border-radius:7px; padding:4px 7px; cursor:pointer; font-size:.72rem;
-      }
-      .msg-actions button:hover { background:rgba(16,185,129,.18); color:#fff; }
-      .chat-reply-bar {
-        display:none; align-items:center; justify-content:space-between;
-        padding:7px 14px; background:rgba(16,185,129,.08);
-        border-top:1px solid var(--card-border); font-size:.8rem;
-      }
-      .chat-reply-bar.open { display:flex; }
-      .chat-media-modal {
-        position:fixed; inset:0; z-index:99999; display:none; align-items:center;
-        justify-content:center; background:rgba(0,0,0,.82); padding:20px;
-      }
-      .chat-media-modal.open { display:flex; }
-      .chat-media-panel {
-        position:relative; max-width:min(94vw,1100px); max-height:92vh;
-        display:flex; align-items:center; justify-content:center;
-      }
-      .chat-media-panel img, .chat-media-panel video {
-        max-width:92vw; max-height:86vh; border-radius:14px;
-        box-shadow:0 20px 70px rgba(0,0,0,.5);
-      }
-      .chat-media-close {
-        position:absolute; right:-12px; top:-12px; width:38px; height:38px;
-        border-radius:50%; border:1px solid rgba(255,255,255,.18);
-        background:#06261d; color:#fff; font-size:20px; cursor:pointer;
-      }
-      .chat-attachment-menu {
-        position:absolute; bottom:58px; left:12px; display:none; z-index:30;
-        padding:8px; border-radius:14px; background:#06261d;
-        border:1px solid var(--card-border); box-shadow:0 15px 40px rgba(0,0,0,.35);
-      }
-      .chat-attachment-menu.open { display:flex; gap:6px; }
-      .chat-attachment-menu button {
-        border:0; background:rgba(255,255,255,.06); color:#d1fae5;
-        padding:9px 11px; border-radius:10px; cursor:pointer;
-      }
-      .chat-attachment-menu button:hover { background:rgba(16,185,129,.2); }
 
       .chat-input-bar {
         padding: 12px 16px;
@@ -4645,7 +4566,44 @@
       @media(max-width:900px){.ops-grid{grid-template-columns:1fr}.ops-stat-grid{grid-template-columns:repeat(2,1fr)}}
       @media(max-width:620px){.ops-form{grid-template-columns:1fr}.ops-full{grid-column:auto}.ops-stat-grid{grid-template-columns:1fr}}
     </style>
-  </head>
+  <style>
+
+      /* ===== TASK MEDIA BUILDER / DISPLAY ===== */
+      .task-media-builder{margin:12px 0;padding:14px;border:1px dashed var(--card-border-hover);border-radius:16px;background:rgba(16,185,129,.045)}
+      .task-media-builder-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+      .task-media-builder-help{font-size:.7rem;color:var(--text-muted);margin-top:4px}
+      .task-media-builder-toolbar,.task-media-builder-actions{display:flex;gap:6px;flex-wrap:wrap}
+      .task-media-items{display:flex;flex-direction:column;gap:9px;margin-top:10px}
+      .task-media-builder-item{display:flex;gap:10px;align-items:center;padding:10px;border:1px solid var(--card-border);border-radius:13px;background:rgba(0,0,0,.12)}
+      .task-media-builder-preview{width:120px;min-width:120px;height:78px;border-radius:10px;overflow:hidden;background:rgba(0,0,0,.22);display:flex;align-items:center;justify-content:center}
+      .task-media-builder-preview img,.task-media-builder-preview video{width:100%;height:100%;object-fit:contain}
+      .task-media-builder-preview audio{width:112px}
+      .task-media-builder-meta{flex:1;min-width:0}
+      .task-media-file-icon{padding:8px;font-size:.75rem;word-break:break-word}
+      .task-media-empty{color:var(--text-muted);font-size:.75rem;padding:8px 2px}
+      .task-media-display{display:flex;flex-direction:column;gap:10px;margin:10px 0}
+      .task-media-display.workspace{margin:14px 0}
+      .task-media-display-item{border:1px solid var(--card-border);border-radius:14px;padding:10px;background:rgba(16,185,129,.045)}
+      .task-media-label{font-size:.75rem;font-weight:800;color:var(--emerald-light);margin-bottom:7px}
+      .task-media-image{display:block;width:100%;max-height:420px;object-fit:contain;border-radius:11px;cursor:zoom-in;background:#06120e}
+      .task-media-video{display:block;width:100%;min-height:260px;max-height:520px;object-fit:contain;border-radius:11px;background:#000}
+      .task-media-audio{display:block;width:100%}
+      .task-media-file-link{display:block;padding:12px;border-radius:10px;background:rgba(16,185,129,.09);color:var(--emerald-light);font-weight:800;text-decoration:none}
+      .task-editor-modal{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px}
+      .task-editor-modal.open{display:flex}
+      .task-editor-modal-card{width:min(1050px,96vw);max-height:92vh;overflow:auto;background:var(--bg-card,#071a14);border:1px solid var(--card-border);border-radius:20px;padding:20px;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+      .task-editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+      .task-editor-modal-close{float:right;border:0;background:rgba(255,255,255,.08);color:var(--text-main);border-radius:10px;width:36px;height:36px;cursor:pointer}
+      .task-editor-modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+      @media(max-width:700px){
+        .task-media-builder-item{align-items:flex-start;flex-direction:column}
+        .task-media-builder-preview{width:100%;height:150px}
+        .task-editor-grid{grid-template-columns:1fr}
+        .task-media-video{min-height:200px}
+      }
+
+</style>
+</head>
   <body>
     <div class="ambient-glow"></div>
     <div class="ambient-glow-2"></div>
@@ -8131,45 +8089,48 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
             </div>
 
             <!-- Selected File Preview Bar -->
-            <div class="file-preview" id="file-preview-bar" style="display:none">
-              <span>📎 Biriktirildi: <strong id="file-preview-name">file</strong></span>
-              <span style="cursor:pointer;color:#ef4444" onclick="cancelFile()">✕ Bekor qilish</span>
-            </div>
-            <div class="chat-reply-bar" id="chat-reply-bar">
-              <span id="chat-reply-text">↩️ Javob</span>
-              <button type="button" onclick="cancelChatReply()" style="border:0;background:none;color:#ef4444;cursor:pointer">✕</button>
+            <div
+              class="file-preview"
+              id="file-preview-bar"
+              style="display: none"
+            >
+              <span
+                >📎 Biriktirildi:
+                <strong id="file-preview-name">file.jpg</strong></span
+              >
+              <span
+                style="cursor: pointer; color: #ef4444"
+                onclick="cancelFile()"
+                >✕ Bekor qilish</span
+              >
             </div>
 
             <!-- Input Bar -->
-            <div class="chat-input-bar" style="position:relative">
-              <div class="chat-attachment-menu" id="chat-attachment-menu">
-                <button type="button" onclick="openChatFilePicker('all')">📎 Fayl</button>
-                <button type="button" onclick="openChatFilePicker('image')">🖼️ Rasm</button>
-                <button type="button" onclick="openChatFilePicker('audio')">🎧 Audio</button>
-                <button type="button" onclick="openChatFilePicker('video')">🎬 Video</button>
-              </div>
-              <button type="button" class="attach-btn" title="Fayl biriktirish"
-                onclick="toggleChatAttachmentMenu()">📎</button>
-              <input type="file" id="chat-file-input"
-                accept="image/*,audio/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar"
-                style="display:none" onchange="handleChatFileSelect(event)" />
-              <input type="text" id="chat-input-text" placeholder="Xabar yozing..."
-                onkeypress="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();sendChatMessage()}" />
-              <button class="btn-primary" style="width:auto;padding:10px 20px;margin-top:0"
-                onclick="sendChatMessage()">Jo'natish 🚀</button>
+            <div class="chat-input-bar">
+              <label class="attach-btn" title="Rasm yoki Video biriktirish">
+                📷
+                <input
+                  type="file"
+                  id="chat-file-input"
+                  accept="image/*,video/*"
+                  style="display: none"
+                  onchange="handleChatFileSelect(event)"
+                />
+              </label>
+              <input
+                type="text"
+                id="chat-input-text"
+                placeholder="Xabar yozing..."
+                onkeypress="if(event.key==='Enter') sendChatMessage()"
+              />
+              <button
+                class="btn-primary"
+                style="width: auto; padding: 10px 20px; margin-top: 0"
+                onclick="sendChatMessage()"
+              >
+                Jo'natish 🚀
+              </button>
             </div>
-          </div>
-        </div>
-      </div>
-    </main>
-
-    <!-- Chat media viewer -->
-    <div class="chat-media-modal" id="chat-media-modal" onclick="if(event.target===this)closeChatMediaModal()">
-      <div class="chat-media-panel">
-        <button class="chat-media-close" type="button" onclick="closeChatMediaModal()">✕</button>
-        <div id="chat-media-modal-content"></div>
-      </div>
-    </div>
           </div>
         </div>
       </div>
@@ -8559,20 +8520,6 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           .from("chat-media")
           .getPublicUrl(path);
         return data.publicUrl;
-      }
-
-      async function dbUpdateChatMessage(msg) {
-        const { error } = await supabaseClient.from("chat_messages")
-          .update({ data: msg }).eq("id", msg.id);
-        if (error) console.error("Supabase (chat update) xatolik:", error);
-        return !error;
-      }
-
-      async function dbDeleteChatMessage(id) {
-        const { error } = await supabaseClient.from("chat_messages")
-          .delete().eq("id", id);
-        if (error) console.error("Supabase (chat delete) xatolik:", error);
-        return !error;
       }
 
       /* ============================================================
@@ -15930,93 +15877,45 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
       }
 
 
-      /* TELEGRAM-STYLE INTERNAL CHAT — FULL MEDIA VERSION */
-      let chatReplyTo = null;
-
-      function toggleChatAttachmentMenu() {
-        document.getElementById("chat-attachment-menu")?.classList.toggle("open");
-      }
-
-      function openChatFilePicker(kind) {
-        const input = document.getElementById("chat-file-input");
-        const accept = {
-          image: "image/*",
-          audio: "audio/*",
-          video: "video/*",
-          all: "image/*,audio/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar"
-        }[kind] || "*/*";
-        input.accept = accept;
-        input.value = "";
-        input.click();
-        document.getElementById("chat-attachment-menu")?.classList.remove("open");
-      }
-
+      /* TELEGRAM CHAT FUNCTIONALITY */
       function handleChatFileSelect(e) {
-        const file = e.target.files?.[0];
-        if (!file) return;
-        selectedChatFile = file;
-        document.getElementById("file-preview-name").textContent =
-          `${file.name} (${Math.round(file.size / 1024)} KB)`;
-        document.getElementById("file-preview-bar").style.display = "flex";
+        const file = e.target.files[0];
+        if (file) {
+          selectedChatFile = file;
+          document.getElementById("file-preview-name").innerText = file.name;
+          document.getElementById("file-preview-bar").style.display = "flex";
+        }
       }
 
       function cancelFile() {
         selectedChatFile = null;
-        const input = document.getElementById("chat-file-input");
-        if (input) input.value = "";
-        const bar = document.getElementById("file-preview-bar");
-        if (bar) bar.style.display = "none";
-      }
-
-      function setChatReply(id) {
-        const m = chatMessages.find(x => String(x.id) === String(id));
-        if (!m) return;
-        chatReplyTo = { id:m.id, sender:m.sender || "", text:m.text || "", mediaType:m.mediaType || "" };
-        const bar = document.getElementById("chat-reply-bar");
-        const label = document.getElementById("chat-reply-text");
-        if (label) label.textContent = `↩️ ${m.sender || "Xabar"}: ${m.text || (m.mediaType ? "Media" : "")}`;
-        if (bar) bar.classList.add("open");
-        document.getElementById("chat-input-text")?.focus();
-      }
-
-      function cancelChatReply() {
-        chatReplyTo = null;
-        document.getElementById("chat-reply-bar")?.classList.remove("open");
-      }
-
-      async function deleteChatMessage(id) {
-        const m = chatMessages.find(x => String(x.id) === String(id));
-        if (!m || !currentUser || m.senderEmail !== currentUser.email) return;
-        if (!confirm("Bu xabar o‘chirilsinmi?")) return;
-        if (await dbDeleteChatMessage(id)) {
-          chatMessages = chatMessages.filter(x => String(x.id) !== String(id));
-          renderChatMessages();
-        }
+        document.getElementById("chat-file-input").value = "";
+        document.getElementById("file-preview-bar").style.display = "none";
       }
 
       async function sendChatMessage() {
         const input = document.getElementById("chat-input-text");
         const text = input.value.trim();
+
         if (!text && !selectedChatFile) return;
 
+        const time = new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        let mediaUrl = null;
+        let mediaType = null;
         const fileToUpload = selectedChatFile;
-        const time = new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+
         input.value = "";
         cancelFile();
 
-        let mediaUrl = null, mediaType = null, fileName = null, fileSize = null;
         if (fileToUpload) {
-          fileName = fileToUpload.name;
-          fileSize = fileToUpload.size;
-          if (fileToUpload.type.startsWith("image/")) mediaType = "image";
-          else if (fileToUpload.type.startsWith("audio/")) mediaType = "audio";
-          else if (fileToUpload.type.startsWith("video/")) mediaType = "video";
-          else mediaType = "file";
+          mediaType = fileToUpload.type.startsWith("image/")
+            ? "image"
+            : "video";
           mediaUrl = await dbUploadChatFile(fileToUpload);
-          if (!mediaUrl) {
-            alert("❌ Faylni yuklab bo‘lmadi. Supabase Storage / RLS sozlamalarini tekshiring.");
-            return;
-          }
         }
 
         const msgObj = {
@@ -16026,116 +15925,62 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           text,
           mediaUrl,
           mediaType,
-          fileName,
-          fileSize,
-          replyTo: chatReplyTo,
-          time
+          time,
         };
 
-        cancelChatReply();
         const saved = await dbInsertChatMessage(msgObj);
-        if (!chatMessages.some(m => String(m.id) === String(saved.id))) chatMessages.push(saved);
-        renderChatMessages();
-      }
-
-      function openChatMediaModal(url, type) {
-        if (!url) return;
-        const modal = document.getElementById("chat-media-modal");
-        const content = document.getElementById("chat-media-modal-content");
-        if (!modal || !content) return;
-        content.innerHTML = "";
-        if (type === "image") {
-          const img = document.createElement("img");
-          img.src = url; img.alt = "Chat rasmi"; content.appendChild(img);
-        } else if (type === "video") {
-          const video = document.createElement("video");
-          video.src = url; video.controls = true; video.autoplay = true; video.playsInline = true;
-          content.appendChild(video);
+        if (!chatMessages.some((m) => m.id === saved.id)) {
+          chatMessages.push(saved);
         }
-        modal.classList.add("open");
-      }
-
-      function closeChatMediaModal() {
-        const modal = document.getElementById("chat-media-modal");
-        const content = document.getElementById("chat-media-modal-content");
-        if (content) content.innerHTML = "";
-        if (modal) modal.classList.remove("open");
-      }
-
-      function copyChatText(id) {
-        const m = chatMessages.find(x => String(x.id) === String(id));
-        if (!m?.text) return;
-        navigator.clipboard?.writeText(m.text);
-      }
-
-      function formatChatFileSize(bytes) {
-        if (!bytes) return "";
-        const units=["B","KB","MB","GB"]; let i=0,n=Number(bytes);
-        while(n>=1024 && i<units.length-1){n/=1024;i++;}
-        return `${n.toFixed(i?1:0)} ${units[i]}`;
+        renderChatMessages();
       }
 
       function renderChatMessages() {
         const box = document.getElementById("chat-messages-box");
-        if (!box) return;
         box.innerHTML = `
-          <div class="message received">
-            <div class="msg-author">Ustoz (Emerald Admin)</div>
-            Assalomu alaykum! Savollaringiz, insholaringiz yoki media fayllaringizni shu yerga yuborishingiz mumkin! 🚀
-            <div class="msg-time">10:00</div>
-          </div>`;
+        <div class="message received">
+          <div class="msg-author">Ustoz (Emerald Admin)</div>
+          Assalomu alaykum! Savollaringiz, insholaringiz yoki media fayllaringizni shu yerga yuborishingiz mumkin! 🚀
+          <div class="msg-time">10:00</div>
+        </div>
+      `;
 
-        chatMessages.forEach(m => {
+        chatMessages.forEach((m) => {
           const isMe = currentUser && m.senderEmail === currentUser.email;
-          const safeUrl = typeof m.mediaUrl === "string" && /^https?:\/\//i.test(m.mediaUrl) ? m.mediaUrl : "";
           let mediaHtml = "";
 
-          if (m.replyTo) {
-            mediaHtml += `<div class="msg-reply" onclick="document.getElementById('chat-msg-${String(m.replyTo.id).replace(/[^a-zA-Z0-9_-]/g,'')}')?.scrollIntoView({behavior:'smooth',block:'center'})">
-              ↩️ <b>${escapeHtml(m.replyTo.sender || "")}</b>: ${escapeHtml(m.replyTo.text || (m.replyTo.mediaType ? "Media xabar" : ""))}
-            </div>`;
+          // XAVFSIZLIK: mediaUrl faqat http(s) bo'lsa ishlatiladi va
+          // atribut ichiga escapeHtml orqali xavfsiz joylashtiriladi —
+          // aks holda "javascript:" yoki qo'shtirnoqdan chiqib ketuvchi
+          // (attribute-breakout) XSS bo'lishi mumkin edi.
+          const safeMediaUrl =
+            typeof m.mediaUrl === "string" && /^https?:\/\//i.test(m.mediaUrl)
+              ? escapeHtml(m.mediaUrl)
+              : "";
+          if (safeMediaUrl) {
+            if (m.mediaType === "image") {
+              mediaHtml = `<br><img src="${safeMediaUrl}" class="msg-media" />`;
+            } else if (m.mediaType === "video") {
+              mediaHtml = `<br><video src="${safeMediaUrl}" controls class="msg-media"></video>`;
+            }
           }
 
-          if (safeUrl && m.mediaType === "image") {
-            mediaHtml += `<img src="${escapeHtml(safeUrl)}" class="msg-media" alt="Rasm"
-              onclick="openChatMediaModal('${escapeHtml(safeUrl)}','image')" loading="lazy" />`;
-          } else if (safeUrl && m.mediaType === "video") {
-            mediaHtml += `<video src="${escapeHtml(safeUrl)}" controls class="msg-media" preload="metadata"
-              onclick="event.stopPropagation()"></video>
-              <button class="msg-actions-btn" onclick="openChatMediaModal('${escapeHtml(safeUrl)}','video')">⛶ Katta ochish</button>`;
-          } else if (safeUrl && m.mediaType === "audio") {
-            mediaHtml += `<audio src="${escapeHtml(safeUrl)}" controls class="msg-audio"></audio>`;
-          } else if (safeUrl && m.mediaType === "file") {
-            mediaHtml += `<a class="msg-file" href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer">
-              📎 ${escapeHtml(m.fileName || "Fayl")} ${m.fileSize ? `(${formatChatFileSize(m.fileSize)})` : ""} ↗
-            </a>`;
-          }
-
-          const actions = `
-            <div class="msg-actions">
-              <button onclick="setChatReply('${String(m.id)}')">↩️ Reply</button>
-              ${m.text ? `<button onclick="copyChatText('${String(m.id)}')">📋 Copy</button>` : ""}
-              ${isMe ? `<button onclick="deleteChatMessage('${String(m.id)}')">🗑️ Delete</button>` : ""}
-            </div>`;
-
-          const domId = String(m.id).replace(/[^a-zA-Z0-9_-]/g,"");
           box.innerHTML += `
-            <div class="message ${isMe ? "sent" : "received"}" id="chat-msg-${domId}">
-              <div class="msg-author" onclick="openPublicProfile('${escapeHtml(m.senderEmail || "")}')">
-                ${escapeHtml(m.sender || "")} (${m.role === "teacher" ? "👨‍🏫 Ustoz" : "🎓 O'quvchi"})
-              </div>
-              ${mediaHtml}
-              ${m.text ? `<div class="msg-caption">${escapeHtml(m.text)}</div>` : ""}
-              ${actions}
-              <div class="msg-time">${escapeHtml(m.time || "")}</div>
-            </div>`;
+          <div class="message ${isMe ? "sent" : "received"}">
+            <div class="msg-author" onclick="openPublicProfile('${escapeHtml(
+              m.senderEmail || ""
+            )}')">${escapeHtml(m.sender || "")} (${
+            m.role === "teacher" ? "👨‍🏫 Ustoz" : "🎓 O'quvchi"
+          })</div>
+            ${m.text ? escapeHtml(m.text) : ""}
+            ${mediaHtml}
+            <div class="msg-time">${escapeHtml(m.time || "")}</div>
+          </div>
+        `;
         });
+
         box.scrollTop = box.scrollHeight;
       }
-
-      document.addEventListener("keydown", e => {
-        if (e.key === "Escape") closeChatMediaModal();
-      });
 
       async function logout() {
         try {
@@ -16587,6 +16432,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           prompt: document.getElementById("wt-prompt").value,
           rules: document.getElementById("wt-rules").value,
           sample: document.getElementById("wt-sample").value,
+          task_media: getTaskMediaDraft("writing"),
           timeLimit: WRITING_TIME_LIMITS[taskType],
           created_at: new Date().toLocaleDateString(),
         };
@@ -16629,6 +16475,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
             <td><span class="badge">${typeLabels[t.taskType] || t.taskType}</span></td>
             <td>${t.created_at}</td>
             <td style="text-align: right;">
+              <button class="btn-secondary" onclick="openTaskEditor(${t.id})">✏️ Tahrirlash</button>
               <button class="btn-danger" onclick="deleteLesson(${t.id}); renderWritingTasksAdminList();">O'chirish</button>
             </td>
           </tr>
@@ -16795,6 +16642,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
             return `
             <div class="lesson-card ${isDone ? "is-done" : ""}">
               ${teacherTaskImageHtml(t.image_url, `${t.title} — vazifa rasmi`)}
+              ${renderTaskMedia(t, "card")}
               <div style="display:flex; align-items:center; justify-content:space-between;">
                 <div class="lesson-card-icon">✍️</div>
                 ${isDone ? `<span class="badge" style="background:rgba(16,185,129,0.25); color:var(--emerald-light);">✅ Yuborilgan</span>` : ""}
@@ -16859,6 +16707,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         document.getElementById("writing-workspace-title").innerText = task.title;
 
         let rulesHtml = teacherTaskImageHtml(task.image_url, `${task.title} — vazifa rasmi`);
+        rulesHtml += renderTaskMedia(task, "workspace");
         rulesHtml += `<strong>📌 Mavzu:</strong> ${task.prompt}`;
         if (task.rules) {
           rulesHtml += `<br><br><strong>📋 Qoidalar:</strong> ${task.rules}`;
@@ -17398,6 +17247,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           timeMode,
           timeLimit: timeMode === "unlimited" ? null : timeLimitInput,
           passages,
+          task_media: getTaskMediaDraft("reading"),
           totalQuestions,
           created_at: new Date().toLocaleDateString(),
         };
@@ -17442,6 +17292,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
             }</td>
             <td>${t.created_at}</td>
             <td style="text-align: right;">
+              <button class="btn-secondary" onclick="openTaskEditor(${t.id})">✏️ Tahrirlash</button>
               <button class="btn-danger" onclick="deleteLesson(${t.id}); renderReadingTasksAdminList();">O'chirish</button>
             </td>
           </tr>
@@ -17534,6 +17385,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
             return `
             <div class="lesson-card ${isComplete ? "is-done" : ""}">
               ${teacherTaskImageHtml(t.image_url, `${t.title} — Reading rasmi`)}
+              ${renderTaskMedia(t, "card")}
               <div style="display:flex; align-items:center; justify-content:space-between;">
                 <div class="lesson-card-icon">\ud83d\udcd6</div>
                 ${statusBadge}
@@ -17876,7 +17728,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           .classList.remove("hidden");
         document.getElementById("reading-workspace-title").innerText = task.title;
         const mainTaskImage = document.getElementById("reading-workspace-title-image");
-        if (mainTaskImage) mainTaskImage.innerHTML = teacherTaskImageHtml(task.image_url, `${task.title} — Reading rasmi`);
+        if (mainTaskImage) mainTaskImage.innerHTML = teacherTaskImageHtml(task.image_url, `${task.title} — Reading rasmi`) + renderTaskMedia(task, "workspace");
 
         const wrap = document.getElementById("reading-passages-workspace");
         let qCounter = 0;
@@ -18515,6 +18367,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           timeMode,
           timeLimit: timeMode === "unlimited" ? null : timeLimitInput,
           sections,
+          task_media: getTaskMediaDraft("listening"),
           totalQuestions,
           created_at: new Date().toLocaleDateString(),
         };
@@ -18560,6 +18413,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
             }</td>
             <td>${t.created_at}</td>
             <td style="text-align: right;">
+              <button class="btn-secondary" onclick="openTaskEditor(${t.id})">✏️ Tahrirlash</button>
               <button class="btn-danger" onclick="deleteLesson(${t.id}); renderListeningTasksAdminList();">O'chirish</button>
             </td>
           </tr>
@@ -18652,6 +18506,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
             return `
             <div class="lesson-card ${isComplete ? "is-done" : ""}">
               ${teacherTaskImageHtml(t.image_url, `${t.title} — Listening rasmi`)}
+              ${renderTaskMedia(t, "card")}
               <div style="display:flex; align-items:center; justify-content:space-between;">
                 <div class="lesson-card-icon">\ud83c\udfa7</div>
                 ${statusBadge}
@@ -18778,7 +18633,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           .classList.remove("hidden");
         document.getElementById("listening-workspace-title").innerText = task.title;
         const mainTaskImage = document.getElementById("listening-workspace-title-image");
-        if (mainTaskImage) mainTaskImage.innerHTML = teacherTaskImageHtml(task.image_url, `${task.title} — Listening rasmi`);
+        if (mainTaskImage) mainTaskImage.innerHTML = teacherTaskImageHtml(task.image_url, `${task.title} — Listening rasmi`) + renderTaskMedia(task, "workspace");
 
         const wrap = document.getElementById("listening-sections-workspace");
         let qCounter = 0;
@@ -19677,6 +19532,394 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         box.innerHTML=list.slice(0,5).map(n=>`<div class="ops-item"><div class="ops-item-top"><strong>🔔 Emerald Lab</strong><span class="ops-badge ${n.read?"":"warn"}">${n.read?"Read":"New"}</span></div><div class="ops-muted">${opsSafe(n.text)}<br>${opsSafe(n.date)}</div></div>`).join("")||'<div class="ops-item"><div class="ops-muted">Hozircha yangi bildirishnoma yo‘q.</div></div>';
       }
 
+
+      /* ============================================================
+         EMERALD LAB — TASK MEDIA + EDITOR v1
+         - Qo'shimcha rasm/video/audio bloklari
+         - Tepaga/pastga ko'chirish
+         - O'chirish
+         - URL yoki Supabase Storage fayli
+         - Ustoz vazifani keyin ham tahrirlay oladi
+         - Video doim ko'rinadigan preview + controls
+      ============================================================ */
+      const taskMediaDrafts = { writing: [], reading: [], listening: [] };
+      let activeTaskEditorId = null;
+      let activeTaskEditorMedia = [];
+
+      function taskMediaKind(fileOrType) {
+        const t = typeof fileOrType === "string" ? fileOrType : (fileOrType?.type || "");
+        if (t.startsWith("image/")) return "image";
+        if (t.startsWith("video/")) return "video";
+        if (t.startsWith("audio/")) return "audio";
+        return "file";
+      }
+
+      function taskMediaIcon(type) {
+        return type === "image" ? "🖼️" : type === "video" ? "🎬" : type === "audio" ? "🎧" : "📎";
+      }
+
+      function getTaskMediaDraft(type) {
+        return (taskMediaDrafts[type] || []).map(x => ({...x}));
+      }
+
+      function setTaskMediaDraft(type, items) {
+        taskMediaDrafts[type] = Array.isArray(items) ? items.map(x => ({...x})) : [];
+        renderTaskMediaBuilder(type);
+      }
+
+      async function uploadTaskMediaFile(file) {
+        if (!file) return null;
+        if (file.size > 80 * 1024 * 1024) {
+          alert("❌ Media hajmi 80 MB dan oshmasin.");
+          return null;
+        }
+        try {
+          const url = await dbUploadChatFile(file);
+          if (!url) {
+            alert("❌ Media yuklanmadi. Supabase Storage / RLS sozlamalarini tekshiring.");
+            return null;
+          }
+          return url;
+        } catch (err) {
+          console.error(err);
+          alert("❌ Media yuklashda xatolik: " + (err?.message || err));
+          return null;
+        }
+      }
+
+      function renderTaskMediaBuilder(type) {
+        const box = document.getElementById(`task-media-builder-${type}`);
+        if (!box) return;
+        const items = taskMediaDrafts[type] || [];
+        box.querySelector(".task-media-items").innerHTML = items.length ? items.map((m, i) => `
+          <div class="task-media-builder-item">
+            <div class="task-media-builder-preview">
+              ${m.type === "image" ? `<img src="${escapeHtml(m.url)}" alt="">` :
+                m.type === "video" ? `<video src="${escapeHtml(m.url)}" controls preload="metadata"></video>` :
+                m.type === "audio" ? `<audio src="${escapeHtml(m.url)}" controls></audio>` :
+                `<div class="task-media-file-icon">${taskMediaIcon(m.type)} ${escapeHtml(m.name || "Fayl")}</div>`}
+            </div>
+            <div class="task-media-builder-meta">
+              <strong>${taskMediaIcon(m.type)} ${escapeHtml(m.name || m.type)}</strong>
+              <div class="task-media-builder-actions">
+                <button type="button" class="lesson-editor-btn" ${i===0?"disabled":""} onclick="moveTaskMediaDraft('${type}',${i},-1)">⬆️</button>
+                <button type="button" class="lesson-editor-btn" ${i===items.length-1?"disabled":""} onclick="moveTaskMediaDraft('${type}',${i},1)">⬇️</button>
+                <button type="button" class="lesson-editor-btn" onclick="deleteTaskMediaDraft('${type}',${i})">🗑️ O'chirish</button>
+              </div>
+            </div>
+          </div>
+        `).join("") : `<div class="task-media-empty">Hozircha qo'shimcha media yo'q.</div>`;
+      }
+
+      function moveTaskMediaDraft(type, index, delta) {
+        const arr = taskMediaDrafts[type] || [];
+        const ni = index + delta;
+        if (ni < 0 || ni >= arr.length) return;
+        [arr[index], arr[ni]] = [arr[ni], arr[index]];
+        renderTaskMediaBuilder(type);
+      }
+
+      function deleteTaskMediaDraft(type, index) {
+        const arr = taskMediaDrafts[type] || [];
+        arr.splice(index, 1);
+        renderTaskMediaBuilder(type);
+      }
+
+      async function handleTaskMediaFiles(type, input) {
+        const files = [...(input.files || [])];
+        input.value = "";
+        for (const file of files) {
+          const url = await uploadTaskMediaFile(file);
+          if (!url) continue;
+          taskMediaDrafts[type].push({
+            id: `${Date.now()}_${Math.random().toString(36).slice(2)}`,
+            type: taskMediaKind(file),
+            url,
+            name: file.name
+          });
+        }
+        renderTaskMediaBuilder(type);
+      }
+
+      function addTaskMediaUrl(type) {
+        const url = prompt("Media URL manzilini kiriting:");
+        if (!url) return;
+        let kind = prompt("Turini kiriting: image / video / audio", "video");
+        kind = (kind || "").toLowerCase().trim();
+        if (!["image","video","audio"].includes(kind)) {
+          alert("Tur faqat image, video yoki audio bo'lishi kerak.");
+          return;
+        }
+        const name = prompt("Media nomi (ixtiyoriy):", kind);
+        taskMediaDrafts[type].push({
+          id: `${Date.now()}_${Math.random().toString(36).slice(2)}`,
+          type: kind, url: url.trim(), name: name || kind
+        });
+        renderTaskMediaBuilder(type);
+      }
+
+      function buildTaskMediaBuilder(type, mountAfterEl) {
+        if (document.getElementById(`task-media-builder-${type}`)) return;
+        const wrap = document.createElement("div");
+        wrap.id = `task-media-builder-${type}`;
+        wrap.className = "task-media-builder";
+        wrap.innerHTML = `
+          <div class="task-media-builder-head">
+            <div>
+              <strong>🧩 Qo'shimcha Media</strong>
+              <div class="task-media-builder-help">Rasm, video yoki audioni xohlagan tartibda joylashtiring. ⬆️ / ⬇️ bilan yuqoriga-pastga o'tkazing, 🗑️ bilan o'chiring.</div>
+            </div>
+            <div class="task-media-builder-toolbar">
+              <button type="button" class="lesson-editor-btn" onclick="document.getElementById('task-media-file-${type}').click()">🖼️🎬🎧 Fayl qo'shish</button>
+              <button type="button" class="lesson-editor-btn" onclick="addTaskMediaUrl('${type}')">🔗 URL qo'shish</button>
+              <input id="task-media-file-${type}" type="file" accept="image/*,video/*,audio/*" multiple hidden onchange="handleTaskMediaFiles('${type}',this)">
+            </div>
+          </div>
+          <div class="task-media-items"></div>
+        `;
+        mountAfterEl.insertAdjacentElement("afterend", wrap);
+      }
+
+      function initTaskMediaBuilders() {
+        const map = [
+          ["writing", "wt-main-image-file"],
+          ["reading", "rt-main-image-file"],
+          ["listening", "lt-main-image-file"]
+        ];
+        map.forEach(([type, fileId]) => {
+          const file = document.getElementById(fileId);
+          if (file) buildTaskMediaBuilder(type, file.closest(".teacher-task-image-upload") || file);
+          renderTaskMediaBuilder(type);
+        });
+      }
+
+      function renderTaskMedia(task, mode = "card") {
+        const items = Array.isArray(task?.task_media) ? task.task_media : [];
+        if (!items.length) return "";
+        const cls = mode === "workspace" ? "task-media-display workspace" : "task-media-display";
+        return `<div class="${cls}">${items.map((m, i) => {
+          const url = escapeHtml(m.url || "");
+          const name = escapeHtml(m.name || `${m.type || "media"} ${i+1}`);
+          if (m.type === "image") {
+            return `<div class="task-media-display-item"><div class="task-media-label">🖼️ ${name}</div><img class="task-media-image" src="${url}" alt="${name}" loading="lazy" onclick="openTaskMediaViewer(${JSON.stringify(m).replace(/"/g,'&quot;')})"></div>`;
+          }
+          if (m.type === "video") {
+            return `<div class="task-media-display-item"><div class="task-media-label">🎬 ${name}</div><video class="task-media-video" src="${url}" controls preload="metadata" playsinline></video></div>`;
+          }
+          if (m.type === "audio") {
+            return `<div class="task-media-display-item"><div class="task-media-label">🎧 ${name}</div><audio class="task-media-audio" src="${url}" controls preload="metadata"></audio></div>`;
+          }
+          return `<div class="task-media-display-item"><a class="task-media-file-link" href="${url}" target="_blank" rel="noopener">📎 ${name}</a></div>`;
+        }).join("")}</div>`;
+      }
+
+      function openTaskMediaViewer(media) {
+        const modal = document.getElementById("task-media-viewer-modal");
+        const body = document.getElementById("task-media-viewer-body");
+        if (!modal || !body) return;
+        if (media.type === "image") body.innerHTML = `<img src="${escapeHtml(media.url)}" style="max-width:100%;max-height:78vh;object-fit:contain;border-radius:14px;">`;
+        else if (media.type === "video") body.innerHTML = `<video src="${escapeHtml(media.url)}" controls autoplay playsinline style="width:100%;max-height:78vh;object-fit:contain;border-radius:14px;"></video>`;
+        else body.innerHTML = `<audio src="${escapeHtml(media.url)}" controls autoplay style="width:100%;"></audio>`;
+        modal.classList.add("open");
+      }
+
+      function closeTaskMediaViewer() {
+        const modal = document.getElementById("task-media-viewer-modal");
+        const body = document.getElementById("task-media-viewer-body");
+        if (body) body.innerHTML = "";
+        if (modal) modal.classList.remove("open");
+      }
+
+      async function dbUpdateLesson(lesson) {
+        const { data, error } = await supabaseClient
+          .from("lessons")
+          .update({ data: lesson })
+          .eq("id", lesson.id)
+          .select()
+          .single();
+        if (error) {
+          console.error("Supabase (dars/vazifa update) xatolik:", error);
+          alert("❌ Saqlashda xatolik: " + error.message);
+          return false;
+        }
+        const idx = lessons.findIndex(x => String(x.id) === String(lesson.id));
+        if (idx >= 0) lessons[idx] = {...lesson};
+        return true;
+      }
+
+      function openTaskEditor(taskId) {
+        const task = lessons.find(x => String(x.id) === String(taskId));
+        if (!task || !["writing","reading","listening"].includes(task.type)) return;
+        activeTaskEditorId = task.id;
+        activeTaskEditorMedia = Array.isArray(task.task_media) ? task.task_media.map(x=>({...x})) : [];
+        const modal = document.getElementById("task-editor-modal");
+        const body = document.getElementById("task-editor-body");
+        if (!modal || !body) return;
+
+        let html = `
+          <div class="task-editor-grid">
+            <div class="input-group"><label>Vazifa sarlavhasi</label><input id="te-title" value="${escapeHtml(task.title || "")}"></div>
+            <div class="input-group"><label>Asosiy rasm URL</label><input id="te-image" value="${escapeHtml(task.image_url || "")}" placeholder="https://..."></div>
+          </div>
+          <div class="task-editor-media-editor">
+            <div class="task-media-builder-head"><strong>🧩 Qo'shimcha media</strong><span class="task-media-builder-help">⬆️⬇️ tartib, 🗑️ o'chirish.</span></div>
+            <div id="task-editor-media-items"></div>
+            <div class="task-media-builder-toolbar">
+              <button type="button" class="lesson-editor-btn" onclick="document.getElementById('task-editor-media-file').click()">🖼️🎬🎧 Fayl qo'shish</button>
+              <button type="button" class="lesson-editor-btn" onclick="addTaskEditorUrl()">🔗 URL qo'shish</button>
+              <input id="task-editor-media-file" type="file" accept="image/*,video/*,audio/*" multiple hidden onchange="handleTaskEditorFiles(this)">
+            </div>
+          </div>
+        `;
+
+        if (task.type === "writing") {
+          html += `
+            <div class="input-group"><label>Vazifa turi</label><select id="te-tasktype">
+              <option value="task1" ${task.taskType==="task1"?"selected":""}>Task 1</option>
+              <option value="task2" ${task.taskType==="task2"?"selected":""}>Task 2</option>
+              <option value="full" ${task.taskType==="full"?"selected":""}>Full Writing</option>
+            </select></div>
+            <div class="input-group"><label>Mavzu / Savol</label><textarea id="te-prompt" rows="4">${escapeHtml(task.prompt || "")}</textarea></div>
+            <div class="input-group"><label>Qoidalar / Yo'riqnoma</label><textarea id="te-rules" rows="4">${escapeHtml(task.rules || "")}</textarea></div>
+            <div class="input-group"><label>Namuna javob</label><textarea id="te-sample" rows="5">${escapeHtml(task.sample || "")}</textarea></div>
+          `;
+        } else if (task.type === "reading") {
+          html += `
+            <div class="input-group"><label>Format</label><select id="te-mode">
+              <option value="p1" ${task.mode==="p1"?"selected":""}>Passage 1</option>
+              <option value="p2" ${task.mode==="p2"?"selected":""}>Passage 2</option>
+              <option value="p3" ${task.mode==="p3"?"selected":""}>Passage 3</option>
+              <option value="full" ${task.mode==="full"?"selected":""}>Full Test</option>
+            </select></div>
+            <div class="input-group"><label>Reading passage/question ma'lumotlari (JSON)</label>
+              <textarea id="te-json" rows="16">${escapeHtml(JSON.stringify(task.passages || [], null, 2))}</textarea>
+              <small style="color:var(--text-muted)">Bu qism mavjud passage va savollarni to'liq saqlaydi. JSON'ni o'zgartirsangiz, savollar ham yangilanadi.</small>
+            </div>
+          `;
+        } else {
+          html += `
+            <div class="input-group"><label>Format</label><select id="te-mode">
+              <option value="p1" ${task.mode==="p1"?"selected":""}>Section 1</option>
+              <option value="p2" ${task.mode==="p2"?"selected":""}>Section 2</option>
+              <option value="p3" ${task.mode==="p3"?"selected":""}>Section 3</option>
+              <option value="p4" ${task.mode==="p4"?"selected":""}>Section 4</option>
+              <option value="full" ${task.mode==="full"?"selected":""}>Full Test</option>
+            </select></div>
+            <div class="input-group"><label>Listening section/question ma'lumotlari (JSON)</label>
+              <textarea id="te-json" rows="16">${escapeHtml(JSON.stringify(task.sections || [], null, 2))}</textarea>
+              <small style="color:var(--text-muted)">Audio URL, transcript, instruction va savollarni shu yerda to'liq o'zgartirish mumkin.</small>
+            </div>
+          `;
+        }
+        body.innerHTML = html;
+        renderTaskEditorMedia();
+        modal.classList.add("open");
+      }
+
+      function renderTaskEditorMedia() {
+        const box = document.getElementById("task-editor-media-items");
+        if (!box) return;
+        box.innerHTML = activeTaskEditorMedia.length ? activeTaskEditorMedia.map((m,i)=>`
+          <div class="task-media-builder-item">
+            <div class="task-media-builder-preview">
+              ${m.type==="image"?`<img src="${escapeHtml(m.url)}" alt="">`:m.type==="video"?`<video src="${escapeHtml(m.url)}" controls preload="metadata"></video>`:m.type==="audio"?`<audio src="${escapeHtml(m.url)}" controls></audio>`:`<div class="task-media-file-icon">📎 ${escapeHtml(m.name||"Fayl")}</div>`}
+            </div>
+            <div class="task-media-builder-meta"><strong>${taskMediaIcon(m.type)} ${escapeHtml(m.name||m.type)}</strong>
+              <div class="task-media-builder-actions">
+                <button type="button" class="lesson-editor-btn" ${i===0?"disabled":""} onclick="moveTaskEditorMedia(${i},-1)">⬆️</button>
+                <button type="button" class="lesson-editor-btn" ${i===activeTaskEditorMedia.length-1?"disabled":""} onclick="moveTaskEditorMedia(${i},1)">⬇️</button>
+                <button type="button" class="lesson-editor-btn" onclick="deleteTaskEditorMedia(${i})">🗑️ O'chirish</button>
+              </div>
+            </div>
+          </div>
+        `).join("") : `<div class="task-media-empty">Qo'shimcha media yo'q.</div>`;
+      }
+
+      function moveTaskEditorMedia(i,d) {
+        const n=i+d; if(n<0||n>=activeTaskEditorMedia.length)return;
+        [activeTaskEditorMedia[i],activeTaskEditorMedia[n]]=[activeTaskEditorMedia[n],activeTaskEditorMedia[i]];
+        renderTaskEditorMedia();
+      }
+      function deleteTaskEditorMedia(i) {
+        activeTaskEditorMedia.splice(i,1);
+        renderTaskEditorMedia();
+      }
+      async function handleTaskEditorFiles(input) {
+        const files=[...(input.files||[])]; input.value="";
+        for(const file of files){
+          const url=await uploadTaskMediaFile(file); if(!url) continue;
+          activeTaskEditorMedia.push({id:`${Date.now()}_${Math.random().toString(36).slice(2)}`,type:taskMediaKind(file),url,name:file.name});
+        }
+        renderTaskEditorMedia();
+      }
+      function addTaskEditorUrl(){
+        const url=prompt("Media URL:");
+        if(!url)return;
+        let type=(prompt("Tur: image / video / audio","video")||"").toLowerCase().trim();
+        if(!["image","video","audio"].includes(type)){alert("Tur noto'g'ri.");return;}
+        activeTaskEditorMedia.push({id:`${Date.now()}_${Math.random().toString(36).slice(2)}`,type,url:url.trim(),name:prompt("Nomi: ",type)||type});
+        renderTaskEditorMedia();
+      }
+
+      async function saveTaskEditor() {
+        const task=lessons.find(x=>String(x.id)===String(activeTaskEditorId));
+        if(!task)return;
+        task.title=document.getElementById("te-title")?.value.trim() || task.title;
+        task.image_url=document.getElementById("te-image")?.value.trim() || "";
+        task.task_media=activeTaskEditorMedia.map(x=>({...x}));
+        if(task.type==="writing"){
+          task.taskType=document.getElementById("te-tasktype")?.value || task.taskType;
+          task.prompt=document.getElementById("te-prompt")?.value || "";
+          task.rules=document.getElementById("te-rules")?.value || "";
+          task.sample=document.getElementById("te-sample")?.value || "";
+          task.timeLimit=WRITING_TIME_LIMITS[task.taskType];
+        } else if(task.type==="reading"){
+          task.mode=document.getElementById("te-mode")?.value || task.mode;
+          try { task.passages=JSON.parse(document.getElementById("te-json")?.value || "[]"); }
+          catch(e){ alert("❌ Reading JSON xato. O'zgarishlar saqlanmadi."); return; }
+          task.totalQuestions=(task.passages||[]).reduce((sum,p)=>sum+(p.questions||[]).length,0);
+        } else if(task.type==="listening"){
+          task.mode=document.getElementById("te-mode")?.value || task.mode;
+          try { task.sections=JSON.parse(document.getElementById("te-json")?.value || "[]"); }
+          catch(e){ alert("❌ Listening JSON xato. O'zgarishlar saqlanmadi."); return; }
+          task.totalQuestions=(task.sections||[]).reduce((sum,p)=>sum+(p.questions||[]).length,0);
+        }
+        const ok=await dbUpdateLesson(task);
+        if(!ok)return;
+        closeTaskEditor();
+        renderWritingTasksAdminList();
+        renderReadingTasksAdminList();
+        renderListeningTasksAdminList();
+        if(typeof renderStudentWritingTasks==="function") renderStudentWritingTasks();
+        if(typeof renderStudentReadingTasks==="function") renderStudentReadingTasks();
+        if(typeof renderStudentListeningTasks==="function") renderStudentListeningTasks();
+        alert("✅ Vazifa muvaffaqiyatli yangilandi.");
+      }
+
+      function closeTaskEditor(){
+        const modal=document.getElementById("task-editor-modal");
+        if(modal) modal.classList.remove("open");
+        activeTaskEditorId=null;
+        activeTaskEditorMedia=[];
+      }
+
+      function resetTaskMediaDraft(type) {
+        taskMediaDrafts[type]=[];
+        renderTaskMediaBuilder(type);
+      }
+
+      // Dars/vazifa yaratish formalariga media builderni qo'shamiz.
+      setTimeout(() => {
+        initTaskMediaBuilders();
+        ["writing","reading","listening"].forEach(type => {
+          const form = document.querySelector(type==="writing" ? 'form[onsubmit="addWritingTask(event)"]' :
+            type==="reading" ? 'form[onsubmit="addReadingTask(event)"]' : 'form[onsubmit="addListeningTask(event)"]');
+          if(form && !form.dataset.taskMediaResetBound){
+            form.dataset.taskMediaResetBound="1";
+            form.addEventListener("submit",()=>setTimeout(()=>resetTaskMediaDraft(type),300));
+          }
+        });
+      }, 300);
     </script>
 
     <!-- 🎧🎬 EMERALD LAB — Lesson media modal -->
@@ -19688,5 +19931,24 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
       </div>
     </div>
     
-  </body>
+  
+    <div id="task-media-viewer-modal" class="task-editor-modal" onclick="if(event.target===this)closeTaskMediaViewer()">
+      <div class="task-editor-modal-card" style="max-width:1000px;">
+        <button class="task-editor-modal-close" type="button" onclick="closeTaskMediaViewer()">✕</button>
+        <div id="task-media-viewer-body"></div>
+      </div>
+    </div>
+
+    <div id="task-editor-modal" class="task-editor-modal" onclick="if(event.target===this)closeTaskEditor()">
+      <div class="task-editor-modal-card">
+        <button class="task-editor-modal-close" type="button" onclick="closeTaskEditor()">✕</button>
+        <h2 style="margin:0 0 14px;color:var(--emerald-light);">✏️ Vazifani tahrirlash</h2>
+        <div id="task-editor-body"></div>
+        <div class="task-editor-modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeTaskEditor()">Bekor qilish</button>
+          <button type="button" class="submit-btn" onclick="saveTaskEditor()">💾 O'zgarishlarni saqlash</button>
+        </div>
+      </div>
+    </div>
+</body>
 </html>
