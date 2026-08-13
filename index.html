@@ -7947,6 +7947,3841 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
       let dbLoadAllPromise = null;
 
       /* ============================================================
+         📘 ENGLISH FILE 5th BEGINNER — EMERALD LAB CONTENT SEED
+         24 ta asosiy A/B mavzu: 1A–12B
+         Har bir mavzuda: title, target_level, content_text, vocabulary[],
+         quiz.questions[] (standard/matching/filling/writing), video_url.
+         Mazmun Student's Book mavzulari asosida qayta tuzilgan va
+         platformadagi mavjud lesson schema bilan moslashtirilgan.
+      ============================================================ */
+      const ENGLISH_FILE_BEGINNER_LESSONS = [
+  {
+    "id": 100001,
+    "title": "1A — Tanishuv va verb be: I/you",
+    "target_level": "pre-beginner",
+    "video_url": "",
+    "content_text": "Maqsad: Tanishuv va verb be: I/you.\n\nGRAMMATIKA — verb be (singular): I am / I'm, you are / you're; qisqa shakllar va savol-javoblar\nI am — I’m. You are — you’re. I am bilan o‘zingiz haqingizda gapirasiz: I’m a student. You are boshqa odamga murojaat qilishda ishlatiladi: You’re my friend. Yes/No savollarda Are you…? — Yes, I am. / No, I’m not.\n\nTALAFFUZ — /æ/, /ɑː/ va am/are qisqa shakllari\nSo'zlarni baland ovozda o'qing, namunaviy gaplarni 2-3 marta takrorlang va yangi so'zlarni gap ichida ishlating.\n\nAMALIYOT\n1) Grammar: qoidani o'zingizning 3-5 ta gapingizda qo'llang.\n2) Vocabulary: darsdagi yangi so'zlardan kamida 5 tasini gaplarda ishlating.\n3) Speaking: Partner bilan Hello, My name is…, Nice to meet you, Are you…? kabi iboralar yordamida qisqa tanishuv dialogi tuzing.\n4) Writing/Homework: O‘zingiz haqingizda 5 ta gap yozing: ism, o‘quvchi/o‘qituvchi ekaningiz, shahar, til va bitta qiziqish. So‘ng 30 soniyalik self-introduction yozib, ovoz chiqarib ayting.\n\nSELF-CHECK\nDars oxirida o'zingizga savol bering: qoidani kitobsiz tushuntira olamanmi, yangi so'zlarni talaffuz qila olamanmi va ular bilan mustaqil gap tuza olamanmi?",
+    "image_url": "",
+    "vocabulary": [
+      {
+        "word": "hello",
+        "phonetic": "/həˈləʊ/",
+        "trans": "salom",
+        "example": "Hello! I'm Ali."
+      },
+      {
+        "word": "name",
+        "phonetic": "/neɪm/",
+        "trans": "ism",
+        "example": "My name is Sara."
+      },
+      {
+        "word": "nice",
+        "phonetic": "/naɪs/",
+        "trans": "yoqimli",
+        "example": "Nice to meet you."
+      },
+      {
+        "word": "meet",
+        "phonetic": "/miːt/",
+        "trans": "uchrashmoq",
+        "example": "Nice to meet you."
+      },
+      {
+        "word": "student",
+        "phonetic": "/ˈstjuːdənt/",
+        "trans": "o‘quvchi",
+        "example": "I'm a student."
+      },
+      {
+        "word": "teacher",
+        "phonetic": "/ˈtiːtʃə(r)/",
+        "trans": "o‘qituvchi",
+        "example": "I'm a teacher."
+      },
+      {
+        "word": "yes",
+        "phonetic": "/jes/",
+        "trans": "ha",
+        "example": "Yes, I am."
+      },
+      {
+        "word": "no",
+        "phonetic": "/nəʊ/",
+        "trans": "yo‘q",
+        "example": "No, I'm not."
+      },
+      {
+        "word": "sorry",
+        "phonetic": "/ˈsɒri/",
+        "trans": "kechirasiz",
+        "example": "Sorry, I'm late."
+      },
+      {
+        "word": "thanks",
+        "phonetic": "/θæŋks/",
+        "trans": "rahmat",
+        "example": "Thanks!"
+      }
+    ],
+    "created_at": "2026-08-14",
+    "quiz": {
+      "version": 2,
+      "questions": [
+        {
+          "question": "Complete: I ___ a student.",
+          "question_type": "standard",
+          "options": [
+            "am",
+            "is",
+            "are"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Complete: You ___ my friend.",
+          "question_type": "standard",
+          "options": [
+            "am",
+            "is",
+            "are"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "question": "Choose the correct short form: I am Ali.",
+          "question_type": "standard",
+          "options": [
+            "I's Ali.",
+            "I'm Ali.",
+            "I are Ali."
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "Are you a teacher? — No, ___.",
+          "question_type": "standard",
+          "options": [
+            "I am",
+            "I'm not",
+            "you aren't"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "Match the words with meanings",
+          "question_type": "matching",
+          "matching_text": "___ = salom; ___ = ism; ___ = rahmat",
+          "matching_answers": [
+            "hello",
+            "name",
+            "thanks"
+          ],
+          "matching_words": [
+            "thanks",
+            "hello",
+            "name"
+          ]
+        },
+        {
+          "question": "Complete the sentence",
+          "question_type": "filling",
+          "filling_text": "I ___ Sara. You ___ my friend.",
+          "filling_answers": [
+            "am",
+            "are"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "Nice to ___ you.",
+          "filling_answers": [
+            "meet"
+          ]
+        },
+        {
+          "question": "Write a short self-introduction",
+          "question_type": "writing",
+          "writing_instruction": "Write 3 short sentences about yourself.",
+          "writing_text": "My name is ___. I am ___. I am from ___.",
+          "writing_answers": [
+            "name",
+            "am",
+            "from"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 100002,
+    "title": "1B — Dunyo musiqasi, mamlakatlar va alifbo",
+    "target_level": "pre-beginner",
+    "video_url": "",
+    "content_text": "Maqsad: Dunyo musiqasi, mamlakatlar va alifbo.\n\nGRAMMATIKA — verb be bilan he/she; countries va nationality; alifbo va ismni harflab aytish\nHe is / He's va She is / She's shakllari uchinchi shaxs birlik uchun ishlatiladi. Country — mamlakat, nationality — millat/fuqarolik. Masalan: She’s from Spain. She’s Spanish. Is he a singer? — Yes, he is.\n\nTALAFFUZ — Alphabet letter names; W, U, I va country/nationality stress\nSo'zlarni baland ovozda o'qing, namunaviy gaplarni 2-3 marta takrorlang va yangi so'zlarni gap ichida ishlating.\n\nAMALIYOT\n1) Grammar: qoidani o'zingizning 3-5 ta gapingizda qo'llang.\n2) Vocabulary: darsdagi yangi so'zlardan kamida 5 tasini gaplarda ishlating.\n3) Speaking: Bir mamlakatni tanlang va: It is…, People are…, The language is… kabi sodda gaplar bilan 30 soniya gapiring.\n4) Writing/Homework: 3 ta odam haqida yozing: ularning ismi, mamlakati, millati va kasbi. Har bir ismni ingliz alifbosida harflab ayting.\n\nSELF-CHECK\nDars oxirida o'zingizga savol bering: qoidani kitobsiz tushuntira olamanmi, yangi so'zlarni talaffuz qila olamanmi va ular bilan mustaqil gap tuza olamanmi?",
+    "image_url": "",
+    "vocabulary": [
+      {
+        "word": "country",
+        "phonetic": "/ˈkʌntri/",
+        "trans": "mamlakat",
+        "example": "What country are you from?"
+      },
+      {
+        "word": "nationality",
+        "phonetic": "/ˌnæʃəˈnæləti/",
+        "trans": "millat/fuqarolik",
+        "example": "What's your nationality?"
+      },
+      {
+        "word": "England",
+        "phonetic": "/ˈɪŋɡlənd/",
+        "trans": "Angliya",
+        "example": "She is from England."
+      },
+      {
+        "word": "English",
+        "phonetic": "/ˈɪŋɡlɪʃ/",
+        "trans": "ingliz",
+        "example": "He is English."
+      },
+      {
+        "word": "Spain",
+        "phonetic": "/speɪn/",
+        "trans": "Ispaniya",
+        "example": "She is from Spain."
+      },
+      {
+        "word": "Spanish",
+        "phonetic": "/ˈspænɪʃ/",
+        "trans": "ispan",
+        "example": "She is Spanish."
+      },
+      {
+        "word": "Brazil",
+        "phonetic": "/brəˈzɪl/",
+        "trans": "Braziliya",
+        "example": "He is from Brazil."
+      },
+      {
+        "word": "Brazilian",
+        "phonetic": "/brəˈzɪliən/",
+        "trans": "braziliyalik",
+        "example": "He is Brazilian."
+      },
+      {
+        "word": "singer",
+        "phonetic": "/ˈsɪŋə(r)/",
+        "trans": "qo‘shiqchi",
+        "example": "She is a singer."
+      },
+      {
+        "word": "alphabet",
+        "phonetic": "/ˈælfəbet/",
+        "trans": "alifbo",
+        "example": "Say the alphabet."
+      }
+    ],
+    "created_at": "2026-08-14",
+    "quiz": {
+      "version": 2,
+      "questions": [
+        {
+          "question": "___ is from Brazil.",
+          "question_type": "standard",
+          "options": [
+            "He",
+            "I",
+            "You"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "She ___ Spanish.",
+          "question_type": "standard",
+          "options": [
+            "am",
+            "is",
+            "are"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "Choose the correct pair.",
+          "question_type": "standard",
+          "options": [
+            "Spain — Spanish",
+            "Spain — Brazilian",
+            "Brazil — Spanish"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Is he a singer? — Yes, ___.",
+          "question_type": "standard",
+          "options": [
+            "he is",
+            "he isn't",
+            "she is"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Match country and nationality",
+          "question_type": "matching",
+          "matching_text": "___ — English; ___ — Spanish; ___ — Brazilian",
+          "matching_answers": [
+            "England",
+            "Spain",
+            "Brazil"
+          ],
+          "matching_words": [
+            "Brazil",
+            "England",
+            "Spain"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "She ___ from Spain. She ___ Spanish.",
+          "filling_answers": [
+            "is",
+            "is"
+          ]
+        },
+        {
+          "question": "Complete the question",
+          "question_type": "filling",
+          "filling_text": "___ he a singer?",
+          "filling_answers": [
+            "Is"
+          ]
+        },
+        {
+          "question": "Introduce another person",
+          "question_type": "writing",
+          "writing_instruction": "Write 3 sentences about a person.",
+          "writing_text": "He/She is ___. He/She is from ___. He/She is ___.",
+          "writing_answers": [
+            "name",
+            "from",
+            "nationality"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 100003,
+    "title": "2A — Ta'til va verb be: we/you/they",
+    "target_level": "pre-beginner",
+    "video_url": "",
+    "content_text": "Maqsad: Ta'til va verb be: we/you/they.\n\nGRAMMATIKA — plural verb be: we are, you are, they are; plural subject bilan savollar\nWe are — we’re, you are — you’re, they are — they’re. Ko‘plik subyektlari bilan are ishlatiladi: We’re on holiday. They’re at the hotel. Savollar: Are you…? Are they…? Javob: Yes, we are / No, they aren’t.\n\nTALAFFUZ — we/you/they va are bog‘lanishi\nSo'zlarni baland ovozda o'qing, namunaviy gaplarni 2-3 marta takrorlang va yangi so'zlarni gap ichida ishlating.\n\nAMALIYOT\n1) Grammar: qoidani o'zingizning 3-5 ta gapingizda qo'llang.\n2) Vocabulary: darsdagi yangi so'zlardan kamida 5 tasini gaplarda ishlating.\n3) Speaking: O‘zingizni va do‘stlaringizni tasvirlang: qayerdasiz, kayfiyatingiz qanday va nima qilyapsiz — faqat sodda be gaplaridan foydalaning.\n4) Writing/Homework: Ta’tilingizni tasvirlab 6 ta gap yozing. We/they/you bilan kamida bittadan savol va javob ham tuzing.\n\nSELF-CHECK\nDars oxirida o'zingizga savol bering: qoidani kitobsiz tushuntira olamanmi, yangi so'zlarni talaffuz qila olamanmi va ular bilan mustaqil gap tuza olamanmi?",
+    "image_url": "",
+    "vocabulary": [
+      {
+        "word": "holiday",
+        "phonetic": "/ˈhɒlədeɪ/",
+        "trans": "ta’til",
+        "example": "Are you on holiday?"
+      },
+      {
+        "word": "beach",
+        "phonetic": "/biːtʃ/",
+        "trans": "plyaj",
+        "example": "We are on the beach."
+      },
+      {
+        "word": "hotel",
+        "phonetic": "/həʊˈtel/",
+        "trans": "mehmonxona",
+        "example": "They are at a hotel."
+      },
+      {
+        "word": "city",
+        "phonetic": "/ˈsɪti/",
+        "trans": "shahar",
+        "example": "We are in the city."
+      },
+      {
+        "word": "friend",
+        "phonetic": "/frend/",
+        "trans": "do‘st",
+        "example": "They are my friends."
+      },
+      {
+        "word": "family",
+        "phonetic": "/ˈfæməli/",
+        "trans": "oila",
+        "example": "We are a family."
+      },
+      {
+        "word": "here",
+        "phonetic": "/hɪə(r)/",
+        "trans": "bu yerda",
+        "example": "We are here."
+      },
+      {
+        "word": "there",
+        "phonetic": "/ðeə(r)/",
+        "trans": "u yerda",
+        "example": "They are there."
+      },
+      {
+        "word": "happy",
+        "phonetic": "/ˈhæpi/",
+        "trans": "xursand",
+        "example": "We are happy."
+      },
+      {
+        "word": "tired",
+        "phonetic": "/taɪəd/",
+        "trans": "charchagan",
+        "example": "They are tired."
+      }
+    ],
+    "created_at": "2026-08-14",
+    "quiz": {
+      "version": 2,
+      "questions": [
+        {
+          "question": "We ___ on holiday.",
+          "question_type": "standard",
+          "options": [
+            "am",
+            "is",
+            "are"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "question": "They ___ at the hotel.",
+          "question_type": "standard",
+          "options": [
+            "are",
+            "is",
+            "am"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Choose the correct question.",
+          "question_type": "standard",
+          "options": [
+            "Are they here?",
+            "Is they here?",
+            "Am they here?"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Are you tired? — Yes, ___.",
+          "question_type": "standard",
+          "options": [
+            "we are",
+            "I am",
+            "they are"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "Match words",
+          "question_type": "matching",
+          "matching_text": "___ = plyaj; ___ = mehmonxona; ___ = charchagan",
+          "matching_answers": [
+            "beach",
+            "hotel",
+            "tired"
+          ],
+          "matching_words": [
+            "tired",
+            "beach",
+            "hotel"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "We ___ happy. They ___ there.",
+          "filling_answers": [
+            "are",
+            "are"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "Are ___ on holiday?",
+          "filling_answers": [
+            "you"
+          ]
+        },
+        {
+          "question": "Write about your group",
+          "question_type": "writing",
+          "writing_instruction": "Write 3 sentences using we/they.",
+          "writing_text": "We are ___. We are ___. They are ___.",
+          "writing_answers": [
+            "are",
+            "are",
+            "are"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 100004,
+    "title": "2B — Avtobus raqami va 0–100 sonlar",
+    "target_level": "pre-beginner",
+    "video_url": "",
+    "content_text": "Maqsad: Avtobus raqami va 0–100 sonlar.\n\nGRAMMATIKA — be bilan Wh- va How savollari: What, Where, Who, How old; numbers 0–100\nWhat is…? / What are…? ma’lumot so‘rashda, Where — joy, Who — odam, How old — yoshni so‘rashda ishlatiladi. Sonlarda 13–19 teen shakllari, 20/30/40 kabi o‘nliklar va 21, 35 kabi qo‘shma sonlar muhim.\n\nTALAFFUZ — numbers, teen endings va o‘nliklar; telefon raqamlarini aniq aytish\nSo'zlarni baland ovozda o'qing, namunaviy gaplarni 2-3 marta takrorlang va yangi so'zlarni gap ichida ishlating.\n\nAMALIYOT\n1) Grammar: qoidani o'zingizning 3-5 ta gapingizda qo'llang.\n2) Vocabulary: darsdagi yangi so'zlardan kamida 5 tasini gaplarda ishlating.\n3) Speaking: Partnerdan What’s your phone number? How old are you? What number is the bus? kabi 5 ta savol so‘rang.\n4) Writing/Homework: 0 dan 100 gacha sonlarni o‘qing. Telefon raqamingizni inglizcha raqamlarni bittalab aytib yozing va How old are you? savoliga javob bering.\n\nSELF-CHECK\nDars oxirida o'zingizga savol bering: qoidani kitobsiz tushuntira olamanmi, yangi so'zlarni talaffuz qila olamanmi va ular bilan mustaqil gap tuza olamanmi?",
+    "image_url": "",
+    "vocabulary": [
+      {
+        "word": "number",
+        "phonetic": "/ˈnʌmbə(r)/",
+        "trans": "raqam/son",
+        "example": "What number is the bus?"
+      },
+      {
+        "word": "bus",
+        "phonetic": "/bʌs/",
+        "trans": "avtobus",
+        "example": "The bus is number 12."
+      },
+      {
+        "word": "phone",
+        "phonetic": "/fəʊn/",
+        "trans": "telefon",
+        "example": "What's your phone number?"
+      },
+      {
+        "word": "zero",
+        "phonetic": "/ˈzɪərəʊ/",
+        "trans": "nol",
+        "example": "Zero, one, two."
+      },
+      {
+        "word": "ten",
+        "phonetic": "/ten/",
+        "trans": "o‘n",
+        "example": "Ten students."
+      },
+      {
+        "word": "twenty",
+        "phonetic": "/ˈtwenti/",
+        "trans": "yigirma",
+        "example": "Twenty people."
+      },
+      {
+        "word": "thirty",
+        "phonetic": "/ˈθɜːti/",
+        "trans": "o‘ttiz",
+        "example": "Thirty minutes."
+      },
+      {
+        "word": "forty",
+        "phonetic": "/ˈfɔːti/",
+        "trans": "qirq",
+        "example": "Forty books."
+      },
+      {
+        "word": "hundred",
+        "phonetic": "/ˈhʌndrəd/",
+        "trans": "yuz",
+        "example": "One hundred."
+      },
+      {
+        "word": "old",
+        "phonetic": "/əʊld/",
+        "trans": "yosh/qarigan",
+        "example": "How old are you?"
+      }
+    ],
+    "created_at": "2026-08-14",
+    "quiz": {
+      "version": 2,
+      "questions": [
+        {
+          "question": "___ old are you?",
+          "question_type": "standard",
+          "options": [
+            "What",
+            "How",
+            "Where"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "What number ___ the bus?",
+          "question_type": "standard",
+          "options": [
+            "are",
+            "am",
+            "is"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "question": "Choose the correct number word: 40",
+          "question_type": "standard",
+          "options": [
+            "fourteen",
+            "forty",
+            "fourty"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "How old is she? — She ___ 20.",
+          "question_type": "standard",
+          "options": [
+            "am",
+            "is",
+            "are"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "Match numbers",
+          "question_type": "matching",
+          "matching_text": "___ = 20; ___ = 30; ___ = 40",
+          "matching_answers": [
+            "twenty",
+            "thirty",
+            "forty"
+          ],
+          "matching_words": [
+            "forty",
+            "twenty",
+            "thirty"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "What number ___ the bus?",
+          "filling_answers": [
+            "is"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "How ___ are you?",
+          "filling_answers": [
+            "old"
+          ]
+        },
+        {
+          "question": "Write a number dialogue",
+          "question_type": "writing",
+          "writing_instruction": "Write a short dialogue about a bus and age.",
+          "writing_text": "What number is the bus? — It is ___. How old are you? — I am ___.",
+          "writing_answers": [
+            "number",
+            "old"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 100005,
+    "title": "3A — Telefonim qayerda? Singular/plural nouns va a/an",
+    "target_level": "beginner-middle",
+    "video_url": "",
+    "content_text": "Maqsad: Telefonim qayerda? Singular/plural nouns va a/an.\n\nGRAMMATIKA — singular/plural nouns, a/an; oddiy otlarni ko‘plikka aylantirish\nBirlikdagi countable noun oldidan a/an ishlatiladi: a phone, a book, an apple, an orange. Ko‘plikda odatda -s/-es qo‘shiladi: books, bags, boxes. 'Where’s my phone?' kabi savollarda joyni keyingi darslarda kengaytiramiz.\n\nTALAFFUZ — plural -s / -es va a/an talaffuzi\nSo'zlarni baland ovozda o'qing, namunaviy gaplarni 2-3 marta takrorlang va yangi so'zlarni gap ichida ishlating.\n\nAMALIYOT\n1) Grammar: qoidani o'zingizning 3-5 ta gapingizda qo'llang.\n2) Vocabulary: darsdagi yangi so'zlardan kamida 5 tasini gaplarda ishlating.\n3) Speaking: Atrofingizdagi buyumlarni ko‘rsatib This is a…, These are… kabi gaplar tuzing.\n4) Writing/Homework: Xonangizdagi 10 ta buyumni topib, a/an bilan yozing; kamida 4 tasini ko‘plikka aylantiring.\n\nSELF-CHECK\nDars oxirida o'zingizga savol bering: qoidani kitobsiz tushuntira olamanmi, yangi so'zlarni talaffuz qila olamanmi va ular bilan mustaqil gap tuza olamanmi?",
+    "image_url": "",
+    "vocabulary": [
+      {
+        "word": "phone",
+        "phonetic": "/fəʊn/",
+        "trans": "telefon",
+        "example": "Where's my phone?"
+      },
+      {
+        "word": "key",
+        "phonetic": "/kiː/",
+        "trans": "kalit",
+        "example": "My key is here."
+      },
+      {
+        "word": "bag",
+        "phonetic": "/bæɡ/",
+        "trans": "sumka",
+        "example": "It's in my bag."
+      },
+      {
+        "word": "book",
+        "phonetic": "/bʊk/",
+        "trans": "kitob",
+        "example": "I have a book."
+      },
+      {
+        "word": "pen",
+        "phonetic": "/pen/",
+        "trans": "ruchka",
+        "example": "This is a pen."
+      },
+      {
+        "word": "apple",
+        "phonetic": "/ˈæpəl/",
+        "trans": "olma",
+        "example": "It's an apple."
+      },
+      {
+        "word": "orange",
+        "phonetic": "/ˈɒrɪndʒ/",
+        "trans": "apelsin",
+        "example": "It's an orange."
+      },
+      {
+        "word": "watch",
+        "phonetic": "/wɒtʃ/",
+        "trans": "qo‘l soati",
+        "example": "My watch is new."
+      },
+      {
+        "word": "box",
+        "phonetic": "/bɒks/",
+        "trans": "quti",
+        "example": "There are two boxes."
+      },
+      {
+        "word": "bottle",
+        "phonetic": "/ˈbɒtl/",
+        "trans": "butilka",
+        "example": "A bottle of water."
+      }
+    ],
+    "created_at": "2026-08-14",
+    "quiz": {
+      "version": 2,
+      "questions": [
+        {
+          "question": "Choose: ___ apple.",
+          "question_type": "standard",
+          "options": [
+            "a",
+            "an",
+            "the"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "Choose the plural of box.",
+          "question_type": "standard",
+          "options": [
+            "boxs",
+            "boxes",
+            "box"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "I have ___ book.",
+          "question_type": "standard",
+          "options": [
+            "a",
+            "an",
+            "are"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Which is correct?",
+          "question_type": "standard",
+          "options": [
+            "an orange",
+            "a orange",
+            "an book"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Match singular/plural",
+          "question_type": "matching",
+          "matching_text": "___ → books; ___ → boxes; ___ → bags",
+          "matching_answers": [
+            "book",
+            "box",
+            "bag"
+          ],
+          "matching_words": [
+            "bag",
+            "book",
+            "box"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "It is ___ orange.",
+          "filling_answers": [
+            "an"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "Two book___ are on the table.",
+          "filling_answers": [
+            "s"
+          ]
+        },
+        {
+          "question": "Describe your desk",
+          "question_type": "writing",
+          "writing_instruction": "Write 4 sentences about objects on your desk.",
+          "writing_text": "There is a ___. There is an ___. I have two ___.",
+          "writing_answers": [
+            "pen",
+            "apple",
+            "books"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 100006,
+    "title": "3B — Souvenirlar: this/that/these/those",
+    "target_level": "beginner-middle",
+    "video_url": "",
+    "content_text": "Maqsad: Souvenirlar: this/that/these/those.\n\nGRAMMATIKA — this/that/these/those bilan yaqin/uzoq va birlik/ko‘plikni ko‘rsatish\nThis — yaqin birlik, that — uzoq birlik; these — yaqin ko‘plik, those — uzoq ko‘plik. This is a shirt. Those are postcards. Ko‘rsatish olmoshidan keyin birlik/ko‘plik mos kelishi kerak.\n\nTALAFFUZ — this/these va that/those; /ð/ tovushi\nSo'zlarni baland ovozda o'qing, namunaviy gaplarni 2-3 marta takrorlang va yangi so'zlarni gap ichida ishlating.\n\nAMALIYOT\n1) Grammar: qoidani o'zingizning 3-5 ta gapingizda qo'llang.\n2) Vocabulary: darsdagi yangi so'zlardan kamida 5 tasini gaplarda ishlating.\n3) Speaking: Biror do‘konni tasavvur qilib, 6 ta souvenirni ko‘rsating va cheap/expensive, big/small sifatlarini ishlating.\n4) Writing/Homework: Xonada 4 ta buyumni tanlang: 2 tasi yaqin, 2 tasi uzoq. Har biri uchun this/that/these/those bilan gap yozing.\n\nSELF-CHECK\nDars oxirida o'zingizga savol bering: qoidani kitobsiz tushuntira olamanmi, yangi so'zlarni talaffuz qila olamanmi va ular bilan mustaqil gap tuza olamanmi?",
+    "image_url": "",
+    "vocabulary": [
+      {
+        "word": "souvenir",
+        "phonetic": "/ˌsuːvəˈnɪə(r)/",
+        "trans": "suvenir/esdalik",
+        "example": "It's a souvenir."
+      },
+      {
+        "word": "shirt",
+        "phonetic": "/ʃɜːt/",
+        "trans": "ko‘ylak",
+        "example": "This shirt is nice."
+      },
+      {
+        "word": "hat",
+        "phonetic": "/hæt/",
+        "trans": "shlyapa",
+        "example": "That hat is expensive."
+      },
+      {
+        "word": "postcard",
+        "phonetic": "/ˈpəʊstkɑːd/",
+        "trans": "otkritka",
+        "example": "These postcards are beautiful."
+      },
+      {
+        "word": "keyring",
+        "phonetic": "/ˈkiːrɪŋ/",
+        "trans": "kalit ilgichi",
+        "example": "Those keyrings are cheap."
+      },
+      {
+        "word": "cheap",
+        "phonetic": "/tʃiːp/",
+        "trans": "arzon",
+        "example": "It's cheap."
+      },
+      {
+        "word": "expensive",
+        "phonetic": "/ɪkˈspensɪv/",
+        "trans": "qimmat",
+        "example": "It's expensive."
+      },
+      {
+        "word": "beautiful",
+        "phonetic": "/ˈbjuːtɪfəl/",
+        "trans": "chiroyli",
+        "example": "These are beautiful."
+      },
+      {
+        "word": "small",
+        "phonetic": "/smɔːl/",
+        "trans": "kichik",
+        "example": "This bag is small."
+      },
+      {
+        "word": "big",
+        "phonetic": "/bɪɡ/",
+        "trans": "katta",
+        "example": "That shop is big."
+      }
+    ],
+    "created_at": "2026-08-14",
+    "quiz": {
+      "version": 2,
+      "questions": [
+        {
+          "question": "___ is my phone (near).",
+          "question_type": "standard",
+          "options": [
+            "This",
+            "These",
+            "Those"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "___ are my keys (near).",
+          "question_type": "standard",
+          "options": [
+            "That",
+            "This",
+            "These"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "question": "___ is that bag (far).",
+          "question_type": "standard",
+          "options": [
+            "Those",
+            "That",
+            "These"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "___ are expensive souvenirs (far).",
+          "question_type": "standard",
+          "options": [
+            "Those",
+            "This",
+            "That"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Match demonstratives",
+          "question_type": "matching",
+          "matching_text": "___ — near singular; ___ — far singular; ___ — near plural; ___ — far plural",
+          "matching_answers": [
+            "this",
+            "that",
+            "these",
+            "those"
+          ],
+          "matching_words": [
+            "these",
+            "that",
+            "those",
+            "this"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "___ is a nice shirt. (near)",
+          "filling_answers": [
+            "This"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "___ are postcards. (far)",
+          "filling_answers": [
+            "Those"
+          ]
+        },
+        {
+          "question": "Describe a shop",
+          "question_type": "writing",
+          "writing_instruction": "Write 4 sentences using all four demonstratives.",
+          "writing_text": "This is ___. That is ___. These are ___. Those are ___.",
+          "writing_answers": [
+            "this",
+            "that",
+            "these",
+            "those"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 100007,
+    "title": "4A — Oila va egalik sifatlari",
+    "target_level": "beginner-middle",
+    "video_url": "",
+    "content_text": "Maqsad: Oila va egalik sifatlari.\n\nGRAMMATIKA — possessive adjectives: my, your, his, her, its, our, their; possessive 's\nEgalik sifatlari ot oldidan keladi: my book, your phone, his brother, her sister, our family, their parents. Ism + 's egalikni ko‘rsatadi: Anna’s mother. 's ni fe’l be bilan aralashtirmang: Anna’s a teacher = Anna is a teacher; Anna’s mother = Annaning onasi.\n\nTALAFFUZ — his/her va possessive 's talaffuzi\nSo'zlarni baland ovozda o'qing, namunaviy gaplarni 2-3 marta takrorlang va yangi so'zlarni gap ichida ishlating.\n\nAMALIYOT\n1) Grammar: qoidani o'zingizning 3-5 ta gapingizda qo'llang.\n2) Vocabulary: darsdagi yangi so'zlardan kamida 5 tasini gaplarda ishlating.\n3) Speaking: Oilangizdagi 3 kishini tanishtiring va ularning bir-biriga munosabatini ayting.\n4) Writing/Homework: Oilaviy daraxt tuzing va 8 ta gap yozing. Kamida my, his, her, our, their va 2 ta possessive 's ishlating.\n\nSELF-CHECK\nDars oxirida o'zingizga savol bering: qoidani kitobsiz tushuntira olamanmi, yangi so'zlarni talaffuz qila olamanmi va ular bilan mustaqil gap tuza olamanmi?",
+    "image_url": "",
+    "vocabulary": [
+      {
+        "word": "family",
+        "phonetic": "/ˈfæməli/",
+        "trans": "oila",
+        "example": "My family is big."
+      },
+      {
+        "word": "mother",
+        "phonetic": "/ˈmʌðə(r)/",
+        "trans": "ona",
+        "example": "Her mother is a teacher."
+      },
+      {
+        "word": "father",
+        "phonetic": "/ˈfɑːðə(r)/",
+        "trans": "ota",
+        "example": "His father is a driver."
+      },
+      {
+        "word": "sister",
+        "phonetic": "/ˈsɪstə(r)/",
+        "trans": "opa/singil",
+        "example": "My sister is 18."
+      },
+      {
+        "word": "brother",
+        "phonetic": "/ˈbrʌðə(r)/",
+        "trans": "aka/uka",
+        "example": "His brother is young."
+      },
+      {
+        "word": "husband",
+        "phonetic": "/ˈhʌzbənd/",
+        "trans": "er",
+        "example": "Her husband is a doctor."
+      },
+      {
+        "word": "wife",
+        "phonetic": "/waɪf/",
+        "trans": "xotin",
+        "example": "His wife is a teacher."
+      },
+      {
+        "word": "child",
+        "phonetic": "/tʃaɪld/",
+        "trans": "bola",
+        "example": "Their child is happy."
+      },
+      {
+        "word": "parents",
+        "phonetic": "/ˈpeərənts/",
+        "trans": "ota-ona",
+        "example": "My parents are at home."
+      },
+      {
+        "word": "daughter",
+        "phonetic": "/ˈdɔːtə(r)/",
+        "trans": "qiz farzand",
+        "example": "Their daughter is ten."
+      }
+    ],
+    "created_at": "2026-08-14",
+    "quiz": {
+      "version": 2,
+      "questions": [
+        {
+          "question": "This is ___ mother. (I)",
+          "question_type": "standard",
+          "options": [
+            "my",
+            "his",
+            "their"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Tom is with ___ sister.",
+          "question_type": "standard",
+          "options": [
+            "her",
+            "his",
+            "our"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "Sara is my friend. ___ brother is 12.",
+          "question_type": "standard",
+          "options": [
+            "Her",
+            "His",
+            "Their"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Choose the possessive form.",
+          "question_type": "standard",
+          "options": [
+            "Ali mother",
+            "Ali's mother",
+            "Alis mother"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "Match pronoun and possessive",
+          "question_type": "matching",
+          "matching_text": "I → ___; he → ___; she → ___; they → ___",
+          "matching_answers": [
+            "my",
+            "his",
+            "her",
+            "their"
+          ],
+          "matching_words": [
+            "her",
+            "their",
+            "my",
+            "his"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "We love ___ family.",
+          "filling_answers": [
+            "our"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "They are ___ parents.",
+          "filling_answers": [
+            "their"
+          ]
+        },
+        {
+          "question": "Write about your family",
+          "question_type": "writing",
+          "writing_instruction": "Write 4 sentences about family members.",
+          "writing_text": "My ___ is ___. His/Her ___ is ___. Our family is ___.",
+          "writing_answers": [
+            "mother",
+            "name",
+            "family"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 100008,
+    "title": "4B — Menga mos mashina: sifatlar va ranglar",
+    "target_level": "beginner-middle",
+    "video_url": "",
+    "content_text": "Maqsad: Menga mos mashina: sifatlar va ranglar.\n\nGRAMMATIKA — adjectives va noun order: a red car, a big house; basic adjective descriptions\nIngliz tilida sifat odatda ot oldidan keladi: a new car, a blue car, an expensive house. Bir nechta sifat ishlatilsa, tabiiy tartibni saqlang: a small red car. Be bilan sifat gap oxirida ham keladi: The car is red.\n\nTALAFFUZ — adjective stress va common adjective endings\nSo'zlarni baland ovozda o'qing, namunaviy gaplarni 2-3 marta takrorlang va yangi so'zlarni gap ichida ishlating.\n\nAMALIYOT\n1) Grammar: qoidani o'zingizning 3-5 ta gapingizda qo'llang.\n2) Vocabulary: darsdagi yangi so'zlardan kamida 5 tasini gaplarda ishlating.\n3) Speaking: O‘zingizga yoqadigan mashinani tasvirlang: rang, hajm, tezlik, narx va yangi/eski ekanini ayting.\n4) Writing/Homework: 5 ta buyum yoki transport vositasini 2 ta sifat bilan tasvirlang. Har bir gapda rang yoki size/quality sifatidan foydalaning.\n\nSELF-CHECK\nDars oxirida o'zingizga savol bering: qoidani kitobsiz tushuntira olamanmi, yangi so'zlarni talaffuz qila olamanmi va ular bilan mustaqil gap tuza olamanmi?",
+    "image_url": "",
+    "vocabulary": [
+      {
+        "word": "car",
+        "phonetic": "/kɑː(r)/",
+        "trans": "mashina",
+        "example": "It's a red car."
+      },
+      {
+        "word": "new",
+        "phonetic": "/njuː/",
+        "trans": "yangi",
+        "example": "My car is new."
+      },
+      {
+        "word": "old",
+        "phonetic": "/əʊld/",
+        "trans": "eski",
+        "example": "That car is old."
+      },
+      {
+        "word": "fast",
+        "phonetic": "/fɑːst/",
+        "trans": "tez",
+        "example": "It's very fast."
+      },
+      {
+        "word": "slow",
+        "phonetic": "/sləʊ/",
+        "trans": "sekin",
+        "example": "This bus is slow."
+      },
+      {
+        "word": "cheap",
+        "phonetic": "/tʃiːp/",
+        "trans": "arzon",
+        "example": "It's cheap."
+      },
+      {
+        "word": "expensive",
+        "phonetic": "/ɪkˈspensɪv/",
+        "trans": "qimmat",
+        "example": "It's expensive."
+      },
+      {
+        "word": "black",
+        "phonetic": "/blæk/",
+        "trans": "qora",
+        "example": "A black car."
+      },
+      {
+        "word": "white",
+        "phonetic": "/waɪt/",
+        "trans": "oq",
+        "example": "A white car."
+      },
+      {
+        "word": "blue",
+        "phonetic": "/bluː/",
+        "trans": "ko‘k",
+        "example": "A blue car."
+      }
+    ],
+    "created_at": "2026-08-14",
+    "quiz": {
+      "version": 2,
+      "questions": [
+        {
+          "question": "Choose the correct phrase.",
+          "question_type": "standard",
+          "options": [
+            "a car red",
+            "a red car",
+            "red a car"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "My car is ___. (new)",
+          "question_type": "standard",
+          "options": [
+            "new",
+            "newly",
+            "news"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Choose a color.",
+          "question_type": "standard",
+          "options": [
+            "blue",
+            "fast",
+            "expensive"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Which is correct?",
+          "question_type": "standard",
+          "options": [
+            "a expensive car",
+            "an expensive car",
+            "an expensively car"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "Match adjectives",
+          "question_type": "matching",
+          "matching_text": "red → ___; big → ___; cheap → ___",
+          "matching_answers": [
+            "colour",
+            "size",
+            "price"
+          ],
+          "matching_words": [
+            "price",
+            "colour",
+            "size"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "It is a ___ car. (blue)",
+          "filling_answers": [
+            "blue"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "My car is ___. (new)",
+          "filling_answers": [
+            "new"
+          ]
+        },
+        {
+          "question": "Describe a car",
+          "question_type": "writing",
+          "writing_instruction": "Write 4 sentences about a car you like.",
+          "writing_text": "It is a ___ car. It is ___. It is ___.",
+          "writing_answers": [
+            "red",
+            "fast",
+            "expensive"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 100009,
+    "title": "5A — Sevimli ovqatim: Present Simple I/you/we/they",
+    "target_level": "beginner-middle",
+    "video_url": "",
+    "content_text": "Maqsad: Sevimli ovqatim: Present Simple I/you/we/they.\n\nGRAMMATIKA — Present Simple positive with I/you/we/they; do/does not yet for questions in this lesson\nPresent Simple I/you/we/they bilan odatiy ish va faktlarni aytishda ishlatiladi: I like rice. We eat breakfast at seven. They work in Tashkent. Fe’l odatda o‘zining asosiy shaklida qoladi.\n\nTALAFFUZ — food words, /ʃ/ and /tʃ/ in common food words\nSo'zlarni baland ovozda o'qing, namunaviy gaplarni 2-3 marta takrorlang va yangi so'zlarni gap ichida ishlating.\n\nAMALIYOT\n1) Grammar: qoidani o'zingizning 3-5 ta gapingizda qo'llang.\n2) Vocabulary: darsdagi yangi so'zlardan kamida 5 tasini gaplarda ishlating.\n3) Speaking: Sevimli ovqatingizni 45 soniyada tasvirlang: qachon yeysiz, nimalarni yoqtirasiz va nimalarni yemaysiz.\n4) Writing/Homework: Bir kunlik ovqatlanish rejangizni yozing: breakfast, lunch, dinner uchun kamida 6 ta gap. like/eat/have fe’llarini ishlating.\n\nSELF-CHECK\nDars oxirida o'zingizga savol bering: qoidani kitobsiz tushuntira olamanmi, yangi so'zlarni talaffuz qila olamanmi va ular bilan mustaqil gap tuza olamanmi?",
+    "image_url": "",
+    "vocabulary": [
+      {
+        "word": "meal",
+        "phonetic": "/miːl/",
+        "trans": "ovqat",
+        "example": "My favourite meal is dinner."
+      },
+      {
+        "word": "breakfast",
+        "phonetic": "/ˈbrekfəst/",
+        "trans": "nonushta",
+        "example": "I have breakfast at seven."
+      },
+      {
+        "word": "lunch",
+        "phonetic": "/lʌntʃ/",
+        "trans": "tushlik",
+        "example": "We have lunch at one."
+      },
+      {
+        "word": "dinner",
+        "phonetic": "/ˈdɪnə(r)/",
+        "trans": "kechki ovqat",
+        "example": "They have dinner at eight."
+      },
+      {
+        "word": "rice",
+        "phonetic": "/raɪs/",
+        "trans": "guruch",
+        "example": "I like rice."
+      },
+      {
+        "word": "bread",
+        "phonetic": "/bred/",
+        "trans": "non",
+        "example": "We eat bread."
+      },
+      {
+        "word": "chicken",
+        "phonetic": "/ˈtʃɪkɪn/",
+        "trans": "tovuq go‘shti",
+        "example": "I like chicken."
+      },
+      {
+        "word": "vegetable",
+        "phonetic": "/ˈvedʒtəbl/",
+        "trans": "sabzavot",
+        "example": "We eat vegetables."
+      },
+      {
+        "word": "fruit",
+        "phonetic": "/fruːt/",
+        "trans": "meva",
+        "example": "I eat fruit."
+      },
+      {
+        "word": "favourite",
+        "phonetic": "/ˈfeɪvərɪt/",
+        "trans": "sevimli",
+        "example": "Rice is my favourite food."
+      }
+    ],
+    "created_at": "2026-08-14",
+    "quiz": {
+      "version": 2,
+      "questions": [
+        {
+          "question": "I ___ rice.",
+          "question_type": "standard",
+          "options": [
+            "like",
+            "likes",
+            "liking"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "We ___ breakfast at seven.",
+          "question_type": "standard",
+          "options": [
+            "has",
+            "have",
+            "having"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "They ___ vegetables.",
+          "question_type": "standard",
+          "options": [
+            "eat",
+            "eats",
+            "eating"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Choose the Present Simple sentence.",
+          "question_type": "standard",
+          "options": [
+            "I am eat rice.",
+            "I eat rice.",
+            "I eating rice."
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "Match meals",
+          "question_type": "matching",
+          "matching_text": "breakfast → ___; lunch → ___; dinner → ___",
+          "matching_answers": [
+            "morning",
+            "afternoon",
+            "evening"
+          ],
+          "matching_words": [
+            "evening",
+            "morning",
+            "afternoon"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "I ___ chicken. (like)",
+          "filling_answers": [
+            "like"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "We ___ dinner at eight. (have)",
+          "filling_answers": [
+            "have"
+          ]
+        },
+        {
+          "question": "Write about food",
+          "question_type": "writing",
+          "writing_instruction": "Write 4 sentences about your eating habits.",
+          "writing_text": "I have ___. I like ___. We eat ___. My favourite food is ___.",
+          "writing_answers": [
+            "breakfast",
+            "rice",
+            "vegetables",
+            "chicken"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 100010,
+    "title": "5B — Uzoq parvoz: common verb phrases",
+    "target_level": "beginner-middle",
+    "video_url": "",
+    "content_text": "Maqsad: Uzoq parvoz: common verb phrases.\n\nGRAMMATIKA — Present Simple bilan common verb phrases va kundalik faoliyatlarni gapga qo‘shish\nCommon verb phrasesni tayyor birlik sifatida o‘rganing: fly to…, arrive at…, leave at…, live in…, listen to…, speak English. Present Simple odatiy harakatlar va jadvalga oid sodda faktlar uchun ishlatiladi.\n\nTALAFFUZ — word stress, /w/ va sentence rhythm\nSo'zlarni baland ovozda o'qing, namunaviy gaplarni 2-3 marta takrorlang va yangi so'zlarni gap ichida ishlating.\n\nAMALIYOT\n1) Grammar: qoidani o'zingizning 3-5 ta gapingizda qo'llang.\n2) Vocabulary: darsdagi yangi so'zlardan kamida 5 tasini gaplarda ishlating.\n3) Speaking: Bir kuningizni ertalabdan kechgacha aytib bering; vaqt va joyni qo‘shing.\n4) Writing/Homework: Kun tartibingizni 8 ta gap bilan yozing. live, study, work, listen, watch, speak kabi fe’llardan kamida 5 tasini ishlating.\n\nSELF-CHECK\nDars oxirida o'zingizga savol bering: qoidani kitobsiz tushuntira olamanmi, yangi so'zlarni talaffuz qila olamanmi va ular bilan mustaqil gap tuza olamanmi?",
+    "image_url": "",
+    "vocabulary": [
+      {
+        "word": "fly",
+        "phonetic": "/flaɪ/",
+        "trans": "uchmoq",
+        "example": "We fly to London."
+      },
+      {
+        "word": "travel",
+        "phonetic": "/ˈtrævəl/",
+        "trans": "sayohat qilmoq",
+        "example": "I travel a lot."
+      },
+      {
+        "word": "arrive",
+        "phonetic": "/əˈraɪv/",
+        "trans": "yetib kelmoq",
+        "example": "We arrive at noon."
+      },
+      {
+        "word": "leave",
+        "phonetic": "/liːv/",
+        "trans": "ketmoq",
+        "example": "They leave at six."
+      },
+      {
+        "word": "work",
+        "phonetic": "/wɜːk/",
+        "trans": "ishlamoq",
+        "example": "I work in an office."
+      },
+      {
+        "word": "study",
+        "phonetic": "/ˈstʌdi/",
+        "trans": "o‘qimoq",
+        "example": "We study English."
+      },
+      {
+        "word": "live",
+        "phonetic": "/lɪv/",
+        "trans": "yashamoq",
+        "example": "I live in Tashkent."
+      },
+      {
+        "word": "watch",
+        "phonetic": "/wɒtʃ/",
+        "trans": "tomosha qilmoq",
+        "example": "We watch films."
+      },
+      {
+        "word": "listen",
+        "phonetic": "/ˈlɪsən/",
+        "trans": "tinglamoq",
+        "example": "I listen to music."
+      },
+      {
+        "word": "speak",
+        "phonetic": "/spiːk/",
+        "trans": "gapirmoq",
+        "example": "They speak English."
+      }
+    ],
+    "created_at": "2026-08-14",
+    "quiz": {
+      "version": 2,
+      "questions": [
+        {
+          "question": "We ___ to London.",
+          "question_type": "standard",
+          "options": [
+            "fly",
+            "flies",
+            "flying"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "I ___ in Tashkent.",
+          "question_type": "standard",
+          "options": [
+            "live",
+            "lives",
+            "living"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "They ___ English.",
+          "question_type": "standard",
+          "options": [
+            "speak",
+            "speaks",
+            "speaking"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Choose the correct phrase.",
+          "question_type": "standard",
+          "options": [
+            "listen music",
+            "listen to music",
+            "listening to music"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "Match verbs and objects",
+          "question_type": "matching",
+          "matching_text": "listen → ___; watch → ___; speak → ___",
+          "matching_answers": [
+            "music",
+            "films",
+            "English"
+          ],
+          "matching_words": [
+            "English",
+            "music",
+            "films"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "I ___ English. (study)",
+          "filling_answers": [
+            "study"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "They ___ at six. (leave)",
+          "filling_answers": [
+            "leave"
+          ]
+        },
+        {
+          "question": "Describe your routine",
+          "question_type": "writing",
+          "writing_instruction": "Write 4 sentences about your normal day.",
+          "writing_text": "I live ___. I study ___. I listen to ___. I watch ___.",
+          "writing_answers": [
+            "in",
+            "English",
+            "music",
+            "films"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 100011,
+    "title": "6A — Eski do‘stlar: Present Simple he/she/it",
+    "target_level": "beginner-middle",
+    "video_url": "",
+    "content_text": "Maqsad: Eski do‘stlar: Present Simple he/she/it.\n\nGRAMMATIKA — Present Simple third person: he/she/it + -s/-es; positive statements\nHe/she/it bilan Present Simple fe’lga odatda -s qo‘shadi: work → works, live → lives. -es: go → goes, watch → watches, teach → teaches. Undosh + y bo‘lsa y → ies: study → studies.\n\nTALAFFUZ — third-person endings -s/-es and sentence rhythm\nSo'zlarni baland ovozda o'qing, namunaviy gaplarni 2-3 marta takrorlang va yangi so'zlarni gap ichida ishlating.\n\nAMALIYOT\n1) Grammar: qoidani o'zingizning 3-5 ta gapingizda qo'llang.\n2) Vocabulary: darsdagi yangi so'zlardan kamida 5 tasini gaplarda ishlating.\n3) Speaking: Do‘stingiz yoki mashhur shaxsning odatiy kunini 45 soniya davomida aytib bering.\n4) Writing/Homework: 3 ta odamning odatlarini yozing. Har bir odam uchun works/lives/goes/watches/studies kabi uchinchi shaxs shakllaridan foydalaning.\n\nSELF-CHECK\nDars oxirida o'zingizga savol bering: qoidani kitobsiz tushuntira olamanmi, yangi so'zlarni talaffuz qila olamanmi va ular bilan mustaqil gap tuza olamanmi?",
+    "image_url": "",
+    "vocabulary": [
+      {
+        "word": "friend",
+        "phonetic": "/frend/",
+        "trans": "do‘st",
+        "example": "He is an old friend."
+      },
+      {
+        "word": "job",
+        "phonetic": "/dʒɒb/",
+        "trans": "ish/kasb",
+        "example": "Her job is interesting."
+      },
+      {
+        "word": "doctor",
+        "phonetic": "/ˈdɒktə(r)/",
+        "trans": "shifokor",
+        "example": "She is a doctor."
+      },
+      {
+        "word": "driver",
+        "phonetic": "/ˈdraɪvə(r)/",
+        "trans": "haydovchi",
+        "example": "He is a driver."
+      },
+      {
+        "word": "work",
+        "phonetic": "/wɜːk/",
+        "trans": "ishlamoq",
+        "example": "She works in a hospital."
+      },
+      {
+        "word": "live",
+        "phonetic": "/lɪv/",
+        "trans": "yashamoq",
+        "example": "He lives in London."
+      },
+      {
+        "word": "teach",
+        "phonetic": "/tiːtʃ/",
+        "trans": "dars bermoq",
+        "example": "She teaches English."
+      },
+      {
+        "word": "go",
+        "phonetic": "/ɡəʊ/",
+        "trans": "bormoq",
+        "example": "He goes to work."
+      },
+      {
+        "word": "watch",
+        "phonetic": "/wɒtʃ/",
+        "trans": "tomosha qilmoq",
+        "example": "She watches TV."
+      },
+      {
+        "word": "study",
+        "phonetic": "/ˈstʌdi/",
+        "trans": "o‘qimoq",
+        "example": "He studies at night."
+      }
+    ],
+    "created_at": "2026-08-14",
+    "quiz": {
+      "version": 2,
+      "questions": [
+        {
+          "question": "She ___ in a hospital.",
+          "question_type": "standard",
+          "options": [
+            "work",
+            "works",
+            "working"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "He ___ to work at eight.",
+          "question_type": "standard",
+          "options": [
+            "go",
+            "goes",
+            "going"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "She ___ TV in the evening.",
+          "question_type": "standard",
+          "options": [
+            "watch",
+            "watches",
+            "watching"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "Study → third person",
+          "question_type": "standard",
+          "options": [
+            "studys",
+            "studies",
+            "studyies"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "Match base and third person",
+          "question_type": "matching",
+          "matching_text": "go → ___; watch → ___; study → ___",
+          "matching_answers": [
+            "goes",
+            "watches",
+            "studies"
+          ],
+          "matching_words": [
+            "studies",
+            "goes",
+            "watches"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "He ___ in London. (live)",
+          "filling_answers": [
+            "lives"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "She ___ English. (teach)",
+          "filling_answers": [
+            "teaches"
+          ]
+        },
+        {
+          "question": "Write about a friend",
+          "question_type": "writing",
+          "writing_instruction": "Write 4 sentences about a friend's routine.",
+          "writing_text": "He/She lives ___. He/She works ___. He/She goes ___. He/She watches ___.",
+          "writing_answers": [
+            "in",
+            "in",
+            "to",
+            "TV"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 100012,
+    "title": "6B — Xayrli tong, xayrli tun: frequency adverbs",
+    "target_level": "beginner-middle",
+    "video_url": "",
+    "content_text": "Maqsad: Xayrli tong, xayrli tun: frequency adverbs.\n\nGRAMMATIKA — always, usually, often, sometimes, hardly ever, never; adverb position with be and main verbs\nFrequency adverbs ishning qanchalik tez-tez bo‘lishini bildiradi. Main verb bilan odatda fe’ldan oldin: I usually work. Be bilan odatda be dan keyin: She is always happy. Never/hardly ever salbiy ma’noni o‘z ichiga oladi.\n\nTALAFFUZ — /ə/ in unstressed adverbs and sentence rhythm\nSo'zlarni baland ovozda o'qing, namunaviy gaplarni 2-3 marta takrorlang va yangi so'zlarni gap ichida ishlating.\n\nAMALIYOT\n1) Grammar: qoidani o'zingizning 3-5 ta gapingizda qo'llang.\n2) Vocabulary: darsdagi yangi so'zlardan kamida 5 tasini gaplarda ishlating.\n3) Speaking: Partnerga How often do you…? savollarini berib, o‘zingizning javoblaringizni frequency adverbs bilan ayting.\n4) Writing/Homework: Odatlaringiz haqida 8 ta gap yozing va always → usually → often → sometimes → hardly ever → never oralig‘idan foydalaning.\n\nSELF-CHECK\nDars oxirida o'zingizga savol bering: qoidani kitobsiz tushuntira olamanmi, yangi so'zlarni talaffuz qila olamanmi va ular bilan mustaqil gap tuza olamanmi?",
+    "image_url": "",
+    "vocabulary": [
+      {
+        "word": "always",
+        "phonetic": "/ˈɔːlweɪz/",
+        "trans": "har doim",
+        "example": "I always get up early."
+      },
+      {
+        "word": "usually",
+        "phonetic": "/ˈjuːʒuəli/",
+        "trans": "odatda",
+        "example": "She usually walks."
+      },
+      {
+        "word": "often",
+        "phonetic": "/ˈɒfən/",
+        "trans": "tez-tez",
+        "example": "We often eat out."
+      },
+      {
+        "word": "sometimes",
+        "phonetic": "/ˈsʌmtaɪmz/",
+        "trans": "ba’zan",
+        "example": "They sometimes travel."
+      },
+      {
+        "word": "hardly ever",
+        "phonetic": "/ˌhɑːdli ˈevə(r)/",
+        "trans": "deyarli hech qachon",
+        "example": "He hardly ever cooks."
+      },
+      {
+        "word": "never",
+        "phonetic": "/ˈnevə(r)/",
+        "trans": "hech qachon",
+        "example": "I never smoke."
+      },
+      {
+        "word": "early",
+        "phonetic": "/ˈɜːli/",
+        "trans": "erta",
+        "example": "I get up early."
+      },
+      {
+        "word": "late",
+        "phonetic": "/leɪt/",
+        "trans": "kech",
+        "example": "She goes to bed late."
+      },
+      {
+        "word": "morning",
+        "phonetic": "/ˈmɔːnɪŋ/",
+        "trans": "ertalab",
+        "example": "Good morning!"
+      },
+      {
+        "word": "night",
+        "phonetic": "/naɪt/",
+        "trans": "tun",
+        "example": "Good night!"
+      }
+    ],
+    "created_at": "2026-08-14",
+    "quiz": {
+      "version": 2,
+      "questions": [
+        {
+          "question": "I ___ get up at seven. (100%)",
+          "question_type": "standard",
+          "options": [
+            "never",
+            "always",
+            "sometimes"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "She is ___ happy.",
+          "question_type": "standard",
+          "options": [
+            "always",
+            "neverly",
+            "oftenly"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "We ___ eat out. (50%)",
+          "question_type": "standard",
+          "options": [
+            "sometimes",
+            "never",
+            "always"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "He ___ cooks. (almost never)",
+          "question_type": "standard",
+          "options": [
+            "hardly ever",
+            "always",
+            "usually"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Match frequency",
+          "question_type": "matching",
+          "matching_text": "always → ___; sometimes → ___; never → ___",
+          "matching_answers": [
+            "100%",
+            "about 50%",
+            "0%"
+          ],
+          "matching_words": [
+            "0%",
+            "100%",
+            "about 50%"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "I ___ go to bed early. (usually)",
+          "filling_answers": [
+            "usually"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "She is ___ late. (never)",
+          "filling_answers": [
+            "never"
+          ]
+        },
+        {
+          "question": "Write your habits",
+          "question_type": "writing",
+          "writing_instruction": "Write 5 sentences about how often you do things.",
+          "writing_text": "I always ___. I usually ___. I often ___. I sometimes ___. I never ___.",
+          "writing_answers": [
+            "study",
+            "get up",
+            "read",
+            "travel",
+            "smoke"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 100013,
+    "title": "7A — Dam olish kunlari va savol tartibi",
+    "target_level": "beginner-expert",
+    "video_url": "",
+    "content_text": "Maqsad: Dam olish kunlari va savol tartibi.\n\nGRAMMATIKA — be va Present Simple bilan savol so‘zlari va savol tartibi: What/Where/When/Who/How often\nSavolda yordamchi va subject tartibi muhim: What do you do? Where do you live? When does he work? Be bilan esa Do ishlatilmaydi: Where are you? What is she? Savol so‘zi + auxiliary/be + subject + main verb tartibini yodlang.\n\nTALAFFUZ — question intonation and sentence rhythm\nSo'zlarni baland ovozda o'qing, namunaviy gaplarni 2-3 marta takrorlang va yangi so'zlarni gap ichida ishlating.\n\nAMALIYOT\n1) Grammar: qoidani o'zingizning 3-5 ta gapingizda qo'llang.\n2) Vocabulary: darsdagi yangi so'zlardan kamida 5 tasini gaplarda ishlating.\n3) Speaking: Partner bilan weekend interview qiling: 6 ta savol, 6 ta javob va oxirida sherigingiz haqida 3 ta gap.\n4) Writing/Homework: 10 ta savol yozing: What, Where, When, Who, How often bilan kamida bittadan. Keyin javoblarini ham yozing.\n\nSELF-CHECK\nDars oxirida o'zingizga savol bering: qoidani kitobsiz tushuntira olamanmi, yangi so'zlarni talaffuz qila olamanmi va ular bilan mustaqil gap tuza olamanmi?",
+    "image_url": "",
+    "vocabulary": [
+      {
+        "word": "weekend",
+        "phonetic": "/ˌwiːkˈend/",
+        "trans": "dam olish kunlari",
+        "example": "What do you do at the weekend?"
+      },
+      {
+        "word": "free time",
+        "phonetic": "/ˌfriː ˈtaɪm/",
+        "trans": "bo‘sh vaqt",
+        "example": "I read in my free time."
+      },
+      {
+        "word": "cinema",
+        "phonetic": "/ˈsɪnəmə/",
+        "trans": "kino",
+        "example": "We go to the cinema."
+      },
+      {
+        "word": "park",
+        "phonetic": "/pɑːk/",
+        "trans": "bog‘/park",
+        "example": "They walk in the park."
+      },
+      {
+        "word": "music",
+        "phonetic": "/ˈmjuːzɪk/",
+        "trans": "musiqa",
+        "example": "I listen to music."
+      },
+      {
+        "word": "sport",
+        "phonetic": "/spɔːt/",
+        "trans": "sport",
+        "example": "We play sport."
+      },
+      {
+        "word": "read",
+        "phonetic": "/riːd/",
+        "trans": "o‘qimoq",
+        "example": "I read books."
+      },
+      {
+        "word": "cook",
+        "phonetic": "/kʊk/",
+        "trans": "ovqat pishirmoq",
+        "example": "I cook at home."
+      },
+      {
+        "word": "visit",
+        "phonetic": "/ˈvɪzɪt/",
+        "trans": "tashrif buyurmoq",
+        "example": "I visit my family."
+      },
+      {
+        "word": "relax",
+        "phonetic": "/rɪˈlæks/",
+        "trans": "dam olmoq",
+        "example": "I relax at home."
+      }
+    ],
+    "created_at": "2026-08-14",
+    "quiz": {
+      "version": 2,
+      "questions": [
+        {
+          "question": "___ do you live?",
+          "question_type": "standard",
+          "options": [
+            "Where",
+            "What",
+            "Who"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "___ do you do at weekends?",
+          "question_type": "standard",
+          "options": [
+            "What",
+            "Where",
+            "When"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Where ___ you?",
+          "question_type": "standard",
+          "options": [
+            "do",
+            "are",
+            "does"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "When ___ he work?",
+          "question_type": "standard",
+          "options": [
+            "do",
+            "are",
+            "does"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "question": "Match question words",
+          "question_type": "matching",
+          "matching_text": "Where → ___; When → ___; Who → ___",
+          "matching_answers": [
+            "place",
+            "time",
+            "person"
+          ],
+          "matching_words": [
+            "person",
+            "place",
+            "time"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "What ___ you do at the weekend?",
+          "filling_answers": [
+            "do"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "Where ___ she?",
+          "filling_answers": [
+            "is"
+          ]
+        },
+        {
+          "question": "Weekend interview",
+          "question_type": "writing",
+          "writing_instruction": "Write 3 questions and 3 answers about weekends.",
+          "writing_text": "What do you ___? Where do you ___? How often do you ___?",
+          "writing_answers": [
+            "do",
+            "go",
+            "relax"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 100014,
+    "title": "7B — Kino va imperativlar",
+    "target_level": "beginner-expert",
+    "video_url": "",
+    "content_text": "Maqsad: Kino va imperativlar.\n\nGRAMMATIKA — imperatives: positive/negative; object pronouns me, you, him, her, it, us, them\nImperative buyruq/ko‘rsatma uchun fe’lning asosiy shakli bilan keladi: Look! Listen to me. Negative: Don’t look! Don’t wait! Object pronouns fe’ldan keyin keladi: help me, call him, watch it, tell them.\n\nTALAFFUZ — sentence stress in commands\nSo'zlarni baland ovozda o'qing, namunaviy gaplarni 2-3 marta takrorlang va yangi so'zlarni gap ichida ishlating.\n\nAMALIYOT\n1) Grammar: qoidani o'zingizning 3-5 ta gapingizda qo'llang.\n2) Vocabulary: darsdagi yangi so'zlardan kamida 5 tasini gaplarda ishlating.\n3) Speaking: Partnerga kichik role-play bering: Look…, Listen…, Wait for me…, Don’t stop… kabi ko‘rsatmalarni ayting.\n4) Writing/Homework: Film sahnasini tasavvur qilib 6 ta buyruq/ko‘rsatma yozing: 4 ta positive va 2 ta negative. 4 xil object pronoun ishlating.\n\nSELF-CHECK\nDars oxirida o'zingizga savol bering: qoidani kitobsiz tushuntira olamanmi, yangi so'zlarni talaffuz qila olamanmi va ular bilan mustaqil gap tuza olamanmi?",
+    "image_url": "",
+    "vocabulary": [
+      {
+        "word": "film",
+        "phonetic": "/fɪlm/",
+        "trans": "film",
+        "example": "It's a good film."
+      },
+      {
+        "word": "actor",
+        "phonetic": "/ˈæktə(r)/",
+        "trans": "aktyor",
+        "example": "The actor is famous."
+      },
+      {
+        "word": "actress",
+        "phonetic": "/ˈæktrəs/",
+        "trans": "aktrisa",
+        "example": "The actress is great."
+      },
+      {
+        "word": "director",
+        "phonetic": "/dəˈrektə(r)/",
+        "trans": "rejissyor",
+        "example": "The director is famous."
+      },
+      {
+        "word": "watch",
+        "phonetic": "/wɒtʃ/",
+        "trans": "tomosha qilmoq",
+        "example": "Watch this film."
+      },
+      {
+        "word": "look",
+        "phonetic": "/lʊk/",
+        "trans": "qaramoq",
+        "example": "Look at this."
+      },
+      {
+        "word": "listen",
+        "phonetic": "/ˈlɪsən/",
+        "trans": "tinglamoq",
+        "example": "Listen to me."
+      },
+      {
+        "word": "wait",
+        "phonetic": "/weɪt/",
+        "trans": "kutmoq",
+        "example": "Wait for us."
+      },
+      {
+        "word": "help",
+        "phonetic": "/help/",
+        "trans": "yordam bermoq",
+        "example": "Help me."
+      },
+      {
+        "word": "stop",
+        "phonetic": "/stɒp/",
+        "trans": "to‘xtamoq",
+        "example": "Stop!"
+      }
+    ],
+    "created_at": "2026-08-14",
+    "quiz": {
+      "version": 2,
+      "questions": [
+        {
+          "question": "Choose the imperative.",
+          "question_type": "standard",
+          "options": [
+            "You look.",
+            "Look!",
+            "Looking!"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "Negative imperative:",
+          "question_type": "standard",
+          "options": [
+            "No look!",
+            "Don't look!",
+            "Not look!"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "Help ___, please. (I)",
+          "question_type": "standard",
+          "options": [
+            "I",
+            "me",
+            "my"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "Wait for ___. (we)",
+          "question_type": "standard",
+          "options": [
+            "us",
+            "we",
+            "our"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Match pronouns",
+          "question_type": "matching",
+          "matching_text": "him → ___; her → ___; them → ___",
+          "matching_answers": [
+            "male person",
+            "female person",
+            "people"
+          ],
+          "matching_words": [
+            "people",
+            "female person",
+            "male person"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "Listen ___ me.",
+          "filling_answers": [
+            "to"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "Don’t ___!",
+          "filling_answers": [
+            "stop"
+          ]
+        },
+        {
+          "question": "Write commands",
+          "question_type": "writing",
+          "writing_instruction": "Write 4 film-set commands.",
+          "writing_text": "Look at ___. Listen to ___. Wait for ___. Don't ___.",
+          "writing_answers": [
+            "him",
+            "me",
+            "us",
+            "stop"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 100015,
+    "title": "8A — Can I park here? Can/can't",
+    "target_level": "beginner-expert",
+    "video_url": "",
+    "content_text": "Maqsad: Can I park here? Can/can't.\n\nGRAMMATIKA — can/can't ability and permission; can + base verb; questions Can I…?\nCan modal fe’li qobiliyat va ruxsatni bildiradi. Can + base verb: I can drive. He can swim. Negative: can’t. Savol: Can I park here? Can you help me? Can dan keyin -s yoki to kelmaydi: She can swim, not She can swims.\n\nTALAFFUZ — can/can't contrast and sentence rhythm\nSo'zlarni baland ovozda o'qing, namunaviy gaplarni 2-3 marta takrorlang va yangi so'zlarni gap ichida ishlating.\n\nAMALIYOT\n1) Grammar: qoidani o'zingizning 3-5 ta gapingizda qo'llang.\n2) Vocabulary: darsdagi yangi so'zlardan kamida 5 tasini gaplarda ishlating.\n3) Speaking: Partnerdan ruxsat so‘rang: Can I open the window? Can I use your pen? Can we sit here? Javoblarni Sure/Yes, you can yoki Sorry, you can’t bilan bering.\n4) Writing/Homework: Qila oladigan va qila olmaydigan 6 ta ish haqida yozing. So‘ng Can I…? bilan 3 ta ruxsat savoli tuzing.\n\nSELF-CHECK\nDars oxirida o'zingizga savol bering: qoidani kitobsiz tushuntira olamanmi, yangi so'zlarni talaffuz qila olamanmi va ular bilan mustaqil gap tuza olamanmi?",
+    "image_url": "",
+    "vocabulary": [
+      {
+        "word": "park",
+        "phonetic": "/pɑːk/",
+        "trans": "mashina qo‘ymoq",
+        "example": "Can I park here?"
+      },
+      {
+        "word": "drive",
+        "phonetic": "/draɪv/",
+        "trans": "haydamoq",
+        "example": "I can drive."
+      },
+      {
+        "word": "swim",
+        "phonetic": "/swɪm/",
+        "trans": "suzmoq",
+        "example": "She can swim."
+      },
+      {
+        "word": "run",
+        "phonetic": "/rʌn/",
+        "trans": "yugurmoq",
+        "example": "He can run fast."
+      },
+      {
+        "word": "help",
+        "phonetic": "/help/",
+        "trans": "yordam bermoq",
+        "example": "Can you help me?"
+      },
+      {
+        "word": "use",
+        "phonetic": "/juːz/",
+        "trans": "foydalanmoq",
+        "example": "Can I use this?"
+      },
+      {
+        "word": "open",
+        "phonetic": "/ˈəʊpən/",
+        "trans": "ochmoq",
+        "example": "Can you open it?"
+      },
+      {
+        "word": "close",
+        "phonetic": "/kləʊz/",
+        "trans": "yopmoq",
+        "example": "Can you close the door?"
+      },
+      {
+        "word": "enter",
+        "phonetic": "/ˈentə(r)/",
+        "trans": "kirmoq",
+        "example": "Can we enter?"
+      },
+      {
+        "word": "permission",
+        "phonetic": "/pəˈmɪʃn/",
+        "trans": "ruxsat",
+        "example": "Do I have permission?"
+      }
+    ],
+    "created_at": "2026-08-14",
+    "quiz": {
+      "version": 2,
+      "questions": [
+        {
+          "question": "I ___ swim.",
+          "question_type": "standard",
+          "options": [
+            "can",
+            "cans",
+            "am can"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "She can ___ fast.",
+          "question_type": "standard",
+          "options": [
+            "runs",
+            "run",
+            "running"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "Can I park here? — Yes, you ___.",
+          "question_type": "standard",
+          "options": [
+            "can",
+            "can't",
+            "are"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Choose the negative.",
+          "question_type": "standard",
+          "options": [
+            "I can’t drive.",
+            "I don’t can drive.",
+            "I can’t to drive."
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Match verbs",
+          "question_type": "matching",
+          "matching_text": "can swim → ___; can drive → ___; can help → ___",
+          "matching_answers": [
+            "water",
+            "car",
+            "person"
+          ],
+          "matching_words": [
+            "person",
+            "water",
+            "car"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "Can you ___ me?",
+          "filling_answers": [
+            "help"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "I ___ use this. (permission)",
+          "filling_answers": [
+            "can"
+          ]
+        },
+        {
+          "question": "Write a permission dialogue",
+          "question_type": "writing",
+          "writing_instruction": "Write 3 short permission questions and answers.",
+          "writing_text": "Can I ___? — Yes, you ___. Can we ___? — No, you ___.",
+          "writing_answers": [
+            "enter",
+            "can",
+            "park",
+            "can't"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 100016,
+    "title": "8B — Shopping: love/like/hate + verb-ing",
+    "target_level": "beginner-expert",
+    "video_url": "",
+    "content_text": "Maqsad: Shopping: love/like/hate + verb-ing.\n\nGRAMMATIKA — love, like, hate + verb-ing; activities and shopping preferences\nlove/like/hate dan keyin faoliyatni bildiruvchi fe’l ko‘pincha -ing shaklida keladi: I like shopping. She loves cooking. They hate waiting. Spelling: buy → buying, make → making, shop → shopping kabi o‘zgarishlarga e’tibor bering.\n\nTALAFFUZ — /ɪŋ/ ending and sentence stress\nSo'zlarni baland ovozda o'qing, namunaviy gaplarni 2-3 marta takrorlang va yangi so'zlarni gap ichida ishlating.\n\nAMALIYOT\n1) Grammar: qoidani o'zingizning 3-5 ta gapingizda qo'llang.\n2) Vocabulary: darsdagi yangi so'zlardan kamida 5 tasini gaplarda ishlating.\n3) Speaking: Shopping mall dialogi tuzing: narx so‘rash, try qilish, to‘lash va shopping preferences haqida gapiring.\n4) Writing/Homework: 3 ta yoqtiradigan, 2 ta yoqtirmaydigan shopping faoliyatingizni yozing: I love…, I like…, I hate… + -ing.\n\nSELF-CHECK\nDars oxirida o'zingizga savol bering: qoidani kitobsiz tushuntira olamanmi, yangi so'zlarni talaffuz qila olamanmi va ular bilan mustaqil gap tuza olamanmi?",
+    "image_url": "",
+    "vocabulary": [
+      {
+        "word": "shopping",
+        "phonetic": "/ˈʃɒpɪŋ/",
+        "trans": "xarid qilish",
+        "example": "I like shopping."
+      },
+      {
+        "word": "buy",
+        "phonetic": "/baɪ/",
+        "trans": "sotib olmoq",
+        "example": "I like buying clothes."
+      },
+      {
+        "word": "sell",
+        "phonetic": "/sel/",
+        "trans": "sotmoq",
+        "example": "They sell shoes."
+      },
+      {
+        "word": "clothes",
+        "phonetic": "/kləʊðz/",
+        "trans": "kiyimlar",
+        "example": "I like buying clothes."
+      },
+      {
+        "word": "shoes",
+        "phonetic": "/ʃuːz/",
+        "trans": "oyoq kiyim",
+        "example": "These shoes are nice."
+      },
+      {
+        "word": "try",
+        "phonetic": "/traɪ/",
+        "trans": "sinab ko‘rmoq",
+        "example": "Can I try it?"
+      },
+      {
+        "word": "pay",
+        "phonetic": "/peɪ/",
+        "trans": "to‘lamoq",
+        "example": "I pay by card."
+      },
+      {
+        "word": "choose",
+        "phonetic": "/tʃuːz/",
+        "trans": "tanlamoq",
+        "example": "I hate choosing."
+      },
+      {
+        "word": "look for",
+        "phonetic": "/lʊk fɔː(r)/",
+        "trans": "qidirmoq",
+        "example": "I look for a shirt."
+      },
+      {
+        "word": "queue",
+        "phonetic": "/kjuː/",
+        "trans": "navbat",
+        "example": "I hate queuing."
+      }
+    ],
+    "created_at": "2026-08-14",
+    "quiz": {
+      "version": 2,
+      "questions": [
+        {
+          "question": "I like ___ clothes.",
+          "question_type": "standard",
+          "options": [
+            "buy",
+            "buying",
+            "bought"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "She hates ___. (wait)",
+          "question_type": "standard",
+          "options": [
+            "wait",
+            "waiting",
+            "waits"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "They love ___. (shop)",
+          "question_type": "standard",
+          "options": [
+            "shopping",
+            "shop",
+            "shops"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Choose the correct form.",
+          "question_type": "standard",
+          "options": [
+            "I hate queue.",
+            "I hate queuing.",
+            "I hate to queuing."
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "Match shopping verbs",
+          "question_type": "matching",
+          "matching_text": "buy → ___; pay → ___; try → ___",
+          "matching_answers": [
+            "clothes",
+            "by card",
+            "on clothes"
+          ],
+          "matching_words": [
+            "by card",
+            "clothes",
+            "on clothes"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "I love ___. (shop)",
+          "filling_answers": [
+            "shopping"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "She likes ___. (cook)",
+          "filling_answers": [
+            "cooking"
+          ]
+        },
+        {
+          "question": "Write your shopping likes",
+          "question_type": "writing",
+          "writing_instruction": "Write 4 sentences with love/like/hate + -ing.",
+          "writing_text": "I love ___. I like ___. I hate ___. I like ___.",
+          "writing_answers": [
+            "shopping",
+            "buying",
+            "queuing",
+            "trying"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 100017,
+    "title": "9A — Ular aslida nima qilyapti? Present Continuous",
+    "target_level": "beginner-expert",
+    "video_url": "",
+    "content_text": "Maqsad: Ular aslida nima qilyapti? Present Continuous.\n\nGRAMMATIKA — Present Continuous: am/is/are + verb-ing for actions happening now\nPresent Continuous hozir sodir bo‘layotgan ish uchun am/is/are + verb-ing shaklida tuziladi: I’m reading. She’s working. They’re talking. Savol: What are they doing? Negative: He isn’t sleeping.\n\nTALAFFUZ — -ing spelling and sentence rhythm\nSo'zlarni baland ovozda o'qing, namunaviy gaplarni 2-3 marta takrorlang va yangi so'zlarni gap ichida ishlating.\n\nAMALIYOT\n1) Grammar: qoidani o'zingizning 3-5 ta gapingizda qo'llang.\n2) Vocabulary: darsdagi yangi so'zlardan kamida 5 tasini gaplarda ishlating.\n3) Speaking: Biror joyni tasvirlang: Who is sitting? Who is talking? What are they doing? kamida 5 ta Present Continuous gap ayting.\n4) Writing/Homework: Hozirgi holatingiz haqida 6 ta gap yozing. Keyin xonadagi odamlar yoki rasmdagi odamlar nima qilayotganini tasvirlang.\n\nSELF-CHECK\nDars oxirida o'zingizga savol bering: qoidani kitobsiz tushuntira olamanmi, yangi so'zlarni talaffuz qila olamanmi va ular bilan mustaqil gap tuza olamanmi?",
+    "image_url": "",
+    "vocabulary": [
+      {
+        "word": "do",
+        "phonetic": "/duː/",
+        "trans": "qilmoq",
+        "example": "What are they doing?"
+      },
+      {
+        "word": "work",
+        "phonetic": "/wɜːk/",
+        "trans": "ishlamoq",
+        "example": "She is working."
+      },
+      {
+        "word": "sit",
+        "phonetic": "/sɪt/",
+        "trans": "o‘tirmoq",
+        "example": "He is sitting."
+      },
+      {
+        "word": "stand",
+        "phonetic": "/stænd/",
+        "trans": "turmoq",
+        "example": "They are standing."
+      },
+      {
+        "word": "talk",
+        "phonetic": "/tɔːk/",
+        "trans": "gaplashmoq",
+        "example": "They are talking."
+      },
+      {
+        "word": "eat",
+        "phonetic": "/iːt/",
+        "trans": "yemoq",
+        "example": "She is eating."
+      },
+      {
+        "word": "drink",
+        "phonetic": "/drɪŋk/",
+        "trans": "ichmoq",
+        "example": "He is drinking."
+      },
+      {
+        "word": "read",
+        "phonetic": "/riːd/",
+        "trans": "o‘qimoq",
+        "example": "I am reading."
+      },
+      {
+        "word": "write",
+        "phonetic": "/raɪt/",
+        "trans": "yozmoq",
+        "example": "She is writing."
+      },
+      {
+        "word": "sleep",
+        "phonetic": "/sliːp/",
+        "trans": "uxlamoq",
+        "example": "The baby is sleeping."
+      }
+    ],
+    "created_at": "2026-08-14",
+    "quiz": {
+      "version": 2,
+      "questions": [
+        {
+          "question": "She ___ working now.",
+          "question_type": "standard",
+          "options": [
+            "is",
+            "are",
+            "am"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "They are ___. (talk)",
+          "question_type": "standard",
+          "options": [
+            "talk",
+            "talking",
+            "talks"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "I am ___. (read)",
+          "question_type": "standard",
+          "options": [
+            "reading",
+            "read",
+            "reads"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "What ___ they doing?",
+          "question_type": "standard",
+          "options": [
+            "is",
+            "are",
+            "do"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "Match actions",
+          "question_type": "matching",
+          "matching_text": "sit → ___; eat → ___; write → ___",
+          "matching_answers": [
+            "sitting",
+            "eating",
+            "writing"
+          ],
+          "matching_words": [
+            "writing",
+            "sitting",
+            "eating"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "He is ___. (sleep)",
+          "filling_answers": [
+            "sleeping"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "They are ___. (stand)",
+          "filling_answers": [
+            "standing"
+          ]
+        },
+        {
+          "question": "Describe now",
+          "question_type": "writing",
+          "writing_instruction": "Write 4 sentences about what people are doing now.",
+          "writing_text": "I am ___. He/She is ___. They are ___.",
+          "writing_answers": [
+            "reading",
+            "working",
+            "talking"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 100018,
+    "title": "9B — Watching and waiting: Present Continuous vs Present Simple",
+    "target_level": "beginner-expert",
+    "video_url": "",
+    "content_text": "Maqsad: Watching and waiting: Present Continuous vs Present Simple.\n\nGRAMMATIKA — Present Continuous for now vs Present Simple for habits/routines\nPresent Simple — odat, takroriy ish: I usually watch TV. Present Continuous — hozirgi vaqtinchalik harakat: I’m watching TV now. Time markers yordam beradi: every day/usually/often → Present Simple; now/right now/at the moment/today → Present Continuous.\n\nTALAFFUZ — sentence rhythm and unstressed auxiliaries\nSo'zlarni baland ovozda o'qing, namunaviy gaplarni 2-3 marta takrorlang va yangi so'zlarni gap ichida ishlating.\n\nAMALIYOT\n1) Grammar: qoidani o'zingizning 3-5 ta gapingizda qo'llang.\n2) Vocabulary: darsdagi yangi so'zlardan kamida 5 tasini gaplarda ishlating.\n3) Speaking: Partneringizning odati va bugungi holatini taqqoslang: Usually I…, but today I’m…\n4) Writing/Homework: 10 ta gap yozing: 5 tasi odat, 5 tasi ayni paytdagi ish. Har bir gapda vaqt belgisi bo‘lsin.\n\nSELF-CHECK\nDars oxirida o'zingizga savol bering: qoidani kitobsiz tushuntira olamanmi, yangi so'zlarni talaffuz qila olamanmi va ular bilan mustaqil gap tuza olamanmi?",
+    "image_url": "",
+    "vocabulary": [
+      {
+        "word": "watch",
+        "phonetic": "/wɒtʃ/",
+        "trans": "tomosha qilmoq",
+        "example": "I am watching TV now."
+      },
+      {
+        "word": "wait",
+        "phonetic": "/weɪt/",
+        "trans": "kutmoq",
+        "example": "We are waiting."
+      },
+      {
+        "word": "usually",
+        "phonetic": "/ˈjuːʒuəli/",
+        "trans": "odatda",
+        "example": "I usually watch TV at night."
+      },
+      {
+        "word": "now",
+        "phonetic": "/naʊ/",
+        "trans": "hozir",
+        "example": "She is working now."
+      },
+      {
+        "word": "today",
+        "phonetic": "/təˈdeɪ/",
+        "trans": "bugun",
+        "example": "We are studying today."
+      },
+      {
+        "word": "every day",
+        "phonetic": "/ˈevri deɪ/",
+        "trans": "har kuni",
+        "example": "I study every day."
+      },
+      {
+        "word": "right now",
+        "phonetic": "/raɪt naʊ/",
+        "trans": "ayni hozir",
+        "example": "He is sleeping right now."
+      },
+      {
+        "word": "often",
+        "phonetic": "/ˈɒfən/",
+        "trans": "tez-tez",
+        "example": "They often travel."
+      },
+      {
+        "word": "at the moment",
+        "phonetic": "/æt ðə ˈməʊmənt/",
+        "trans": "ayni paytda",
+        "example": "I am working at the moment."
+      },
+      {
+        "word": "routine",
+        "phonetic": "/ruːˈtiːn/",
+        "trans": "kun tartibi",
+        "example": "My routine is simple."
+      }
+    ],
+    "created_at": "2026-08-14",
+    "quiz": {
+      "version": 2,
+      "questions": [
+        {
+          "question": "I usually ___ TV at night.",
+          "question_type": "standard",
+          "options": [
+            "watch",
+            "am watching",
+            "watching"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "I ___ TV now.",
+          "question_type": "standard",
+          "options": [
+            "watch",
+            "am watching",
+            "watches"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "She ___ every day.",
+          "question_type": "standard",
+          "options": [
+            "studies",
+            "is studying",
+            "study"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "They are working ___.",
+          "question_type": "standard",
+          "options": [
+            "every day",
+            "right now",
+            "usually"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "Match time markers",
+          "question_type": "matching",
+          "matching_text": "usually → ___; now → ___; every day → ___",
+          "matching_answers": [
+            "Present Simple",
+            "Present Continuous",
+            "Present Simple"
+          ],
+          "matching_words": [
+            "Present Simple",
+            "Present Simple",
+            "Present Continuous"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "We ___ English every day. (study)",
+          "filling_answers": [
+            "study"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "We are ___ English now. (study)",
+          "filling_answers": [
+            "studying"
+          ]
+        },
+        {
+          "question": "Compare routine and now",
+          "question_type": "writing",
+          "writing_instruction": "Write 4 sentences comparing a normal day with today.",
+          "writing_text": "I usually ___. Today I am ___. I often ___. Right now I am ___.",
+          "writing_answers": [
+            "work",
+            "studying",
+            "watch",
+            "reading"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 100019,
+    "title": "10A — Mehmonxona: there is/are va joy predloglari",
+    "target_level": "beginner-expert",
+    "video_url": "",
+    "content_text": "Maqsad: Mehmonxona: there is/are va joy predloglari.\n\nGRAMMATIKA — there is/there are; a/an va plural bilan tasdiq; in, on, under, next to\nThere is birlikdagi narsa uchun: There is a bed. There are ko‘plik uchun: There are two chairs. Joy predloglari: in, on, under, next to. Masalan: The lamp is on the table. There is a chair next to the bed.\n\nTALAFFUZ — /ð/ in there and preposition phrases\nSo'zlarni baland ovozda o'qing, namunaviy gaplarni 2-3 marta takrorlang va yangi so'zlarni gap ichida ishlating.\n\nAMALIYOT\n1) Grammar: qoidani o'zingizning 3-5 ta gapingizda qo'llang.\n2) Vocabulary: darsdagi yangi so'zlardan kamida 5 tasini gaplarda ishlating.\n3) Speaking: Tasavvuriy mehmonxona xonasini 45 soniya tasvirlang: mebel, joylashuv va manzara.\n4) Writing/Homework: Xonangizning kichik xaritasini chizing va 8 ta gap yozing. There is/are va in/on/under/next to ni aralashtiring.\n\nSELF-CHECK\nDars oxirida o'zingizga savol bering: qoidani kitobsiz tushuntira olamanmi, yangi so'zlarni talaffuz qila olamanmi va ular bilan mustaqil gap tuza olamanmi?",
+    "image_url": "",
+    "vocabulary": [
+      {
+        "word": "room",
+        "phonetic": "/ruːm/",
+        "trans": "xona",
+        "example": "There is a room."
+      },
+      {
+        "word": "view",
+        "phonetic": "/vjuː/",
+        "trans": "manzara",
+        "example": "The room has a nice view."
+      },
+      {
+        "word": "bed",
+        "phonetic": "/bed/",
+        "trans": "karavot",
+        "example": "There is a bed in the room."
+      },
+      {
+        "word": "table",
+        "phonetic": "/ˈteɪbl/",
+        "trans": "stol",
+        "example": "The lamp is on the table."
+      },
+      {
+        "word": "chair",
+        "phonetic": "/tʃeə(r)/",
+        "trans": "stul",
+        "example": "There are two chairs."
+      },
+      {
+        "word": "lamp",
+        "phonetic": "/læmp/",
+        "trans": "chiroq",
+        "example": "The lamp is next to the bed."
+      },
+      {
+        "word": "window",
+        "phonetic": "/ˈwɪndəʊ/",
+        "trans": "deraza",
+        "example": "The bed is under the window."
+      },
+      {
+        "word": "door",
+        "phonetic": "/dɔː(r)/",
+        "trans": "eshik",
+        "example": "The chair is next to the door."
+      },
+      {
+        "word": "bathroom",
+        "phonetic": "/ˈbɑːθruːm/",
+        "trans": "hammom",
+        "example": "There is a bathroom."
+      },
+      {
+        "word": "kitchen",
+        "phonetic": "/ˈkɪtʃɪn/",
+        "trans": "oshxona",
+        "example": "There is a kitchen."
+      }
+    ],
+    "created_at": "2026-08-14",
+    "quiz": {
+      "version": 2,
+      "questions": [
+        {
+          "question": "___ is a bed in the room.",
+          "question_type": "standard",
+          "options": [
+            "There",
+            "They",
+            "These"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "___ are two chairs.",
+          "question_type": "standard",
+          "options": [
+            "There",
+            "It",
+            "That"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "The lamp is ___ the table.",
+          "question_type": "standard",
+          "options": [
+            "on",
+            "in",
+            "under"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "The bed is ___ the window.",
+          "question_type": "standard",
+          "options": [
+            "under",
+            "on",
+            "at"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Match prepositions",
+          "question_type": "matching",
+          "matching_text": "on → ___; under → ___; next to → ___",
+          "matching_answers": [
+            "surface",
+            "below",
+            "beside"
+          ],
+          "matching_words": [
+            "below",
+            "beside",
+            "surface"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "There ___ a bathroom.",
+          "filling_answers": [
+            "is"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "There ___ two chairs.",
+          "filling_answers": [
+            "are"
+          ]
+        },
+        {
+          "question": "Describe a room",
+          "question_type": "writing",
+          "writing_instruction": "Write 4 sentences using there is/are.",
+          "writing_text": "There is ___. There are ___. The ___ is on ___. The ___ is next to ___.",
+          "writing_answers": [
+            "a bed",
+            "two chairs",
+            "lamp",
+            "door"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 100020,
+    "title": "10B — U qayerda edi? Past Simple of be",
+    "target_level": "beginner-expert",
+    "video_url": "",
+    "content_text": "Maqsad: U qayerda edi? Past Simple of be.\n\nGRAMMATIKA — was/were: past form of be; was with I/he/she/it, were with you/we/they\nBe fe’lining o‘tgan zamoni was/were. I/he/she/it → was; you/we/they → were. Savol: Was she at home? Were they busy? Negative: wasn’t/weren’t. Past time markers: yesterday, last night, last week.\n\nTALAFFUZ — was/were weak forms and sentence rhythm\nSo'zlarni baland ovozda o'qing, namunaviy gaplarni 2-3 marta takrorlang va yangi so'zlarni gap ichida ishlating.\n\nAMALIYOT\n1) Grammar: qoidani o'zingizning 3-5 ta gapingizda qo'llang.\n2) Vocabulary: darsdagi yangi so'zlardan kamida 5 tasini gaplarda ishlating.\n3) Speaking: Partnerga Where were you yesterday? Were you busy? kabi savollar bering va qisqa javob qaytaring.\n4) Writing/Homework: Kecha yoki o‘tgan hafta haqida 8 ta gap yozing. Was/were bilan joy, kayfiyat va holatni tasvirlang.\n\nSELF-CHECK\nDars oxirida o'zingizga savol bering: qoidani kitobsiz tushuntira olamanmi, yangi so'zlarni talaffuz qila olamanmi va ular bilan mustaqil gap tuza olamanmi?",
+    "image_url": "",
+    "vocabulary": [
+      {
+        "word": "yesterday",
+        "phonetic": "/ˈjestədeɪ/",
+        "trans": "kecha",
+        "example": "I was at home yesterday."
+      },
+      {
+        "word": "last night",
+        "phonetic": "/ˌlɑːst ˈnaɪt/",
+        "trans": "kecha kechasi",
+        "example": "We were at the hotel last night."
+      },
+      {
+        "word": "last week",
+        "phonetic": "/ˌlɑːst ˈwiːk/",
+        "trans": "o‘tgan hafta",
+        "example": "They were busy last week."
+      },
+      {
+        "word": "home",
+        "phonetic": "/həʊm/",
+        "trans": "uy",
+        "example": "I was at home."
+      },
+      {
+        "word": "busy",
+        "phonetic": "/ˈbɪzi/",
+        "trans": "band",
+        "example": "She was busy."
+      },
+      {
+        "word": "free",
+        "phonetic": "/friː/",
+        "trans": "bo‘sh",
+        "example": "We were free."
+      },
+      {
+        "word": "sick",
+        "phonetic": "/sɪk/",
+        "trans": "kasal",
+        "example": "He was sick."
+      },
+      {
+        "word": "happy",
+        "phonetic": "/ˈhæpi/",
+        "trans": "xursand",
+        "example": "They were happy."
+      },
+      {
+        "word": "late",
+        "phonetic": "/leɪt/",
+        "trans": "kech",
+        "example": "I was late."
+      },
+      {
+        "word": "there",
+        "phonetic": "/ðeə(r)/",
+        "trans": "u yerda",
+        "example": "Were you there?"
+      }
+    ],
+    "created_at": "2026-08-14",
+    "quiz": {
+      "version": 2,
+      "questions": [
+        {
+          "question": "I ___ at home yesterday.",
+          "question_type": "standard",
+          "options": [
+            "was",
+            "were",
+            "am"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "They ___ busy last week.",
+          "question_type": "standard",
+          "options": [
+            "was",
+            "were",
+            "are"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "___ you there?",
+          "question_type": "standard",
+          "options": [
+            "Was",
+            "Were",
+            "Are"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "She ___ not late.",
+          "question_type": "standard",
+          "options": [
+            "was",
+            "were",
+            "is"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Match subjects",
+          "question_type": "matching",
+          "matching_text": "I → ___; she → ___; we → ___; they → ___",
+          "matching_answers": [
+            "was",
+            "was",
+            "were",
+            "were"
+          ],
+          "matching_words": [
+            "were",
+            "was",
+            "were",
+            "was"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "He ___ happy yesterday.",
+          "filling_answers": [
+            "was"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "We ___ at the hotel last night.",
+          "filling_answers": [
+            "were"
+          ]
+        },
+        {
+          "question": "Write about yesterday",
+          "question_type": "writing",
+          "writing_instruction": "Write 4 sentences about where you were yesterday.",
+          "writing_text": "I was ___. I was ___. We were ___. They were ___.",
+          "writing_answers": [
+            "at home",
+            "happy",
+            "together",
+            "busy"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 100021,
+    "title": "11A — AQShdagi yangi hayot: regular past simple",
+    "target_level": "beginner-expert",
+    "video_url": "",
+    "content_text": "Maqsad: AQShdagi yangi hayot: regular past simple.\n\nGRAMMATIKA — Past Simple regular verbs: -ed; positive statements and past time expressions\nRegular Past Simple odatda fe’lga -ed qo‘shish bilan tuziladi: work → worked, visit → visited. Talaffuz uch xil bo‘lishi mumkin: /t/ worked, /d/ played, /ɪd/ started. Past time expressions: yesterday, last week, two days ago.\n\nTALAFFUZ — regular past -ed endings /t/, /d/, /ɪd/\nSo'zlarni baland ovozda o'qing, namunaviy gaplarni 2-3 marta takrorlang va yangi so'zlarni gap ichida ishlating.\n\nAMALIYOT\n1) Grammar: qoidani o'zingizning 3-5 ta gapingizda qo'llang.\n2) Vocabulary: darsdagi yangi so'zlardan kamida 5 tasini gaplarda ishlating.\n3) Speaking: O‘tgan hafta qilgan 5 ta ishni ketma-ket ayting: first…, then…, after that…, finally…\n4) Writing/Homework: O‘tgan hafta haqida 8 ta gap yozing. Kamida 6 ta regular verb ishlating va -ed talaffuzini ovoz chiqarib mashq qiling.\n\nSELF-CHECK\nDars oxirida o'zingizga savol bering: qoidani kitobsiz tushuntira olamanmi, yangi so'zlarni talaffuz qila olamanmi va ular bilan mustaqil gap tuza olamanmi?",
+    "image_url": "",
+    "vocabulary": [
+      {
+        "word": "move",
+        "phonetic": "/muːv/",
+        "trans": "ko‘chmoq",
+        "example": "They moved to the USA."
+      },
+      {
+        "word": "start",
+        "phonetic": "/stɑːt/",
+        "trans": "boshlamoq",
+        "example": "She started a new life."
+      },
+      {
+        "word": "work",
+        "phonetic": "/wɜːk/",
+        "trans": "ishlamoq",
+        "example": "He worked in a shop."
+      },
+      {
+        "word": "live",
+        "phonetic": "/lɪv/",
+        "trans": "yashamoq",
+        "example": "They lived in New York."
+      },
+      {
+        "word": "visit",
+        "phonetic": "/ˈvɪzɪt/",
+        "trans": "tashrif buyurmoq",
+        "example": "We visited friends."
+      },
+      {
+        "word": "watch",
+        "phonetic": "/wɒtʃ/",
+        "trans": "tomosha qilmoq",
+        "example": "I watched a film."
+      },
+      {
+        "word": "play",
+        "phonetic": "/pleɪ/",
+        "trans": "o‘ynamoq",
+        "example": "They played football."
+      },
+      {
+        "word": "clean",
+        "phonetic": "/kliːn/",
+        "trans": "tozalamoq",
+        "example": "She cleaned the room."
+      },
+      {
+        "word": "open",
+        "phonetic": "/ˈəʊpən/",
+        "trans": "ochmoq",
+        "example": "He opened the door."
+      },
+      {
+        "word": "finish",
+        "phonetic": "/ˈfɪnɪʃ/",
+        "trans": "tugatmoq",
+        "example": "We finished work."
+      }
+    ],
+    "created_at": "2026-08-14",
+    "quiz": {
+      "version": 2,
+      "questions": [
+        {
+          "question": "Yesterday I ___ football.",
+          "question_type": "standard",
+          "options": [
+            "play",
+            "played",
+            "playing"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "They ___ to the USA.",
+          "question_type": "standard",
+          "options": [
+            "move",
+            "moved",
+            "moving"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "She ___ the room.",
+          "question_type": "standard",
+          "options": [
+            "cleaned",
+            "clean",
+            "cleaning"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Which verb is correct in Past Simple?",
+          "question_type": "standard",
+          "options": [
+            "finish → finished",
+            "finish → finisht",
+            "finish → finishs"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Match base and past",
+          "question_type": "matching",
+          "matching_text": "work → ___; play → ___; visit → ___",
+          "matching_answers": [
+            "worked",
+            "played",
+            "visited"
+          ],
+          "matching_words": [
+            "visited",
+            "worked",
+            "played"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "We ___ the film yesterday. (watch)",
+          "filling_answers": [
+            "watched"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "He ___ the door. (open)",
+          "filling_answers": [
+            "opened"
+          ]
+        },
+        {
+          "question": "Write a past story",
+          "question_type": "writing",
+          "writing_instruction": "Write 4 sentences about last week.",
+          "writing_text": "Last week I ___. Then I ___. After that I ___. Finally I ___.",
+          "writing_answers": [
+            "worked",
+            "visited",
+            "watched",
+            "finished"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 100022,
+    "title": "11B — Kun qanday o‘tdi? Irregular verbs: get/go/have/do",
+    "target_level": "beginner-expert",
+    "video_url": "",
+    "content_text": "Maqsad: Kun qanday o‘tdi? Irregular verbs: get/go/have/do.\n\nGRAMMATIKA — Past Simple irregular verbs and common verb phrases with get, go, have, do\nIrregular fe’llar -ed olmaydi: get → got, go → went, have → had, do → did. Ularni ibora bilan yodlang: get home, go to work, have breakfast/lunch, do homework. Past Simpleda vaqt o‘tgan bo‘lsa fe’lning past shakli ishlatiladi.\n\nTALAFFUZ — irregular past forms and sentence rhythm\nSo'zlarni baland ovozda o'qing, namunaviy gaplarni 2-3 marta takrorlang va yangi so'zlarni gap ichida ishlating.\n\nAMALIYOT\n1) Grammar: qoidani o'zingizning 3-5 ta gapingizda qo'llang.\n2) Vocabulary: darsdagi yangi so'zlardan kamida 5 tasini gaplarda ishlating.\n3) Speaking: Yesterday routine: I got up…, I had…, I went…, I did… ketma-ketligida 45 soniya gapiring.\n4) Writing/Homework: Get/go/have/do bilan 8 ta gap yozing: 2 tasi get, 2 tasi go, 2 tasi have, 2 tasi do. So‘ng ularni kechagi kun bilan bog‘lang.\n\nSELF-CHECK\nDars oxirida o'zingizga savol bering: qoidani kitobsiz tushuntira olamanmi, yangi so'zlarni talaffuz qila olamanmi va ular bilan mustaqil gap tuza olamanmi?",
+    "image_url": "",
+    "vocabulary": [
+      {
+        "word": "get",
+        "phonetic": "/ɡet/",
+        "trans": "olmoq/ega bo‘lmoq",
+        "example": "I got home late."
+      },
+      {
+        "word": "got",
+        "phonetic": "/ɡɒt/",
+        "trans": "oldi/ega bo‘ldi",
+        "example": "I got a message."
+      },
+      {
+        "word": "go",
+        "phonetic": "/ɡəʊ/",
+        "trans": "bormoq",
+        "example": "We went home."
+      },
+      {
+        "word": "went",
+        "phonetic": "/went/",
+        "trans": "bordi",
+        "example": "She went to work."
+      },
+      {
+        "word": "have",
+        "phonetic": "/hæv/",
+        "trans": "ega bo‘lmoq",
+        "example": "I had breakfast."
+      },
+      {
+        "word": "had",
+        "phonetic": "/hæd/",
+        "trans": "ega bo‘ldi",
+        "example": "We had lunch."
+      },
+      {
+        "word": "do",
+        "phonetic": "/duː/",
+        "trans": "qilmoq",
+        "example": "I did my homework."
+      },
+      {
+        "word": "did",
+        "phonetic": "/dɪd/",
+        "trans": "qildi",
+        "example": "She did the work."
+      },
+      {
+        "word": "home",
+        "phonetic": "/həʊm/",
+        "trans": "uy",
+        "example": "We got home at six."
+      },
+      {
+        "word": "breakfast",
+        "phonetic": "/ˈbrekfəst/",
+        "trans": "nonushta",
+        "example": "I had breakfast."
+      }
+    ],
+    "created_at": "2026-08-14",
+    "quiz": {
+      "version": 2,
+      "questions": [
+        {
+          "question": "I ___ home at six.",
+          "question_type": "standard",
+          "options": [
+            "get",
+            "got",
+            "gets"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "We ___ to work yesterday.",
+          "question_type": "standard",
+          "options": [
+            "went",
+            "go",
+            "gone"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "She ___ breakfast at eight.",
+          "question_type": "standard",
+          "options": [
+            "had",
+            "have",
+            "has"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "He ___ his homework.",
+          "question_type": "standard",
+          "options": [
+            "did",
+            "do",
+            "does"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Match verbs",
+          "question_type": "matching",
+          "matching_text": "get → ___; go → ___; have → ___; do → ___",
+          "matching_answers": [
+            "got",
+            "went",
+            "had",
+            "did"
+          ],
+          "matching_words": [
+            "had",
+            "got",
+            "did",
+            "went"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "I ___ home late. (get)",
+          "filling_answers": [
+            "got"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "We ___ lunch at one. (have)",
+          "filling_answers": [
+            "had"
+          ]
+        },
+        {
+          "question": "Write yesterday's routine",
+          "question_type": "writing",
+          "writing_instruction": "Write 4 sentences using the four irregular verbs.",
+          "writing_text": "I got ___. I went ___. I had ___. I did ___.",
+          "writing_answers": [
+            "home",
+            "to work",
+            "breakfast",
+            "homework"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 100023,
+    "title": "12A — Poyezddagi notanishlar: regular + irregular Past Simple",
+    "target_level": "beginner-expert",
+    "video_url": "",
+    "content_text": "Maqsad: Poyezddagi notanishlar: regular + irregular Past Simple.\n\nGRAMMATIKA — Past Simple revision with regular and irregular verbs; sequencing past events\nPast Simpleda regular va irregular fe’llarni farqlang. Regular: talked, arrived, remembered. Irregular: met, said, took, sat, left. Hikoya tuzishda first, then, after that, finally kabi bog‘lovchilardan foydalaning.\n\nTALAFFUZ — regular/irregular verb endings and past forms\nSo'zlarni baland ovozda o'qing, namunaviy gaplarni 2-3 marta takrorlang va yangi so'zlarni gap ichida ishlating.\n\nAMALIYOT\n1) Grammar: qoidani o'zingizning 3-5 ta gapingizda qo'llang.\n2) Vocabulary: darsdagi yangi so'zlardan kamida 5 tasini gaplarda ishlating.\n3) Speaking: 1 daqiqalik mini-story: poyezdga chiqish, notanish odam bilan uchrashish, suhbat, kelish va ketish voqealarini ketma-ket ayting.\n4) Writing/Homework: Poyezdda bo‘lgan yoki tasavvuriy voqeani 8-10 gap bilan yozing. Kamida 4 regular va 4 irregular past verb ishlating.\n\nSELF-CHECK\nDars oxirida o'zingizga savol bering: qoidani kitobsiz tushuntira olamanmi, yangi so'zlarni talaffuz qila olamanmi va ular bilan mustaqil gap tuza olamanmi?",
+    "image_url": "",
+    "vocabulary": [
+      {
+        "word": "train",
+        "phonetic": "/treɪn/",
+        "trans": "poyezd",
+        "example": "I was on a train."
+      },
+      {
+        "word": "stranger",
+        "phonetic": "/ˈstreɪndʒə(r)/",
+        "trans": "notanish odam",
+        "example": "A stranger talked to me."
+      },
+      {
+        "word": "meet",
+        "phonetic": "/miːt/",
+        "trans": "uchrashmoq",
+        "example": "I met a new person."
+      },
+      {
+        "word": "say",
+        "phonetic": "/seɪ/",
+        "trans": "aytmoq",
+        "example": "He said hello."
+      },
+      {
+        "word": "take",
+        "phonetic": "/teɪk/",
+        "trans": "olmoq",
+        "example": "She took a seat."
+      },
+      {
+        "word": "sit",
+        "phonetic": "/sɪt/",
+        "trans": "o‘tirmoq",
+        "example": "We sat together."
+      },
+      {
+        "word": "talk",
+        "phonetic": "/tɔːk/",
+        "trans": "gaplashmoq",
+        "example": "We talked for an hour."
+      },
+      {
+        "word": "arrive",
+        "phonetic": "/əˈraɪv/",
+        "trans": "yetib kelmoq",
+        "example": "The train arrived."
+      },
+      {
+        "word": "leave",
+        "phonetic": "/liːv/",
+        "trans": "ketmoq",
+        "example": "The train left at six."
+      },
+      {
+        "word": "remember",
+        "phonetic": "/rɪˈmembə(r)/",
+        "trans": "eslamoq",
+        "example": "I remember the story."
+      }
+    ],
+    "created_at": "2026-08-14",
+    "quiz": {
+      "version": 2,
+      "questions": [
+        {
+          "question": "Yesterday I ___ a stranger.",
+          "question_type": "standard",
+          "options": [
+            "meet",
+            "met",
+            "meeting"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "She ___ a seat.",
+          "question_type": "standard",
+          "options": [
+            "take",
+            "took",
+            "taken"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "question": "We ___ for an hour.",
+          "question_type": "standard",
+          "options": [
+            "talked",
+            "talk",
+            "talking"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "The train ___ at six.",
+          "question_type": "standard",
+          "options": [
+            "left",
+            "leave",
+            "leaves"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Match past forms",
+          "question_type": "matching",
+          "matching_text": "meet → ___; take → ___; talk → ___; leave → ___",
+          "matching_answers": [
+            "met",
+            "took",
+            "talked",
+            "left"
+          ],
+          "matching_words": [
+            "left",
+            "met",
+            "talked",
+            "took"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "He ___ hello. (say)",
+          "filling_answers": [
+            "said"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "We ___ together. (sit)",
+          "filling_answers": [
+            "sat"
+          ]
+        },
+        {
+          "question": "Write a mini-story",
+          "question_type": "writing",
+          "writing_instruction": "Write 4 connected past sentences.",
+          "writing_text": "First I ___. Then I ___. After that we ___. Finally I ___.",
+          "writing_answers": [
+            "arrived",
+            "met",
+            "talked",
+            "left"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 100024,
+    "title": "12B — Past Simple — yakuniy takrorlash",
+    "target_level": "beginner-expert",
+    "video_url": "",
+    "content_text": "Maqsad: Past Simple — yakuniy takrorlash.\n\nGRAMMATIKA — Past Simple full revision: be, regular verbs, irregular verbs, time expressions and sequencing\nPast Simple yakunida uch guruhni ajrating: 1) be → was/were; 2) regular verbs → -ed; 3) irregular verbs → alohida past form. Vaqt ko‘rsatkichlari va sequencing words hikoyani aniq qiladi. O‘tgan zamon haqida gapirganda fe’lni hozirgi shaklda qoldirmang.\n\nTALAFFUZ — past verb revision and sentence rhythm\nSo'zlarni baland ovozda o'qing, namunaviy gaplarni 2-3 marta takrorlang va yangi so'zlarni gap ichida ishlating.\n\nAMALIYOT\n1) Grammar: qoidani o'zingizning 3-5 ta gapingizda qo'llang.\n2) Vocabulary: darsdagi yangi so'zlardan kamida 5 tasini gaplarda ishlating.\n3) Speaking: 1-2 daqiqalik yakuniy story ayting. Keyin o‘zingizni tekshiring: be, regular va irregular fe’llarning har biridan foydalandimmi?\n4) Writing/Homework: Yakuniy writing: 'My best day' yoki 'Yesterday' mavzusida 10-12 gap yozing. Was/were, kamida 4 regular va 4 irregular verb hamda first/then/after that/finally ishlating.\n\nSELF-CHECK\nDars oxirida o'zingizga savol bering: qoidani kitobsiz tushuntira olamanmi, yangi so'zlarni talaffuz qila olamanmi va ular bilan mustaqil gap tuza olamanmi?",
+    "image_url": "",
+    "vocabulary": [
+      {
+        "word": "yesterday",
+        "phonetic": "/ˈjestədeɪ/",
+        "trans": "kecha",
+        "example": "I worked yesterday."
+      },
+      {
+        "word": "last night",
+        "phonetic": "/ˌlɑːst ˈnaɪt/",
+        "trans": "kecha kechasi",
+        "example": "We watched a film last night."
+      },
+      {
+        "word": "last week",
+        "phonetic": "/ˌlɑːst ˈwiːk/",
+        "trans": "o‘tgan hafta",
+        "example": "They went last week."
+      },
+      {
+        "word": "ago",
+        "phonetic": "/əˈɡəʊ/",
+        "trans": "oldin",
+        "example": "Two days ago."
+      },
+      {
+        "word": "first",
+        "phonetic": "/fɜːst/",
+        "trans": "avval/birinchi",
+        "example": "First, I got up."
+      },
+      {
+        "word": "then",
+        "phonetic": "/ðen/",
+        "trans": "keyin",
+        "example": "Then I went out."
+      },
+      {
+        "word": "after that",
+        "phonetic": "/ˈɑːftə ðæt/",
+        "trans": "shundan keyin",
+        "example": "After that, I met him."
+      },
+      {
+        "word": "finally",
+        "phonetic": "/ˈfaɪnəli/",
+        "trans": "nihoyat",
+        "example": "Finally, I went home."
+      },
+      {
+        "word": "remember",
+        "phonetic": "/rɪˈmembə(r)/",
+        "trans": "eslamoq",
+        "example": "Remember the past form."
+      },
+      {
+        "word": "story",
+        "phonetic": "/ˈstɔːri/",
+        "trans": "hikoya",
+        "example": "Tell a short story."
+      }
+    ],
+    "created_at": "2026-08-14",
+    "quiz": {
+      "version": 2,
+      "questions": [
+        {
+          "question": "I ___ at home yesterday.",
+          "question_type": "standard",
+          "options": [
+            "was",
+            "were",
+            "am"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "They ___ football last week.",
+          "question_type": "standard",
+          "options": [
+            "played",
+            "play",
+            "playing"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "She ___ to work yesterday.",
+          "question_type": "standard",
+          "options": [
+            "went",
+            "go",
+            "gone"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Which sequence is best?",
+          "question_type": "standard",
+          "options": [
+            "First → then → after that → finally",
+            "Finally → first → then → yesterday",
+            "Then → yesterday → first → finally"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "question": "Match past forms",
+          "question_type": "matching",
+          "matching_text": "be → ___; go → ___; work → ___; have → ___",
+          "matching_answers": [
+            "was/were",
+            "went",
+            "worked",
+            "had"
+          ],
+          "matching_words": [
+            "had",
+            "worked",
+            "was/were",
+            "went"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "First I ___ up. Then I ___ breakfast. (get/have)",
+          "filling_answers": [
+            "got",
+            "had"
+          ]
+        },
+        {
+          "question": "Complete",
+          "question_type": "filling",
+          "filling_text": "Finally, we ___ home. (go)",
+          "filling_answers": [
+            "went"
+          ]
+        },
+        {
+          "question": "Final past story",
+          "question_type": "writing",
+          "writing_instruction": "Write a short story using different past forms.",
+          "writing_text": "First I ___. Then I ___. After that I ___. Finally I ___.",
+          "writing_answers": [
+            "got up",
+            "had breakfast",
+            "went out",
+            "went home"
+          ]
+        }
+      ]
+    }
+  }
+];
+
+
+      /* ============================================================
          MA'LUMOTLAR BAZASI YORDAMCHI FUNKSIYALARI (Supabase)
          Har bir jadvalda "data" nomli JSONB ustun bor - shu yerda
          to'liq JS obyekti (user, lesson, submission, chat xabari)
@@ -8042,6 +11877,26 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           .delete()
           .eq("email", email);
         if (error) console.error("Supabase (foydalanuvchi o'chirish) xatolik:", error);
+      }
+
+      async function seedEnglishFileBeginnerLessons() {
+        if (!currentUser || !["teacher", "admin"].includes(currentUser.role)) return;
+        const existingTitles = new Set(lessons.map((l) => String(l.title || "").trim()));
+        const missing = ENGLISH_FILE_BEGINNER_LESSONS.filter((l) => !existingTitles.has(l.title));
+        if (!missing.length) return;
+
+        let added = 0;
+        for (const lesson of missing) {
+          const saved = await dbInsertLesson(lesson);
+          if (saved) {
+            lessons.push({ ...lesson });
+            added++;
+          }
+        }
+        if (added) {
+          lessons.sort((a, b) => Number(a.id || 0) - Number(b.id || 0));
+          console.info(`English File Beginner: ${added} ta yangi dars bazaga qo'shildi.`);
+        }
       }
 
       async function dbInsertLesson(lesson) {
@@ -9628,6 +13483,19 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
 
         const user = await ensureProfileForAuth(authUser, extra);
         currentUser = user;
+
+        // Teacher/admin tizimga kirganda English File Beginner kursining
+        // mavjud bo'lmagan darslarini avtomatik ravishda Supabase'ga qo'shamiz.
+        // Student loginida seed ishlamaydi, shuning uchun RLS/permissions
+        // sababli keraksiz INSERT urinishlari bo'lmaydi.
+        if (["teacher", "admin"].includes(user.role)) {
+          try {
+            await seedEnglishFileBeginnerLessons();
+          } catch (e) {
+            console.error("English File Beginner seed xatosi:", e);
+          }
+        }
+
         localStorage.setItem("emerald_session_email", user.email);
 
         checkDailyStreak(user);
