@@ -1671,6 +1671,226 @@
         background: rgba(2, 20, 15, 0.9);
       }
 
+      /* ===== ✨ EMERALD LAB — RICH LESSON CONTENT EDITOR ===== */
+      .lesson-editor-shell {
+        border: 1px solid var(--card-border);
+        border-radius: 18px;
+        background: rgba(0, 0, 0, 0.14);
+        overflow: hidden;
+        box-shadow: 0 0 24px rgba(16,185,129,.06);
+      }
+      .lesson-editor-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+        padding: 9px;
+        background: linear-gradient(135deg, rgba(16,185,129,.13), rgba(6,44,34,.55));
+        border-bottom: 1px solid var(--card-border);
+      }
+      .lesson-editor-toolbar-group {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding-right: 7px;
+        margin-right: 2px;
+        border-right: 1px solid rgba(52,211,153,.15);
+      }
+      .lesson-editor-toolbar-group:last-child {
+        border-right: 0;
+        margin-right: 0;
+        padding-right: 0;
+      }
+      .lesson-editor-btn {
+        min-width: 34px;
+        height: 34px;
+        padding: 0 9px;
+        border: 1px solid var(--card-border);
+        border-radius: 9px;
+        background: rgba(255,255,255,.035);
+        color: var(--text-main);
+        cursor: pointer;
+        font-size: .72rem;
+        font-weight: 800;
+        transition: .18s ease;
+        white-space: nowrap;
+      }
+      .lesson-editor-btn:hover,
+      .lesson-editor-btn.active {
+        color: #022c22;
+        background: var(--emerald-light);
+        border-color: var(--emerald-light);
+        transform: translateY(-1px);
+      }
+      .lesson-editor-btn.image-btn {
+        background: rgba(16,185,129,.14);
+        color: var(--emerald-light);
+      }
+      .lesson-editor-help {
+        padding: 7px 12px 9px;
+        color: var(--text-muted);
+        font-size: .68rem;
+        border-bottom: 1px solid rgba(52,211,153,.08);
+      }
+      .lesson-editor-canvas {
+        min-height: 330px;
+        padding: 18px 20px;
+        outline: none;
+        color: var(--text-main);
+        font-size: .92rem;
+        line-height: 1.75;
+        overflow: auto;
+      }
+      .lesson-editor-canvas:focus {
+        box-shadow: inset 0 0 0 1px rgba(52,211,153,.18);
+      }
+      .lesson-editor-canvas:empty::before {
+        content: attr(data-placeholder);
+        color: rgba(167,243,208,.55);
+        pointer-events: none;
+      }
+      .lesson-editor-canvas p,
+      .lesson-editor-canvas div {
+        margin: 0 0 10px;
+      }
+      .lesson-editor-canvas h2 {
+        color: var(--emerald-light);
+        font-size: 1.35rem;
+        margin: 16px 0 9px;
+      }
+      .lesson-editor-canvas h3 {
+        color: var(--emerald-light);
+        font-size: 1.05rem;
+        margin: 14px 0 7px;
+      }
+      .lesson-editor-canvas blockquote {
+        margin: 12px 0;
+        padding: 10px 14px;
+        border-left: 3px solid var(--emerald-primary);
+        background: rgba(16,185,129,.08);
+        border-radius: 0 10px 10px 0;
+        color: var(--text-muted);
+      }
+      .lesson-editor-canvas ul,
+      .lesson-editor-canvas ol {
+        padding-left: 25px;
+        margin: 8px 0 12px;
+      }
+      .lesson-editor-image {
+        position: relative;
+        display: block;
+        max-width: 100%;
+        margin: 10px 0 14px;
+        padding: 7px;
+        border: 1px solid rgba(52,211,153,.18);
+        border-radius: 14px;
+        background: rgba(0,0,0,.12);
+        box-shadow: 0 8px 25px rgba(0,0,0,.16);
+        clear: both;
+      }
+      .lesson-editor-image img {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        max-height: 520px;
+        object-fit: contain;
+        border-radius: 9px;
+      }
+      .lesson-editor-image-left {
+        float: left;
+        width: min(46%, 430px);
+        margin: 4px 18px 12px 0;
+        clear: left;
+      }
+      .lesson-editor-image-right {
+        float: right;
+        width: min(46%, 430px);
+        margin: 4px 0 12px 18px;
+        clear: right;
+      }
+      .lesson-editor-image-center {
+        width: min(100%, 760px);
+        margin: 14px auto;
+        clear: both;
+      }
+      .lesson-editor-image figcaption {
+        padding: 5px 4px 1px;
+        color: var(--text-muted);
+        font-size: .68rem;
+        text-align: center;
+        outline: none;
+      }
+      .lesson-editor-image.is-selected {
+        border-color: var(--emerald-light);
+        box-shadow: 0 0 0 2px rgba(52,211,153,.16), 0 12px 30px rgba(16,185,129,.12);
+      }
+      .lesson-editor-image.is-selected::after {
+        content: "Rasm tanlandi — chap / o‘ng / markaz tugmalaridan foydalaning";
+        position: absolute;
+        left: 8px;
+        bottom: 8px;
+        padding: 4px 7px;
+        border-radius: 7px;
+        background: rgba(2,26,20,.88);
+        color: var(--emerald-light);
+        font-size: .58rem;
+        font-weight: 800;
+      }
+      .lesson-editor-status {
+        min-height: 18px;
+        padding: 0 12px 8px;
+        color: var(--text-muted);
+        font-size: .66rem;
+      }
+      .lesson-rich-content {
+        color: var(--text-main);
+        font-size: .92rem;
+        line-height: 1.75;
+        overflow: auto;
+      }
+      .lesson-rich-content::after {
+        content: "";
+        display: block;
+        clear: both;
+      }
+      .lesson-rich-content p,
+      .lesson-rich-content div {
+        margin: 0 0 12px;
+      }
+      .lesson-rich-content h2,
+      .lesson-rich-content h3 {
+        color: var(--emerald-light);
+        margin: 16px 0 8px;
+      }
+      .lesson-rich-content blockquote {
+        margin: 12px 0;
+        padding: 10px 14px;
+        border-left: 3px solid var(--emerald-primary);
+        background: rgba(16,185,129,.08);
+        border-radius: 0 10px 10px 0;
+      }
+      .lesson-rich-content ul,
+      .lesson-rich-content ol {
+        padding-left: 25px;
+        margin: 8px 0 12px;
+      }
+      .lesson-rich-content .lesson-editor-image {
+        margin-top: 5px;
+      }
+      @media (max-width: 700px) {
+        .lesson-editor-canvas { min-height: 260px; padding: 14px; }
+        .lesson-editor-image-left,
+        .lesson-editor-image-right {
+          float: none;
+          width: 100%;
+          max-width: 100%;
+          margin: 12px 0;
+          clear: both;
+        }
+        .lesson-editor-toolbar { gap: 4px; }
+        .lesson-editor-btn { height: 32px; padding: 0 7px; font-size: .65rem; }
+      }
+
       /* ===== 🖼️ USTOZ VAZIFA/DARS ASOSIY RASMI ===== */
       .teacher-task-image-upload {
         border: 1px dashed var(--card-border-hover);
@@ -5262,15 +5482,71 @@
               </div>
 
               <div class="input-group">
-                <label data-i18n="lessonTextLabel"
-                  >Dars Topshiriqlari / Matni</label
-                >
+                <label data-i18n="lessonTextLabel">Dars Matni / Kontenti</label>
+
+                <div class="lesson-editor-shell">
+                  <div class="lesson-editor-toolbar" role="toolbar" aria-label="Lesson content toolbar">
+                    <div class="lesson-editor-toolbar-group">
+                      <button type="button" class="lesson-editor-btn" onclick="formatLessonEditor('bold')" title="Qalin">B</button>
+                      <button type="button" class="lesson-editor-btn" onclick="formatLessonEditor('italic')" title="Qiya">I</button>
+                      <button type="button" class="lesson-editor-btn" onclick="formatLessonEditor('underline')" title="Tagi chizilgan">U</button>
+                    </div>
+
+                    <div class="lesson-editor-toolbar-group">
+                      <button type="button" class="lesson-editor-btn" onclick="formatLessonEditor('formatBlock','<h2>')" title="Sarlavha">H2</button>
+                      <button type="button" class="lesson-editor-btn" onclick="formatLessonEditor('formatBlock','<h3>')" title="Kichik sarlavha">H3</button>
+                      <button type="button" class="lesson-editor-btn" onclick="formatLessonEditor('formatBlock','<blockquote>')" title="Izoh / qoida">❝</button>
+                    </div>
+
+                    <div class="lesson-editor-toolbar-group">
+                      <button type="button" class="lesson-editor-btn" onclick="formatLessonEditor('insertUnorderedList')" title="Ro'yxat">☷</button>
+                      <button type="button" class="lesson-editor-btn" onclick="formatLessonEditor('insertOrderedList')" title="Raqamli ro'yxat">1.</button>
+                      <button type="button" class="lesson-editor-btn" onclick="formatLessonEditor('removeFormat')" title="Formatni tozalash">Tx</button>
+                    </div>
+
+                    <div class="lesson-editor-toolbar-group">
+                      <button type="button" class="lesson-editor-btn image-btn" onclick="document.getElementById('lesson-rich-image-file').click()" title="Kompyuterdan bir nechta rasm yuklash">🖼️ Rasm</button>
+                      <button type="button" class="lesson-editor-btn image-btn" onclick="insertLessonImageFromUrl()" title="Rasm URL orqali qo'shish">🔗 URL</button>
+                      <button type="button" class="lesson-editor-btn" onclick="setLessonImageAlignment('left')" title="Rasm chapda, matn yonida">↤ Chap</button>
+                      <button type="button" class="lesson-editor-btn" onclick="setLessonImageAlignment('right')" title="Rasm o'ngda, matn yonida">O‘ng ↦</button>
+                      <button type="button" class="lesson-editor-btn" onclick="setLessonImageAlignment('center')" title="Rasm markazda">↔ Markaz</button>
+                    </div>
+
+                    <input
+                      type="file"
+                      id="lesson-rich-image-file"
+                      accept="image/png,image/jpeg,image/webp,image/gif"
+                      multiple
+                      hidden
+                      onchange="handleLessonRichImages(event)"
+                    />
+                  </div>
+
+                  <div
+                    id="lesson-editor"
+                    class="lesson-editor-canvas"
+                    contenteditable="true"
+                    spellcheck="true"
+                    data-placeholder="Darsni shu yerga yozing... Matnni bo'limlarga ajrating, kerakli joyga bir nechta rasm qo'shing. Rasmni tanlab Chap/O‘ng/Markaz tugmasini bossangiz, matn rasm yonidan oqib o'tadi."
+                    onmouseup="rememberLessonEditorSelection()"
+                    onkeyup="rememberLessonEditorSelection()"
+                    oninput="syncLessonEditorToHidden()"
+                    ondragover="event.preventDefault()"
+                    ondrop="handleLessonEditorDrop(event)"
+                    onpaste="handleLessonEditorPaste(event)"
+                  ></div>
+
+                  <div id="lesson-editor-status" class="lesson-editor-status">
+                    💡 Maslahat: rasm ustiga bosing → <strong>Chap</strong> yoki <strong>O‘ng</strong>ni tanlang. Shunda matn rasmning yonidan davom etadi.
+                  </div>
+                </div>
+
                 <textarea
                   id="lesson-text"
                   data-i18n-ph="lessonTextPlaceholder"
-                  placeholder="Dars bo'yicha batafsil ma'lumot va vazifalarni kiriting..."
-                  rows="3"
-                  required
+                  aria-hidden="true"
+                  tabindex="-1"
+                  hidden
                 ></textarea>
               </div>
 
@@ -10846,6 +11122,269 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
       document.getElementById("quiz-question-type")?.addEventListener("change", toggleGrammarQuestionTypeFields);
       toggleGrammarQuestionTypeFields();
 
+      /* ============================================================
+         ✨ EMERALD LAB — RICH LESSON CONTENT EDITOR
+         Matn + istalgancha rasm + chap/o'ng/markaz joylashuvi.
+         Saqlanadigan qiymat: lesson.content_text = HTML.
+      ============================================================ */
+      let lessonEditorSavedRange = null;
+      let selectedLessonEditorImage = null;
+
+      function getLessonEditor() {
+        return document.getElementById("lesson-editor");
+      }
+
+      function rememberLessonEditorSelection() {
+        const editor = getLessonEditor();
+        const sel = window.getSelection();
+        if (!editor || !sel || !sel.rangeCount) return;
+        const range = sel.getRangeAt(0);
+        if (editor.contains(range.commonAncestorContainer)) {
+          lessonEditorSavedRange = range.cloneRange();
+        }
+      }
+
+      function restoreLessonEditorSelection() {
+        const editor = getLessonEditor();
+        if (!editor) return;
+        editor.focus();
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+
+        if (lessonEditorSavedRange && editor.contains(lessonEditorSavedRange.commonAncestorContainer)) {
+          sel.addRange(lessonEditorSavedRange);
+          return;
+        }
+
+        const range = document.createRange();
+        range.selectNodeContents(editor);
+        range.collapse(false);
+        sel.addRange(range);
+      }
+
+      function syncLessonEditorToHidden() {
+        const editor = getLessonEditor();
+        const hidden = document.getElementById("lesson-text");
+        if (editor && hidden) hidden.value = editor.innerHTML.trim();
+      }
+
+      function formatLessonEditor(command, value = null) {
+        restoreLessonEditorSelection();
+        try {
+          document.execCommand(command, false, value);
+        } catch (err) {
+          console.warn("Lesson editor format failed:", err);
+        }
+        syncLessonEditorToHidden();
+        rememberLessonEditorSelection();
+      }
+
+      function clearLessonImageSelection() {
+        document.querySelectorAll(".lesson-editor-image.is-selected")
+          .forEach(el => el.classList.remove("is-selected"));
+        selectedLessonEditorImage = null;
+      }
+
+      function selectLessonEditorImage(figure) {
+        clearLessonImageSelection();
+        selectedLessonEditorImage = figure;
+        figure.classList.add("is-selected");
+      }
+
+      function buildLessonImageHtml(dataUrl, alt = "Dars rasmi") {
+        const safeAlt = escapeHtml(alt || "Dars rasmi");
+        const safeSrc = escapeHtml(dataUrl);
+        return `
+          <figure class="lesson-editor-image lesson-editor-image-center" contenteditable="false"
+            onclick="selectLessonEditorImage(this)">
+            <img src="${safeSrc}" alt="${safeAlt}" loading="lazy" />
+            <figcaption contenteditable="true" onclick="event.stopPropagation()">Rasm izohi (ixtiyoriy)</figcaption>
+          </figure>
+          <p><br></p>`;
+      }
+
+      function insertLessonHtmlAtCursor(html) {
+        const editor = getLessonEditor();
+        if (!editor) return;
+
+        restoreLessonEditorSelection();
+
+        const sel = window.getSelection();
+        if (!sel || !sel.rangeCount) return;
+
+        const range = sel.getRangeAt(0);
+        if (!editor.contains(range.commonAncestorContainer)) {
+          const endRange = document.createRange();
+          endRange.selectNodeContents(editor);
+          endRange.collapse(false);
+          sel.removeAllRanges();
+          sel.addRange(endRange);
+        }
+
+        const currentRange = sel.getRangeAt(0);
+        currentRange.deleteContents();
+
+        const template = document.createElement("template");
+        template.innerHTML = html;
+        const fragment = template.content.cloneNode(true);
+        const lastNode = fragment.lastChild;
+        currentRange.insertNode(fragment);
+
+        const after = document.createRange();
+        if (lastNode && lastNode.parentNode) {
+          after.setStartAfter(lastNode);
+          after.collapse(true);
+          sel.removeAllRanges();
+          sel.addRange(after);
+          lessonEditorSavedRange = after.cloneRange();
+        }
+
+        syncLessonEditorToHidden();
+      }
+
+      async function handleLessonRichImages(event) {
+        const files = [...(event.target.files || [])];
+        if (!files.length) return;
+
+        const status = document.getElementById("lesson-editor-status");
+        if (status) status.innerHTML = "⏳ Rasmlar optimallashtirilmoqda...";
+
+        let added = 0;
+        for (const file of files) {
+          if (!file.type.startsWith("image/")) continue;
+          if (file.size > 30 * 1024 * 1024) continue;
+
+          try {
+            const dataUrl = await compressTeacherTaskImage(file, 900, 0.80);
+            if (dataUrl) {
+              insertLessonHtmlAtCursor(buildLessonImageHtml(dataUrl, file.name.replace(/\.[^.]+$/, "")));
+              added++;
+            }
+          } catch (err) {
+            console.error("Lesson rich image error:", err);
+          }
+        }
+
+        if (status) {
+          status.innerHTML = added
+            ? `✅ ${added} ta rasm qo‘shildi. Rasmni bosing → Chap / O‘ng / Markaz.`
+            : "❌ Rasm qo‘shilmadi. JPG, PNG, WEBP yoki GIF tanlang.";
+        }
+
+        event.target.value = "";
+        syncLessonEditorToHidden();
+      }
+
+      function insertLessonImageFromUrl() {
+        const url = prompt("Rasm URL manzilini kiriting:");
+        if (!url) return;
+
+        if (!/^https?:\/\//i.test(url)) {
+          alert("Iltimos, http:// yoki https:// bilan boshlanadigan rasm URL kiriting.");
+          return;
+        }
+
+        insertLessonHtmlAtCursor(buildLessonImageHtml(url, "Dars rasmi"));
+      }
+
+      function setLessonImageAlignment(alignment) {
+        if (!selectedLessonEditorImage) {
+          alert("Avval dars ichidagi rasm ustiga bosing.");
+          return;
+        }
+
+        selectedLessonEditorImage.classList.remove(
+          "lesson-editor-image-left",
+          "lesson-editor-image-right",
+          "lesson-editor-image-center"
+        );
+        selectedLessonEditorImage.classList.add(`lesson-editor-image-${alignment}`);
+
+        syncLessonEditorToHidden();
+      }
+
+      function handleLessonEditorDrop(event) {
+        event.preventDefault();
+        const files = [...(event.dataTransfer?.files || [])].filter(file => file.type.startsWith("image/"));
+        if (!files.length) return;
+
+        const fakeEvent = {
+          target: { files },
+        };
+        handleLessonRichImages(fakeEvent);
+      }
+
+      async function handleLessonEditorPaste(event) {
+        const items = [...(event.clipboardData?.items || [])];
+        const imageItems = items.filter(item => item.type.startsWith("image/"));
+        if (!imageItems.length) return;
+
+        event.preventDefault();
+        const files = imageItems.map(item => item.getAsFile()).filter(Boolean);
+        if (!files.length) return;
+
+        await handleLessonRichImages({ target: { files } });
+      }
+
+      function resetLessonRichEditor() {
+        const editor = getLessonEditor();
+        const hidden = document.getElementById("lesson-text");
+        if (editor) editor.innerHTML = "";
+        if (hidden) hidden.value = "";
+        lessonEditorSavedRange = null;
+        clearLessonImageSelection();
+
+        const status = document.getElementById("lesson-editor-status");
+        if (status) {
+          status.innerHTML = "💡 Maslahat: rasm ustiga bosing → <strong>Chap</strong> yoki <strong>O‘ng</strong>ni tanlang. Shunda matn rasmning yonidan davom etadi.";
+        }
+      }
+
+      function sanitizeLessonRichContent(raw) {
+        const source = String(raw || "");
+        if (!source.trim()) return "";
+
+        // Eski darslarda oddiy matn saqlangan bo'lsa, uni aynan matn sifatida ko'rsatamiz.
+        if (!/<[a-z][\\s\\S]*>/i.test(source)) {
+          return escapeHtml(source).replace(/\\r?\\n/g, "<br>");
+        }
+
+        const template = document.createElement("template");
+        template.innerHTML = source;
+
+        template.content.querySelectorAll("script,style,iframe,object,embed,form,input,button").forEach(el => el.remove());
+
+        template.content.querySelectorAll("*").forEach(el => {
+          [...el.attributes].forEach(attr => {
+            const name = attr.name.toLowerCase();
+            const value = attr.value || "";
+
+            if (name.startsWith("on")) {
+              el.removeAttribute(attr.name);
+              return;
+            }
+
+            if ((name === "src" || name === "href") && /^javascript:/i.test(value)) {
+              el.removeAttribute(attr.name);
+              return;
+            }
+
+            if (name === "src" && el.tagName === "IMG" &&
+                !/^(https?:\/\/|data:image\/)/i.test(value)) {
+              el.removeAttribute(attr.name);
+            }
+          });
+        });
+
+        return template.innerHTML;
+      }
+
+      document.addEventListener("click", (event) => {
+        if (!event.target.closest(".lesson-editor-image")) {
+          clearLessonImageSelection();
+        }
+      });
+
       async function addLesson(e) {
         e.preventDefault();
 
@@ -10871,7 +11410,8 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           title: document.getElementById("lesson-title").value,
           target_level: document.getElementById("lesson-level").value,
           video_url: document.getElementById("lesson-video").value,
-          content_text: document.getElementById("lesson-text").value,
+          content_text: document.getElementById("lesson-editor")?.innerHTML.trim() ||
+            document.getElementById("lesson-text").value.trim(),
           image_url: mainImageUrl,
           vocabulary: vocabList,
           created_at: new Date().toLocaleDateString(),
@@ -10900,6 +11440,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         renderPendingGrammarQuestions();
         resetGrammarBuilder();
         updateGrammarImagePreview();
+        resetLessonRichEditor();
         const lessonImagePreview = document.getElementById("lesson-main-image-preview");
         if (lessonImagePreview) {
           lessonImagePreview.src = "";
@@ -12149,9 +12690,9 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
                   ℹ️ Dars to'liq yakunlanishi uchun: Lug'at testini 100% xatosiz topshiring, Grammatika testiga to'g'ri javob bering va Uy vazifasini yuboring — ustoz uni tasdiqlagach dars yakunlanadi.
                 </div>`
           }
-          <p style="margin: 10px 0; color: var(--text-muted); white-space: pre-line;">${
-            l.content_text
-          }</p>
+          <div class="lesson-rich-content">${
+            sanitizeLessonRichContent(l.content_text)
+          }</div>
           ${
             l.video_url
               ? `<a href="${l.video_url}" target="_blank" style="color:var(--emerald-light); font-weight: bold; text-decoration: none;">▶ Videoni tomosha qilish</a>`
