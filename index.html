@@ -1961,6 +1961,66 @@
       .lesson-editor-media-audio .lesson-editor-media-icon::before { content: "🔊"; }
       .lesson-editor-media-video .lesson-editor-media-icon::before { content: "▶"; }
 
+      .lesson-editor-media {
+        display:block;
+        width:min(100%, 760px);
+        margin:16px auto;
+        padding:10px;
+        border:1px solid rgba(52,211,153,.25);
+        border-radius:16px;
+        background:rgba(2,20,15,.78);
+      }
+      .lesson-editor-media-head {
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:10px;
+        margin-bottom:9px;
+      }
+      .lesson-editor-media-title { font-weight:800; color:var(--emerald-light); }
+      .lesson-editor-media-actions { display:flex; gap:5px; }
+      .lesson-media-move-btn,.lesson-media-delete-btn {
+        border:1px solid rgba(52,211,153,.22);
+        background:rgba(16,185,129,.10);
+        color:var(--text-main);
+        border-radius:8px;
+        min-width:30px;
+        height:30px;
+        cursor:pointer;
+      }
+      .lesson-media-delete-btn { color:#ffb4b4; }
+      .lesson-editor-media-preview { width:100%; }
+      .lesson-inline-video,.lesson-inline-video-frame {
+        display:block;
+        width:100%;
+        min-height:360px;
+        max-height:520px;
+        border:0;
+        border-radius:12px;
+        background:#000;
+        object-fit:contain;
+      }
+      .lesson-inline-audio { display:block; width:100%; margin:8px 0; }
+      .lesson-media-manager {
+        margin-top:10px;
+        border:1px solid var(--card-border);
+        border-radius:14px;
+        padding:10px;
+        background:rgba(16,185,129,.04);
+      }
+      .lesson-media-manager-empty { color:var(--text-muted); font-size:.75rem; padding:6px; }
+      .lesson-media-manager-row {
+        display:flex;
+        align-items:center;
+        gap:8px;
+        padding:8px;
+        margin:5px 0;
+        border:1px solid rgba(52,211,153,.12);
+        border-radius:10px;
+      }
+      .lesson-media-manager-icon { font-size:1.1rem; }
+      .lesson-media-manager-name { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
       @media (max-width: 700px) {
         .lesson-editor-canvas { min-height: 260px; padding: 14px; }
         .lesson-editor-image-left,
@@ -11345,19 +11405,118 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         const safeSrc = lessonMediaSafeUrl(src);
         if (!safeSrc) return "";
         const safeTitle = lessonMediaSafeText(title || (type === "audio" ? "Audio dars materiali" : "Video dars materiali"));
-        const icon = type === "audio" ? "" : "";
-        const label = type === "audio" ? "Audio" : "Video";
-        const sub = type === "audio" ? "Tinglash uchun bosing" : "Videoni ochish uchun bosing";
+        const youtube = type === "video" ? extractYouTubeEmbed(src) : "";
+        const preview = type === "audio"
+          ? `<audio class="lesson-inline-audio" src="${safeSrc}" controls preload="metadata"></audio>`
+          : youtube
+            ? `<iframe class="lesson-inline-video-frame" src="${youtube}" title="${safeTitle}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`
+            : `<video class="lesson-inline-video" src="${safeSrc}" controls preload="metadata" playsinline></video>`;
+
         return `
-          <div class="lesson-editor-media lesson-editor-media-${type}" contenteditable="false" data-media-type="${type}" data-media-src="${safeSrc}" data-media-title="${safeTitle}" tabindex="0" role="button" aria-label="${label}: ${safeTitle}">
-            <div class="lesson-editor-media-icon">${icon}</div>
-            <div class="lesson-editor-media-body">
-              <div class="lesson-editor-media-title">${safeTitle}</div>
-              <div class="lesson-editor-media-subtitle">${sub}</div>
+          <div class="lesson-editor-media lesson-editor-media-${type}" contenteditable="false"
+            data-media-type="${type}" data-media-src="${safeSrc}" data-media-title="${safeTitle}" tabindex="0">
+            <div class="lesson-editor-media-head">
+              <div class="lesson-editor-media-title"> ${type === "audio" ? "🎧" : "🎬"} ${safeTitle}</div>
+              <div class="lesson-editor-media-actions">
+                <button type="button" class="lesson-media-move-btn" onclick="moveLessonEditorMedia(this,-1);event.stopPropagation()">⬆️</button>
+                <button type="button" class="lesson-media-move-btn" onclick="moveLessonEditorMedia(this,1);event.stopPropagation()">⬇️</button>
+                <button type="button" class="lesson-media-delete-btn" onclick="deleteLessonEditorMedia(this);event.stopPropagation()">🗑️</button>
+              </div>
             </div>
-            <div class="lesson-editor-media-play">${type === "audio" ? "▶ Tinglash" : "▶ Ochish"}</div>
+            <div class="lesson-editor-media-preview">${preview}</div>
           </div>
           <p><br></p>`;
+      }
+
+      function lessonEditorMediaElements() {
+        const editor = getLessonEditor();
+        if (!editor) return [];
+        return [...editor.querySelectorAll(":scope > .lesson-editor-media, :scope > .lesson-editor-image")];
+      }
+
+      function lessonEditorMediaGroup(node) {
+        const group = [node];
+        let next = node.nextElementSibling;
+        if (next && next.tagName === "P" && !next.textContent.trim() && next.innerHTML.replace(/<br\s*\/?>(?:\s*)/gi,"").trim() === "") {
+          group.push(next);
+        }
+        return group;
+      }
+
+      function moveLessonEditorMedia(button, direction) {
+        const editor = getLessonEditor();
+        const node = button?.closest(".lesson-editor-media, .lesson-editor-image");
+        if (!editor || !node) return;
+        const media = lessonEditorMediaElements();
+        const index = media.indexOf(node);
+        const target = media[index + direction];
+        if (!target) return;
+
+        const group = lessonEditorMediaGroup(node);
+        const targetGroup = lessonEditorMediaGroup(target);
+
+        if (direction < 0) {
+          const firstTarget = targetGroup[0];
+          group.forEach(el => firstTarget.parentNode.insertBefore(el, firstTarget));
+        } else {
+          const afterTarget = targetGroup[targetGroup.length - 1].nextSibling;
+          group.forEach(el => node.parentNode.insertBefore(el, afterTarget));
+        }
+        syncLessonEditorToHidden();
+        renderLessonEditorMediaManager();
+      }
+
+      function deleteLessonEditorMedia(button) {
+        const editor = getLessonEditor();
+        const node = button?.closest(".lesson-editor-media, .lesson-editor-image");
+        if (!editor || !node) return;
+        if (!confirm("Bu media (rasm/audio/video) ni darsdan o‘chirasizmi?")) return;
+        lessonEditorMediaGroup(node).forEach(el => el.remove());
+        clearLessonImageSelection();
+        syncLessonEditorToHidden();
+        renderLessonEditorMediaManager();
+      }
+
+      function renderLessonEditorMediaManager() {
+        const box = document.getElementById("lesson-editor-media-manager");
+        if (!box) return;
+        const media = lessonEditorMediaElements();
+        if (!media.length) {
+          box.innerHTML = `<div class="lesson-media-manager-empty">🧩 Hozircha qo‘shimcha rasm, audio yoki video yo‘q.</div>`;
+          return;
+        }
+        box.innerHTML = media.map((el, i) => {
+          const type = el.dataset?.mediaType || (el.classList.contains("lesson-editor-image") ? "image" : "media");
+          const name = escapeHtml(el.dataset?.mediaTitle || el.querySelector("img")?.alt || `${type} ${i+1}`);
+          return `<div class="lesson-media-manager-row">
+            <div class="lesson-media-manager-icon">${type === "image" ? "🖼️" : type === "audio" ? "🎧" : "🎬"}</div>
+            <div class="lesson-media-manager-name">${name}</div>
+            <button type="button" class="lesson-editor-btn" ${i===0?'disabled':''} onclick="moveLessonEditorMediaByIndex(${i},-1)">⬆️</button>
+            <button type="button" class="lesson-editor-btn" ${i===media.length-1?'disabled':''} onclick="moveLessonEditorMediaByIndex(${i},1)">⬇️</button>
+            <button type="button" class="lesson-editor-btn" onclick="deleteLessonEditorMediaByIndex(${i})">🗑️</button>
+          </div>`;
+        }).join("");
+      }
+
+      function moveLessonEditorMediaByIndex(index, direction) {
+        const media = lessonEditorMediaElements();
+        const node = media[index];
+        if (!node) return;
+        const fake = document.createElement("button");
+        fake.dataset.temp = "1";
+        node.appendChild(fake);
+        moveLessonEditorMedia(fake, direction);
+        fake.remove();
+      }
+
+      function deleteLessonEditorMediaByIndex(index) {
+        const media = lessonEditorMediaElements();
+        const node = media[index];
+        if (!node) return;
+        const fake = document.createElement("button");
+        node.appendChild(fake);
+        deleteLessonEditorMedia(fake);
+        fake.remove();
       }
 
       function extractYouTubeEmbed(url) {
@@ -11559,6 +11718,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         }
         if (status) status.innerHTML = added ? `✅ ${added} ta audio qo‘shildi. Darsni saqlaganda Storage'ga yuklanadi.` : "❌ Audio qo‘shilmadi.";
         event.target.value = "";
+        renderLessonEditorMediaManager();
       }
 
       async function handleLessonRichVideos(event) {
@@ -11578,6 +11738,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         }
         if (status) status.innerHTML = added ? `✅ ${added} ta video qo‘shildi. Darsni saqlaganda Storage'ga yuklanadi.` : "❌ Video qo‘shilmadi.";
         event.target.value = "";
+        renderLessonEditorMediaManager();
       }
 
       function fileToDataUrl(file) {
@@ -11626,6 +11787,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         }
 
         syncLessonEditorToHidden();
+        renderLessonEditorMediaManager();
       }
 
       async function handleLessonRichImages(event) {
@@ -11659,6 +11821,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
 
         event.target.value = "";
         syncLessonEditorToHidden();
+        renderLessonEditorMediaManager();
       }
 
       function insertLessonImageFromUrl() {
@@ -11719,6 +11882,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         if (hidden) hidden.value = "";
         lessonEditorSavedRange = null;
         clearLessonImageSelection();
+        renderLessonEditorMediaManager();
 
         ["lesson-rich-image-file", "lesson-rich-audio-file", "lesson-rich-video-file"].forEach(id => {
           const input = document.getElementById(id);
@@ -11742,7 +11906,11 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         const template = document.createElement("template");
         template.innerHTML = source;
 
-        template.content.querySelectorAll("script,style,iframe,object,embed,form,input,button").forEach(el => el.remove());
+        template.content.querySelectorAll("script,style,object,embed,form,input,button").forEach(el => el.remove());
+        template.content.querySelectorAll("iframe").forEach(el => {
+          const src = el.getAttribute("src") || "";
+          if (!/^https:\/\/(www\.)?youtube(-nocookie)?\.com\/embed\//i.test(src)) el.remove();
+        });
 
         template.content.querySelectorAll("*").forEach(el => {
           [...el.attributes].forEach(attr => {
