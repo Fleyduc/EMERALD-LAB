@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="uz">
   <head>
-    <!-- EMERALD LAB MEDIA V2 -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>EMERALD LAB - Full Platform, AI Speaking & Analytics</title>
@@ -1906,10 +1905,7 @@
       .lesson-editor-media-body { min-width: 0; flex: 1; }
       .lesson-editor-media-title { font-weight: 800; font-size: .86rem; }
       .lesson-editor-media-subtitle { color: var(--text-muted); font-size: .68rem; margin-top: 2px; }
-            .lesson-editor-media-delete {
-        border: 0; background: rgba(239,68,68,.12); color: #fca5a5; width: 30px; height: 30px; border-radius: 9px; cursor: pointer; font-weight: 900; flex: 0 0 auto; }
-      .lesson-editor-media-delete:hover { background: rgba(239,68,68,.22); color: white; }
-.lesson-editor-media-play {
+      .lesson-editor-media-play {
         border: 1px solid rgba(52,211,153,.24);
         background: rgba(52,211,153,.10);
         color: var(--emerald-light);
@@ -8286,6 +8282,11 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         SUPABASE_ANON_KEY
       );
 
+      // ===== EMERALD LAB MEDIA STORAGE =====
+      // Rasm/audio/video fayllari Supabase Storage'dagi shu bucketka yuklanadi.
+      // Bucket nomi Supabase SQL sozlamasida ham aynan shu bo'lishi kerak.
+      const LESSON_MEDIA_BUCKET = "lesson-media";
+
       /* ============================================================
          ADMIN SIGNUP CODE
          "Ustoz" (teacher) sifatida ro'yxatdan o'tayotganda, agar shu
@@ -11318,7 +11319,6 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
               <div class="lesson-editor-media-subtitle">${sub}</div>
             </div>
             <div class="lesson-editor-media-play">${type === "audio" ? "▶ Tinglash" : "▶ Ochish"}</div>
-            <button type="button" class="lesson-editor-media-delete" title="Darsdan olib tashlash" aria-label="Media blokini o'chirish" onclick="event.stopPropagation(); removeLessonMedia(this)">✕</button>
           </div>
           <p><br></p>`;
       }
@@ -11404,11 +11404,112 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
       function insertLessonAudioFromUrl() { insertLessonMediaFromPrompt("audio"); }
       function insertLessonVideoFromUrl() { insertLessonMediaFromPrompt("video"); }
 
+      // ===== SUPABASE STORAGE MEDIA HELPERS =====
+      function sanitizeLessonFileName(name) {
+        return String(name || "file")
+          .normalize("NFKD")
+          .replace(/[^a-zA-Z0-9._-]+/g, "-")
+          .replace(/-+/g, "-")
+          .replace(/^[-.]+|[-.]+$/g, "")
+          .slice(0, 120) || "file";
+      }
+
+      function dataUrlToBlob(dataUrl) {
+        const parts = String(dataUrl || "").split(",");
+        if (parts.length !== 2 || !parts[0].startsWith("data:")) return null;
+        const meta = parts[0];
+        const base64 = parts[1];
+        const mime = (meta.match(/^data:([^;]+)/i) || [])[1] || "application/octet-stream";
+        const binary = atob(base64);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+        return new Blob([bytes], { type: mime });
+      }
+
+      async function uploadLessonBlobToStorage(blob, fileName, lessonId, kind = "media") {
+        if (!blob) throw new Error("Media fayli topilmadi.");
+
+        const sessionRes = await supabaseClient.auth.getSession();
+        const userId = sessionRes?.data?.session?.user?.id;
+        if (!userId) {
+          throw new Error("Media yuklash uchun foydalanuvchi Supabase orqali tizimga kirgan bo'lishi kerak.");
+        }
+
+        const safeName = sanitizeLessonFileName(fileName);
+        const safeKind = sanitizeLessonFileName(kind);
+        const safeLessonId = sanitizeLessonFileName(lessonId || Date.now());
+        const unique = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+        const path = `${userId}/lessons/${safeLessonId}/${safeKind}-${unique}-${safeName}`;
+
+        const { error } = await supabaseClient.storage
+          .from(LESSON_MEDIA_BUCKET)
+          .upload(path, blob, {
+            contentType: blob.type || "application/octet-stream",
+            cacheControl: "31536000",
+            upsert: false,
+          });
+
+        if (error) {
+          throw new Error(error.message || "Supabase Storage yuklash xatosi.");
+        }
+
+        const { data } = supabaseClient.storage
+          .from(LESSON_MEDIA_BUCKET)
+          .getPublicUrl(path);
+
+        if (!data?.publicUrl) throw new Error("Media uchun public URL olinmadi.");
+        return data.publicUrl;
+      }
+
+      async function uploadLessonFileToStorage(file, lessonId, kind) {
+        return uploadLessonBlobToStorage(file, file.name, lessonId, kind);
+      }
+
+      async function uploadLessonDataUrlToStorage(dataUrl, fileName, lessonId, kind) {
+        const blob = dataUrlToBlob(dataUrl);
+        return uploadLessonBlobToStorage(blob, fileName, lessonId, kind);
+      }
+
+      async function prepareLessonEditorMediaForSave(editorHtml, lessonId) {
+        const template = document.createElement("template");
+        template.innerHTML = editorHtml || "";
+        const root = template.content;
+        const mediaNodes = [...root.querySelectorAll(".lesson-editor-media")];
+        const images = [...root.querySelectorAll(".lesson-editor-image img")];
+        let uploadedCount = 0;
+
+        for (const media of mediaNodes) {
+          const src = media.getAttribute("data-media-src") || "";
+          if (!src.startsWith("data:")) continue;
+          const type = media.getAttribute("data-media-type") || "media";
+          const title = media.getAttribute("data-media-title") || `${type}-${Date.now()}`;
+          const mimeMatch = src.match(/^data:([^;]+)/i);
+          const mime = mimeMatch?.[1] || (type === "audio" ? "audio/mpeg" : "video/mp4");
+          const ext = mime.includes("webm") ? "webm" : mime.includes("ogg") ? "ogg" : mime.includes("wav") ? "wav" : mime.includes("mp3") ? "mp3" : mime.includes("mp4") ? "mp4" : type === "audio" ? "mp3" : "mp4";
+          const url = await uploadLessonDataUrlToStorage(src, `${title}.${ext}`, lessonId, type);
+          media.setAttribute("data-media-src", url);
+          uploadedCount++;
+        }
+
+        for (const img of images) {
+          const src = img.getAttribute("src") || "";
+          if (!src.startsWith("data:image/")) continue;
+          const alt = img.getAttribute("alt") || "lesson-image";
+          const mime = (src.match(/^data:([^;]+)/i) || [])[1] || "image/jpeg";
+          const ext = mime.includes("png") ? "png" : mime.includes("webp") ? "webp" : "jpg";
+          const url = await uploadLessonDataUrlToStorage(src, `${alt}.${ext}`, lessonId, "image");
+          img.setAttribute("src", url);
+          uploadedCount++;
+        }
+
+        return { html: template.innerHTML, uploadedCount };
+      }
+
       async function handleLessonRichAudios(event) {
         const files = [...(event.target.files || [])];
         if (!files.length) return;
         const status = document.getElementById("lesson-editor-status");
-        if (status) status.textContent = "⏳ Audio fayllar tayyorlanmoqda...";
+        if (status) status.textContent = "🎧 Audio fayllar darsga tayyorlanmoqda... Saqlaganda Supabase Storage'ga yuklanadi.";
         let added = 0;
         for (const file of files) {
           if (!file.type.startsWith("audio/")) continue;
@@ -11417,9 +11518,9 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
             const dataUrl = await fileToDataUrl(file);
             const html = buildLessonMediaHtml("audio", dataUrl, file.name.replace(/\.[^.]+$/, ""));
             if (html) { insertLessonHtmlAtCursor(html); added++; }
-          } catch (err) { console.error("Audio upload error:", err); }
+          } catch (err) { console.error("Audio prepare error:", err); }
         }
-        if (status) status.innerHTML = added ? `✅ ${added} ta audio qo‘shildi.` : "❌ Audio qo‘shilmadi.";
+        if (status) status.innerHTML = added ? `✅ ${added} ta audio qo‘shildi. Darsni saqlaganda Storage'ga yuklanadi.` : "❌ Audio qo‘shilmadi.";
         event.target.value = "";
       }
 
@@ -11427,7 +11528,7 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         const files = [...(event.target.files || [])];
         if (!files.length) return;
         const status = document.getElementById("lesson-editor-status");
-        if (status) status.textContent = "⏳ Video fayllar tayyorlanmoqda...";
+        if (status) status.textContent = "🎬 Video fayllar darsga tayyorlanmoqda... Saqlaganda Supabase Storage'ga yuklanadi.";
         let added = 0;
         for (const file of files) {
           if (!file.type.startsWith("video/")) continue;
@@ -11436,9 +11537,9 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
             const dataUrl = await fileToDataUrl(file);
             const html = buildLessonMediaHtml("video", dataUrl, file.name.replace(/\.[^.]+$/, ""));
             if (html) { insertLessonHtmlAtCursor(html); added++; }
-          } catch (err) { console.error("Video upload error:", err); }
+          } catch (err) { console.error("Video prepare error:", err); }
         }
-        if (status) status.innerHTML = added ? `✅ ${added} ta video qo‘shildi.` : "❌ Video qo‘shilmadi.";
+        if (status) status.innerHTML = added ? `✅ ${added} ta video qo‘shildi. Darsni saqlaganda Storage'ga yuklanadi.` : "❌ Video qo‘shilmadi.";
         event.target.value = "";
       }
 
@@ -11631,16 +11732,6 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
         return template.innerHTML;
       }
 
-      function removeLessonMedia(button) {
-        const media = button?.closest?.(".lesson-editor-media");
-        if (!media) return;
-        if (!confirm("Bu audio/video blokini darsdan olib tashlaysizmi?")) return;
-        const next = media.nextElementSibling;
-        media.remove();
-        if (next && next.tagName === "P" && next.innerHTML === "<br>") next.remove();
-        syncLessonEditorToHidden();
-      }
-
       document.addEventListener("click", (event) => {
         const media = event.target.closest(".lesson-editor-media");
         if (media) {
@@ -11674,15 +11765,34 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           }
         });
 
-        const mainImageUrl = await getTeacherTaskImage("lesson-main-image-file");
+        const lessonId = Date.now();
+        const status = document.getElementById("lesson-editor-status");
+        try {
+          if (status) status.textContent = "⏳ Rasm, audio va video fayllar Supabase Storage'ga yuklanmoqda...";
 
-        const newLesson = {
-          id: Date.now(),
+          let mainImageUrl = await getTeacherTaskImage("lesson-main-image-file");
+          if (mainImageUrl?.startsWith("data:image/")) {
+            mainImageUrl = await uploadLessonDataUrlToStorage(
+              mainImageUrl,
+              `main-${lessonId}.jpg`,
+              lessonId,
+              "main-image"
+            );
+          }
+
+          const editor = document.getElementById("lesson-editor");
+          let contentHtml = editor?.innerHTML.trim() || document.getElementById("lesson-text").value.trim();
+          if (editor) {
+            const prepared = await prepareLessonEditorMediaForSave(contentHtml, lessonId);
+            contentHtml = prepared.html;
+          }
+
+          const newLesson = {
+          id: lessonId,
           title: document.getElementById("lesson-title").value,
           target_level: document.getElementById("lesson-level").value,
           video_url: document.getElementById("lesson-video").value,
-          content_text: document.getElementById("lesson-editor")?.innerHTML.trim() ||
-            document.getElementById("lesson-text").value.trim(),
+          content_text: contentHtml,
           image_url: mainImageUrl,
           vocabulary: vocabList,
           created_at: new Date().toLocaleDateString(),
@@ -11718,6 +11828,15 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
           lessonImagePreview.classList.add("hidden");
         }
         renderTeacherLessonsList();
+        } catch (err) {
+          console.error("Dars/media saqlash xatosi:", err);
+          alert(
+            "❌ Dars saqlanmadi.\n\n" +
+            (err?.message || "Media faylini Supabase Storage'ga yuklashda xatolik yuz berdi.") +
+            "\n\nSupabase'da 'lesson-media' bucket va Storage policy'larini o'rnatganingizni tekshiring."
+          );
+          if (status) status.textContent = "❌ Saqlashda xatolik.";
+        }
       }
 
       function renderTeacherLessonsList() {
@@ -19373,7 +19492,6 @@ B: No. There wasn't enough evidence. They ___ (arrest) him if they ___ (find) th
       <div class="lesson-media-modal-card" role="dialog" aria-modal="true" aria-label="Lesson media viewer">
         <button type="button" class="lesson-media-modal-close" onclick="closeLessonMediaModal()" aria-label="Yopish">✕</button>
         <h3 id="lesson-media-modal-title" class="lesson-media-modal-title">Media</h3>
-        <div style="font-size:.72rem;color:var(--text-muted);margin:-8px 0 12px;">✕ tugmasi bilan yopish mumkin</div>
         <div id="lesson-media-modal-content" class="lesson-media-modal-content"></div>
       </div>
     </div>
